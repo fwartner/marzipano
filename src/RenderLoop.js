@@ -140,7 +140,7 @@ class RenderLoop {
     this.emit('afterRender');
 
     // NEW M1.4: Emit performance data periodically
-    if (timestamp && (timestamp - this._lastPerfEmit) >= this._perfEmitInterval) {
+    if (timestamp && timestamp - this._lastPerfEmit >= this._perfEmitInterval) {
       this._emitPerformanceData();
       this._lastPerfEmit = timestamp;
     }

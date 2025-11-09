@@ -6,7 +6,7 @@
 /**
  * @class WebGpuBaseRenderer
  * @classdesc
- * 
+ *
  * NEW M4.2: EXPERIMENTAL Base class for WebGPU renderers.
  * Provides common functionality for WebGPU-based geometry rendering.
  */
@@ -59,4 +59,3 @@ class WebGpuBaseRenderer {
 }
 
 export default WebGpuBaseRenderer;
-

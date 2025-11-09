@@ -6,7 +6,7 @@
 /**
  * @class AudioManager
  * @classdesc
- * 
+ *
  * Manages a shared AudioContext for the application.
  * Handles browser autoplay policies and context state.
  */
@@ -97,4 +97,3 @@ class AudioManager {
 const audioManager = new AudioManager();
 
 export default audioManager;
-

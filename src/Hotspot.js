@@ -218,7 +218,7 @@ class Hotspot {
       // NEW M2.3: Apply occlusion
       if (isVisible && this._occlusion !== 'none') {
         const occluded = !RayPicker.isVisible(params.yaw || 0, params.pitch || 0, view);
-        
+
         if (occluded) {
           if (this._occlusion === 'hide') {
             isVisible = false;

@@ -108,7 +108,7 @@ class Viewer {
     this._performanceHandler = (sample) => {
       // Augment sample with texture store data
       const augmentedSample = { ...sample };
-      
+
       if (this._currentScene) {
         const layers = this._currentScene.listLayers();
         let totalGpuMB = 0;
@@ -216,7 +216,7 @@ class Viewer {
     this._toneMapping = {
       mode: 'none',
       exposure: 1.0,
-      gamma: 2.2
+      gamma: 2.2,
     };
   }
 
@@ -681,7 +681,7 @@ class Viewer {
 
     const stageSize = {
       width: this._stage.width(),
-      height: this._stage.height()
+      height: this._stage.height(),
     };
 
     return RayPicker.screenToCoordinates(screenX, screenY, view, stageSize);
@@ -692,9 +692,7 @@ class Viewer {
    * @return {boolean}
    */
   isXREnabled() {
-    return typeof navigator !== 'undefined' && 
-           navigator.xr !== undefined &&
-           navigator.xr !== null;
+    return typeof navigator !== 'undefined' && navigator.xr !== undefined && navigator.xr !== null;
   }
 
   /**
@@ -713,20 +711,20 @@ class Viewer {
 
     const sessionInit = {
       requiredFeatures: opts.requiredFeatures || ['local-floor'],
-      optionalFeatures: opts.optionalFeatures || []
+      optionalFeatures: opts.optionalFeatures || [],
     };
 
     try {
       // Request immersive VR session
       const xrSession = await navigator.xr.requestSession('immersive-vr', sessionInit);
-      
+
       // Create session handle
       const XRSessionHandle = (await import('./xr/XRSession.js')).default;
       const handle = new XRSessionHandle(xrSession, this._renderLoop, this.view());
-      
+
       // Initialize session
       await handle.init(opts.requiredFeatures ? opts.requiredFeatures[0] : 'local-floor');
-      
+
       // Store session
       this._xrSession = handle;
 
@@ -736,7 +734,7 @@ class Viewer {
         const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
         if (gl) {
           await xrSession.updateRenderState({
-            baseLayer: new XRWebGLLayer(xrSession, gl)
+            baseLayer: new XRWebGLLayer(xrSession, gl),
           });
         }
       }
@@ -789,15 +787,18 @@ class Viewer {
    */
   async setBackend(backend, opts) {
     opts = opts || {};
-    
+
     // For now, this is informational only
     // Full implementation would require recreating the stage
-    console.warn('setBackend: Stage recreation not yet implemented, using current backend:', this.getBackend());
-    
+    console.warn(
+      'setBackend: Stage recreation not yet implemented, using current backend:',
+      this.getBackend()
+    );
+
     if (backend === 'webgpu' && !opts.experimental) {
       throw new Error('WebGPU backend requires experimental: true option');
     }
-    
+
     return Promise.resolve();
   }
 
@@ -816,7 +817,9 @@ class Viewer {
     // Validate mode
     const validModes = ['none', 'reinhard', 'aces'];
     if (opts.mode && !validModes.includes(opts.mode)) {
-      throw new Error(`Invalid tone mapping mode: ${opts.mode}. Must be one of: ${validModes.join(', ')}`);
+      throw new Error(
+        `Invalid tone mapping mode: ${opts.mode}. Must be one of: ${validModes.join(', ')}`
+      );
     }
 
     // Update tone mapping settings
@@ -833,7 +836,7 @@ class Viewer {
     // Note: Full implementation would update shader uniforms
     // For now, settings are stored and can be queried
     this.emit('toneMappingChange', this._toneMapping);
-    
+
     // Force re-render to apply changes
     if (this._stage) {
       this._stage.emit('renderInvalid');
@@ -877,7 +880,7 @@ class Viewer {
     if (typeof opts === 'string') {
       opts = { kind: opts };
     }
-    
+
     opts = opts || {};
     done = done || noop;
 
@@ -918,12 +921,16 @@ class Viewer {
     }
 
     // Get the transition parameters.
-    let duration = opts.duration != null ? opts.duration :
-                   opts.transitionDuration != null ? opts.transitionDuration : defaultSwitchDuration;
-    
+    let duration =
+      opts.duration != null
+        ? opts.duration
+        : opts.transitionDuration != null
+          ? opts.transitionDuration
+          : defaultSwitchDuration;
+
     // NEW M2.4: Honor prefers-reduced-motion
     duration = Accessibility.adjustTransitionDuration(duration);
-    
+
     // NEW M3.2: Get transition function based on kind
     let update;
     if (opts.kind) {
@@ -957,7 +964,7 @@ class Viewer {
       // NEW M3.2: Use easing-wrapped update if available
       const updateFn = opts.easing ? updateWithEasing : update;
       updateFn(val, newScene, oldScene);
-      
+
       // NEW M3.2: Emit transition progress event
       this.emit('transitionProgress', { progress: val, newScene, oldScene });
     };
@@ -977,10 +984,10 @@ class Viewer {
         this._replacedScene = null;
       }
       this._cancelCurrentTween = null;
-      
+
       // NEW M3.2: Emit transition complete event
       this.emit('transitionComplete', { scene: newScene });
-      
+
       done();
     };
 

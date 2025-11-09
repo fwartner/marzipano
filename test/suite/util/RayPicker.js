@@ -12,8 +12,8 @@ describe('RayPicker', () => {
       const mockView = {
         screenToCoordinates: vi.fn((screen) => ({
           yaw: screen.x * Math.PI,
-          pitch: screen.y * Math.PI / 2
-        }))
+          pitch: (screen.y * Math.PI) / 2,
+        })),
       };
 
       const stageSize = { width: 800, height: 600 };
@@ -28,7 +28,7 @@ describe('RayPicker', () => {
     it('returns null when view lacks screenToCoordinates', () => {
       const mockView = {}; // No screenToCoordinates method
       const stageSize = { width: 800, height: 600 };
-      
+
       const result = RayPicker.screenToCoordinates(400, 300, mockView, stageSize);
       expect(result).toBe(null);
     });
@@ -37,18 +37,18 @@ describe('RayPicker', () => {
       const mockView = {
         screenToCoordinates: vi.fn(() => {
           throw new Error('Out of bounds');
-        })
+        }),
       };
 
       const stageSize = { width: 800, height: 600 };
       const result = RayPicker.screenToCoordinates(400, 300, mockView, stageSize);
-      
+
       expect(result).toBe(null);
     });
 
     it('normalizes screen coordinates correctly', () => {
       const mockView = {
-        screenToCoordinates: vi.fn((screen) => ({ yaw: 0, pitch: 0 }))
+        screenToCoordinates: vi.fn((screen) => ({ yaw: 0, pitch: 0 })),
       };
 
       const stageSize = { width: 800, height: 600 };
@@ -64,7 +64,7 @@ describe('RayPicker', () => {
   describe('coordinatesToScreen', () => {
     it('converts yaw/pitch to screen coordinates', () => {
       const mockView = {
-        coordinatesToScreen: vi.fn(() => ({ x: 0, y: 0 }))
+        coordinatesToScreen: vi.fn(() => ({ x: 0, y: 0 })),
       };
 
       const stageSize = { width: 800, height: 600 };
@@ -78,7 +78,7 @@ describe('RayPicker', () => {
     it('returns null when view lacks coordinatesToScreen', () => {
       const mockView = {};
       const stageSize = { width: 800, height: 600 };
-      
+
       const result = RayPicker.coordinatesToScreen(0, 0, mockView, stageSize);
       expect(result).toBe(null);
     });
@@ -87,12 +87,12 @@ describe('RayPicker', () => {
       const mockView = {
         coordinatesToScreen: vi.fn(() => {
           throw new Error('Out of view');
-        })
+        }),
       };
 
       const stageSize = { width: 800, height: 600 };
       const result = RayPicker.coordinatesToScreen(0, 0, mockView, stageSize);
-      
+
       expect(result).toBe(null);
     });
   });
@@ -100,7 +100,7 @@ describe('RayPicker', () => {
   describe('isVisible', () => {
     it('returns true for coordinates in viewport', () => {
       const mockView = {
-        coordinatesToScreen: vi.fn(() => ({ x: 0, y: 0 }))
+        coordinatesToScreen: vi.fn(() => ({ x: 0, y: 0 })),
       };
 
       const result = RayPicker.isVisible(0, 0, mockView);
@@ -109,7 +109,7 @@ describe('RayPicker', () => {
 
     it('returns false for coordinates out of viewport', () => {
       const mockView = {
-        coordinatesToScreen: vi.fn(() => ({ x: 2, y: 0 })) // Outside [-1, 1] range
+        coordinatesToScreen: vi.fn(() => ({ x: 2, y: 0 })), // Outside [-1, 1] range
       };
 
       const result = RayPicker.isVisible(0, 0, mockView);
@@ -120,7 +120,7 @@ describe('RayPicker', () => {
       const mockView = {
         coordinatesToScreen: vi.fn(() => {
           throw new Error('Behind camera');
-        })
+        }),
       };
 
       const result = RayPicker.isVisible(Math.PI, 0, mockView);
@@ -155,12 +155,11 @@ describe('RayPicker', () => {
       const pitch1 = 0.3;
       const yaw2 = 1.2;
       const pitch2 = -0.4;
-      
+
       const d1 = RayPicker.angularDistance(yaw1, pitch1, yaw2, pitch2);
       const d2 = RayPicker.angularDistance(yaw2, pitch2, yaw1, pitch1);
-      
+
       expect(d1).toBeCloseTo(d2, 5);
     });
   });
 });
-

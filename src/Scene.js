@@ -489,7 +489,7 @@ class Scene {
    */
   createAudioAnchor(context, position, opts) {
     const anchor = new AudioAnchor(context, position, opts);
-    
+
     this._audioAnchors.push(anchor);
 
     // Update audio anchor when view changes
@@ -539,7 +539,7 @@ class Scene {
     }
 
     const viewParams = this._view.parameters();
-    
+
     // Update each audio anchor's listener position
     for (let i = 0; i < this._audioAnchors.length; i++) {
       this._audioAnchors[i].updateListener(viewParams);
@@ -555,10 +555,10 @@ class Scene {
    */
   addHotspot(element, position, opts) {
     opts = opts || {};
-    
+
     // Create hotspot using the hotspot container
     const hotspot = this._hotspotContainer.createHotspot(element, position, opts);
-    
+
     // Return a handle with simplified API
     return {
       setPosition: (yaw, pitch) => {
@@ -567,7 +567,7 @@ class Scene {
       destroy: () => {
         this._hotspotContainer.destroyHotspot(hotspot);
       },
-      hotspot: hotspot // Allow access to full hotspot API
+      hotspot: hotspot, // Allow access to full hotspot API
     };
   }
 }

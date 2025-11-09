@@ -100,7 +100,7 @@ export function getLuminanceGLSL() {
  */
 export function getToneMappingShaderCode(mode, includeRGBM = false, includeRGBE = false) {
   let code = '';
-  
+
   // Add decode functions if needed
   if (includeRGBM) {
     code += `${getRGBMDecodeGLSL()}\n`;
@@ -108,18 +108,18 @@ export function getToneMappingShaderCode(mode, includeRGBM = false, includeRGBE 
   if (includeRGBE) {
     code += `${getRGBEDecodeGLSL()}\n`;
   }
-  
+
   // Always include luminance and gamma correction
   code += `${getLuminanceGLSL()}\n`;
   code += `${getGammaCorrectionGLSL()}\n`;
-  
+
   // Add tone mapping function
   if (mode === 'reinhard') {
     code += `${getReinhardToneMappingGLSL()}\n`;
   } else if (mode === 'aces') {
     code += `${getACESToneMappingGLSL()}\n`;
   }
-  
+
   // Add main tone mapping function
   code += `
     vec3 applyToneMapping(vec3 color, float exposure, float gamma, int mode) {
@@ -140,7 +140,7 @@ export function getToneMappingShaderCode(mode, includeRGBM = false, includeRGBE 
       return color;
     }
   `;
-  
+
   return code;
 }
 
@@ -160,9 +160,12 @@ export class ToneMappingSettings {
    */
   getModeInt() {
     switch (this.mode) {
-      case 'reinhard': return 1;
-      case 'aces': return 2;
-      default: return 0;
+      case 'reinhard':
+        return 1;
+      case 'aces':
+        return 2;
+      default:
+        return 0;
     }
   }
 
@@ -199,4 +202,3 @@ export default {
   getToneMappingShaderCode,
   ToneMappingSettings,
 };
-

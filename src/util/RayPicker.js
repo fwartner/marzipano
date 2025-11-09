@@ -6,7 +6,7 @@
 /**
  * @class RayPicker
  * @classdesc
- * 
+ *
  * Utility for ray-picking (unprojecting screen coordinates to world coordinates).
  * Used for hotspot interaction and picking.
  */
@@ -28,9 +28,9 @@ class RayPicker {
     const normalizedX = (screenX / stageSize.width) * 2 - 1;
     const normalizedY = 1 - (screenY / stageSize.height) * 2; // Flip Y axis
 
-    const screen = { 
-      x: normalizedX, 
-      y: normalizedY 
+    const screen = {
+      x: normalizedX,
+      y: normalizedY,
     };
 
     try {
@@ -90,11 +90,9 @@ class RayPicker {
 
     try {
       const screen = view.coordinatesToScreen(coords);
-      
+
       // Check if coordinates are within viewport (normalized coordinates)
-      return screen !== null && 
-             screen.x >= -1 && screen.x <= 1 && 
-             screen.y >= -1 && screen.y <= 1;
+      return screen !== null && screen.x >= -1 && screen.x <= 1 && screen.y >= -1 && screen.y <= 1;
     } catch {
       return false;
     }
@@ -112,14 +110,13 @@ class RayPicker {
     // Haversine formula for great circle distance
     const dYaw = yaw2 - yaw1;
     const dPitch = pitch2 - pitch1;
-    
-    const a = Math.sin(dPitch / 2) * Math.sin(dPitch / 2) +
-              Math.cos(pitch1) * Math.cos(pitch2) *
-              Math.sin(dYaw / 2) * Math.sin(dYaw / 2);
-    
+
+    const a =
+      Math.sin(dPitch / 2) * Math.sin(dPitch / 2) +
+      Math.cos(pitch1) * Math.cos(pitch2) * Math.sin(dYaw / 2) * Math.sin(dYaw / 2);
+
     return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 }
 
 export default RayPicker;
-

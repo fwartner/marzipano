@@ -408,7 +408,7 @@ class TextureStore {
       maxGpuMemory: this._maxGpuMemory,
       residentTextures: this.residentTextureCount(),
       cacheHits: this._tileHitCount,
-      cacheMisses: this._tileMissCount
+      cacheMisses: this._tileMissCount,
     };
   }
 
@@ -654,7 +654,7 @@ class TextureStore {
         tile: tile,
         lastAccess: lastAccess,
         timeSinceAccess: timeSinceAccess,
-        memorySize: this._tileMemoryMap.get(tile) || 0
+        memorySize: this._tileMemoryMap.get(tile) || 0,
       });
     });
 

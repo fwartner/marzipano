@@ -66,9 +66,10 @@ function initWebGlContext(canvas, opts) {
 
   // Fallback to WebGL1
   if (!gl) {
-    gl = canvas.getContext &&
+    gl =
+      canvas.getContext &&
       (canvas.getContext('webgl', options) || canvas.getContext('experimental-webgl', options));
-    
+
     if (gl) {
       version = 'webgl1';
     }

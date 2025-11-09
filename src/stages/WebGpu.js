@@ -10,10 +10,10 @@ import { setAbsolute, setFullSize } from '../util/dom.js';
  * @class WebGpuStage
  * @extends Stage
  * @classdesc
- * 
+ *
  * NEW M4.2: EXPERIMENTAL WebGPU implementation of Stage.
  * This is an experimental backend and requires WebGPU support.
- * 
+ *
  * @param {Object} opts
  * @param {boolean} [opts.experimental=false] - Must be true to enable
  */
@@ -57,15 +57,15 @@ class WebGpuStage extends Stage {
 
       // Request device
       this._device = await this._adapter.requestDevice();
-      
+
       // Configure context
       this._context = this._domElement.getContext('webgpu');
       const preferredFormat = navigator.gpu.getPreferredCanvasFormat();
-      
+
       this._context.configure({
         device: this._device,
         format: preferredFormat,
-        alphaMode: 'premultiplied'
+        alphaMode: 'premultiplied',
       });
 
       this._initialized = true;
@@ -142,7 +142,7 @@ class WebGpuStage extends Stage {
   setSizeForType() {
     const width = this._width;
     const height = this._height;
-    
+
     this._domElement.width = width;
     this._domElement.height = height;
   }
@@ -167,7 +167,7 @@ class WebGpuStage extends Stage {
           width: () => image.width,
           height: () => image.height,
           isDynamic: () => false,
-          destroy: () => {}
+          destroy: () => {},
         };
         done(null, asset);
       }
@@ -232,4 +232,3 @@ class WebGpuStage extends Stage {
 WebGpuStage.prototype.type = 'webgpu';
 
 export default WebGpuStage;
-

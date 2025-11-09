@@ -19,7 +19,7 @@ describe('LODPolicy', () => {
       const policy = new LODPolicy({
         maxGpuMB: 512,
         prefetchAhead: 3,
-        evictionStrategy: 'lru'
+        evictionStrategy: 'lru',
       });
       expect(policy.maxGpuMB()).toBe(512);
       expect(policy.prefetchAhead()).toBe(3);
@@ -75,37 +75,37 @@ describe('LODPolicy', () => {
   describe('calculateEvictionScore', () => {
     it('returns higher score for recently accessed tiles (LRU)', () => {
       const policy = new LODPolicy({ maxGpuMB: 256, evictionStrategy: 'lru' });
-      
+
       const tile = { z: 2 };
       const currentTime = 1000;
       const recentScore = policy.calculateEvictionScore(tile, 900, 10, currentTime);
       const oldScore = policy.calculateEvictionScore(tile, 100, 10, currentTime);
-      
+
       expect(recentScore).toBeGreaterThan(oldScore);
     });
 
     it('returns higher score for closer tiles (distance)', () => {
       const policy = new LODPolicy({ maxGpuMB: 256, evictionStrategy: 'distance' });
-      
+
       const tile = { z: 2 };
       const currentTime = 1000;
       const closeScore = policy.calculateEvictionScore(tile, 500, 1, currentTime);
       const farScore = policy.calculateEvictionScore(tile, 500, 100, currentTime);
-      
+
       expect(closeScore).toBeGreaterThan(farScore);
     });
 
     it('combines LRU and distance for hybrid strategy', () => {
       const policy = new LODPolicy({ maxGpuMB: 256, evictionStrategy: 'hybrid' });
-      
+
       const tile = { z: 2 };
       const currentTime = 1000;
-      
+
       // Recent + close should have highest score
       const score1 = policy.calculateEvictionScore(tile, 900, 1, currentTime);
       // Old + far should have lowest score
       const score2 = policy.calculateEvictionScore(tile, 100, 100, currentTime);
-      
+
       expect(score1).toBeGreaterThan(score2);
     });
   });
@@ -113,7 +113,7 @@ describe('LODPolicy', () => {
   describe('shouldPrefetchLevel', () => {
     it('returns true for levels within prefetch range', () => {
       const policy = new LODPolicy({ maxGpuMB: 256, prefetchAhead: 2 });
-      
+
       expect(policy.shouldPrefetchLevel(3, 3)).toBe(true);
       expect(policy.shouldPrefetchLevel(3, 4)).toBe(true);
       expect(policy.shouldPrefetchLevel(3, 5)).toBe(true);
@@ -121,17 +121,16 @@ describe('LODPolicy', () => {
 
     it('returns false for levels beyond prefetch range', () => {
       const policy = new LODPolicy({ maxGpuMB: 256, prefetchAhead: 2 });
-      
+
       expect(policy.shouldPrefetchLevel(3, 6)).toBe(false);
       expect(policy.shouldPrefetchLevel(3, 7)).toBe(false);
     });
 
     it('respects prefetchAhead value of 0', () => {
       const policy = new LODPolicy({ maxGpuMB: 256, prefetchAhead: 0 });
-      
+
       expect(policy.shouldPrefetchLevel(3, 3)).toBe(true);
       expect(policy.shouldPrefetchLevel(3, 4)).toBe(false);
     });
   });
 });
-

@@ -19,11 +19,11 @@ import now from './now.js';
 /**
  * @function tween
  * @desc Time-based tween utility with frame-rate independent timing
- * 
+ *
  * Supports two API signatures:
  * 1. Legacy: tween(duration, update, done)
  * 2. Enhanced: tween(value, to, {duration, easing, onUpdate, onComplete})
- * 
+ *
  * @param {number|*} durationOrValue - Either duration (legacy) or starting value (enhanced)
  * @param {Function|*} updateOrTo - Either update callback (legacy) or target value (enhanced)
  * @param {Function|Object} [doneOrOpts] - Either done callback (legacy) or options object (enhanced)
@@ -32,7 +32,7 @@ import now from './now.js';
 function tween(durationOrValue, updateOrTo, doneOrOpts) {
   // Detect API signature
   const isEnhancedAPI = typeof doneOrOpts === 'object' && doneOrOpts !== null;
-  
+
   if (isEnhancedAPI) {
     // Enhanced API: tween(value, to, {duration, easing, onUpdate, onComplete})
     return enhancedTween(durationOrValue, updateOrTo, doneOrOpts);
@@ -81,16 +81,16 @@ function enhancedTween(value, to, opts) {
   const easing = opts.easing || ((t) => t); // linear by default
   const onUpdate = opts.onUpdate;
   const onComplete = opts.onComplete;
-  
+
   let cancelled = false;
   const startTime = now();
-  
+
   // Support for both number and object values
   const isObject = typeof value === 'object' && value !== null;
-  
+
   function interpolate(t) {
     const easedT = easing(t);
-    
+
     if (isObject) {
       const result = {};
       for (const key in value) {
@@ -105,18 +105,18 @@ function enhancedTween(value, to, opts) {
       return value + (to - value) * easedT;
     }
   }
-  
+
   function runUpdate() {
     if (cancelled) {
       return;
     }
-    
+
     const elapsed = now() - startTime;
     const t = Math.min(elapsed / duration, 1);
-    
+
     const currentValue = interpolate(t);
     onUpdate(currentValue);
-    
+
     if (t < 1) {
       requestAnimationFrame(runUpdate);
     } else {
@@ -125,11 +125,11 @@ function enhancedTween(value, to, opts) {
       }
     }
   }
-  
+
   // Initial update
   onUpdate(interpolate(0));
   requestAnimationFrame(runUpdate);
-  
+
   return function cancel() {
     cancelled = true;
     if (onComplete) {

@@ -95,11 +95,11 @@ class HotspotContainer {
     this._hotspotContainer = document.createElement('div');
     setAbsolute(this._hotspotContainer);
     setPointerEvents(this._hotspotContainer, 'all');
-    
+
     // NEW M2.4: Add ARIA attributes for accessibility
     this._hotspotContainer.setAttribute('role', 'region');
     this._hotspotContainer.setAttribute('aria-label', 'Interactive hotspots');
-    
+
     this._hotspotContainerWrapper.appendChild(this._hotspotContainer);
 
     // Update when the hotspots change or scene is re-rendered.

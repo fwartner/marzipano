@@ -9,10 +9,10 @@ import clearOwnProperties from '../util/clearOwnProperties.js';
 /**
  * @class XRSessionHandle
  * @classdesc
- * 
+ *
  * Manages a WebXR immersive session, handling session lifecycle,
  * controller input, and pose updates.
- * 
+ *
  * @param {XRSession} xrSession - The WebXR session
  * @param {RenderLoop} renderLoop - The render loop to integrate with
  * @param {View} view - The view to update with XR pose data
@@ -54,10 +54,10 @@ class XRSessionHandle {
   async init(referenceSpaceType = 'local-floor') {
     try {
       this._referenceSpace = await this._xrSession.requestReferenceSpace(referenceSpaceType);
-      
+
       // Start XR render loop
       this._xrFrameHandle = this._xrSession.requestAnimationFrame(this._boundXRLoop);
-      
+
       return this;
     } catch (err) {
       throw new Error(`Failed to initialize XR session: ${err.message}`);
@@ -69,7 +69,7 @@ class XRSessionHandle {
    * @private
    * @param {number} time - Frame time
    * @param {XRFrame} xrFrame - XR frame
-   * 
+   *
    * NEW M3.3: Video sources work automatically in XR mode through the
    * dynamic asset system. VideoAsset emits 'change' events that trigger
    * texture updates, which work seamlessly in both regular and XR render loops.
@@ -200,4 +200,3 @@ class XRSessionHandle {
 eventEmitter(XRSessionHandle);
 
 export default XRSessionHandle;
-

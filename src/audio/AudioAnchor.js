@@ -9,10 +9,10 @@ import clearOwnProperties from '../util/clearOwnProperties.js';
 /**
  * @class AudioAnchor
  * @classdesc
- * 
+ *
  * A 3D audio anchor that positions audio sources in space based on
  * yaw/pitch coordinates. Updates panner node based on camera position.
- * 
+ *
  * @param {AudioContext} context - The Web Audio API context
  * @param {Object} position - Initial position {yaw, pitch}
  * @param {Object} opts - Options
@@ -31,15 +31,15 @@ class AudioAnchor {
     this._context = context;
     this._position = {
       yaw: position.yaw || 0,
-      pitch: position.pitch || 0
+      pitch: position.pitch || 0,
     };
 
     // Create panner node for 3D positioning
     this._panner = context.createPanner();
-    
+
     // Set panning model
     this._panner.panningModel = 'HRTF'; // Use HRTF for realistic 3D audio
-    
+
     // Set distance model
     const distanceModel = opts.distanceModel || 'inverse';
     this._panner.distanceModel = distanceModel;
@@ -92,7 +92,7 @@ class AudioAnchor {
    */
   _updatePosition() {
     const pos = this._yawPitchTo3D();
-    
+
     // Set position (where the sound is coming from)
     if (this._panner.positionX) {
       // Modern API (AudioParam)
@@ -134,7 +134,7 @@ class AudioAnchor {
   getPosition() {
     return {
       yaw: this._position.yaw,
-      pitch: this._position.pitch
+      pitch: this._position.pitch,
     };
   }
 
@@ -144,10 +144,10 @@ class AudioAnchor {
    */
   updateListener(viewParams) {
     const listener = this._context.listener;
-    
+
     // Calculate listener position (at origin)
     const listenerPos = { x: 0, y: 0, z: 0 };
-    
+
     // Calculate listener forward direction based on view
     const yaw = viewParams.yaw || 0;
     const pitch = viewParams.pitch || 0;
@@ -156,13 +156,13 @@ class AudioAnchor {
     const forward = {
       x: Math.cos(pitch) * Math.sin(yaw),
       y: Math.sin(pitch),
-      z: -Math.cos(pitch) * Math.cos(yaw)
+      z: -Math.cos(pitch) * Math.cos(yaw),
     };
 
     const up = {
       x: -Math.sin(pitch) * Math.sin(yaw),
       y: Math.cos(pitch),
-      z: Math.sin(pitch) * Math.cos(yaw)
+      z: Math.sin(pitch) * Math.cos(yaw),
     };
 
     // Apply roll rotation to up vector
@@ -171,7 +171,7 @@ class AudioAnchor {
     const upRotated = {
       x: up.x * cosRoll - forward.x * sinRoll,
       y: up.y * cosRoll - forward.y * sinRoll,
-      z: up.z * cosRoll - forward.z * sinRoll
+      z: up.z * cosRoll - forward.z * sinRoll,
     };
 
     // Set listener position and orientation
@@ -180,18 +180,25 @@ class AudioAnchor {
       listener.positionX.value = listenerPos.x;
       listener.positionY.value = listenerPos.y;
       listener.positionZ.value = listenerPos.z;
-      
+
       listener.forwardX.value = forward.x;
       listener.forwardY.value = forward.y;
       listener.forwardZ.value = forward.z;
-      
+
       listener.upX.value = upRotated.x;
       listener.upY.value = upRotated.y;
       listener.upZ.value = upRotated.z;
     } else {
       // Legacy API
       listener.setPosition(listenerPos.x, listenerPos.y, listenerPos.z);
-      listener.setOrientation(forward.x, forward.y, forward.z, upRotated.x, upRotated.y, upRotated.z);
+      listener.setOrientation(
+        forward.x,
+        forward.y,
+        forward.z,
+        upRotated.x,
+        upRotated.y,
+        upRotated.z
+      );
     }
   }
 
@@ -279,12 +286,12 @@ class AudioAnchor {
    */
   destroy() {
     this.disconnectAll();
-    
+
     if (this._gainNode) {
       this._gainNode.disconnect();
       this._gainNode = null;
     }
-    
+
     if (this._panner) {
       this._panner.disconnect();
       this._panner = null;
@@ -297,4 +304,3 @@ class AudioAnchor {
 eventEmitter(AudioAnchor);
 
 export default AudioAnchor;
-

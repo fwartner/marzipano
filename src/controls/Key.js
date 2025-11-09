@@ -82,9 +82,8 @@ class KeyControlMethod {
 
   _handlePress(e) {
     // NEW M2.4: Support both keyCode and modern key string
-    const matches = (this._keyString && e.key === this._keyString) || 
-                    (e.keyCode === this._keyCode);
-    
+    const matches = (this._keyString && e.key === this._keyString) || e.keyCode === this._keyCode;
+
     if (!matches) {
       return;
     }
@@ -99,9 +98,8 @@ class KeyControlMethod {
 
   _handleRelease(e) {
     // NEW M2.4: Support both keyCode and modern key string
-    const matches = (this._keyString && e.key === this._keyString) || 
-                    (e.keyCode === this._keyCode);
-    
+    const matches = (this._keyString && e.key === this._keyString) || e.keyCode === this._keyCode;
+
     if (!matches) {
       return;
     }

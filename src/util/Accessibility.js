@@ -6,7 +6,7 @@
 /**
  * @class Accessibility
  * @classdesc
- * 
+ *
  * Utilities for accessibility features including motion preferences
  * and ARIA attribute management.
  */
@@ -19,7 +19,7 @@ class Accessibility {
     if (typeof window === 'undefined' || !window.matchMedia) {
       return false;
     }
-    
+
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     return mediaQuery && mediaQuery.matches;
   }
@@ -52,10 +52,8 @@ class Accessibility {
 
     for (const key in attrs) {
       const value = attrs[key];
-      const attrName = key === 'label' ? 'aria-label' : 
-                       key === 'role' ? 'role' :
-                       `aria-${key}`;
-      
+      const attrName = key === 'label' ? 'aria-label' : key === 'role' ? 'role' : `aria-${key}`;
+
       if (value !== null && value !== undefined) {
         element.setAttribute(attrName, value.toString());
       } else {
@@ -92,12 +90,14 @@ class Accessibility {
       return false;
     }
 
-    const focusable = container.querySelectorAll('[tabindex="0"], button, a[href], input, select, textarea');
+    const focusable = container.querySelectorAll(
+      '[tabindex="0"], button, a[href], input, select, textarea'
+    );
     if (focusable.length > 0) {
       focusable[0].focus();
       return true;
     }
-    
+
     return false;
   }
 
@@ -111,7 +111,8 @@ class Accessibility {
       return [];
     }
 
-    const selector = '[tabindex="0"], button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])';
+    const selector =
+      '[tabindex="0"], button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])';
     return Array.from(container.querySelectorAll(selector));
   }
 
@@ -124,12 +125,12 @@ class Accessibility {
   static focusNext(container, currentElement) {
     const tabbable = Accessibility.getTabbableElements(container);
     const currentIndex = tabbable.indexOf(currentElement);
-    
+
     if (currentIndex >= 0 && currentIndex < tabbable.length - 1) {
       tabbable[currentIndex + 1].focus();
       return true;
     }
-    
+
     return false;
   }
 
@@ -142,12 +143,12 @@ class Accessibility {
   static focusPrevious(container, currentElement) {
     const tabbable = Accessibility.getTabbableElements(container);
     const currentIndex = tabbable.indexOf(currentElement);
-    
+
     if (currentIndex > 0) {
       tabbable[currentIndex - 1].focus();
       return true;
     }
-    
+
     return false;
   }
 
@@ -182,4 +183,3 @@ class Accessibility {
 }
 
 export default Accessibility;
-

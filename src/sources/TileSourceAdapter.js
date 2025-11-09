@@ -6,21 +6,21 @@
 /**
  * @interface TileSourceAdapter
  * @classdesc
- * 
+ *
  * An interface for custom tile source adapters that can generate
  * tile URLs based on tile coordinates. This enables support for
  * deep-zoom/IIIF-style tile sources and other custom tiling schemes.
- * 
+ *
  * Implementations should provide a urlFor() method that returns
  * the URL for a given tile.
  */
 
 /**
  * Example IIIF Tile Source Adapter
- * 
+ *
  * @class IIIFTileSourceAdapter
  * @implements TileSourceAdapter
- * 
+ *
  * @example
  * const adapter = new IIIFTileSourceAdapter({
  *   baseUrl: 'https://example.com/iiif/image',
@@ -28,7 +28,7 @@
  *   quality: 'default',
  *   format: 'jpg'
  * });
- * 
+ *
  * const source = ImageUrlSource.fromTiles(adapter);
  */
 export class IIIFTileSourceAdapter {
@@ -57,36 +57,36 @@ export class IIIFTileSourceAdapter {
   urlFor(level, face, x, y) {
     // IIIF Image API 2.1 format:
     // {scheme}://{server}{/prefix}/{identifier}/{region}/{size}/{rotation}/{quality}.{format}
-    
+
     const tileSize = this._tileSize;
     const xPos = x * tileSize;
     const yPos = y * tileSize;
-    
+
     // Region: x,y,w,h
     const region = `${xPos},${yPos},${tileSize},${tileSize}`;
-    
+
     // Size: full tile size
     const size = `${tileSize},`;
-    
+
     // Rotation: 0 degrees
     const rotation = '0';
-    
+
     return `${this._baseUrl}/${region}/${size}/${rotation}/${this._quality}.${this._format}`;
   }
 }
 
 /**
  * Example Deep Zoom Tile Source Adapter
- * 
+ *
  * @class DeepZoomTileSourceAdapter
  * @implements TileSourceAdapter
- * 
+ *
  * @example
  * const adapter = new DeepZoomTileSourceAdapter({
  *   baseUrl: 'https://example.com/deepzoom/image',
  *   format: 'jpg'
  * });
- * 
+ *
  * const source = ImageUrlSource.fromTiles(adapter);
  */
 export class DeepZoomTileSourceAdapter {
@@ -116,15 +116,15 @@ export class DeepZoomTileSourceAdapter {
 
 /**
  * Example Google Maps-style Tile Source Adapter
- * 
+ *
  * @class GoogleMapsTileSourceAdapter
  * @implements TileSourceAdapter
- * 
+ *
  * @example
  * const adapter = new GoogleMapsTileSourceAdapter({
  *   baseUrl: 'https://tiles.example.com'
  * });
- * 
+ *
  * const source = ImageUrlSource.fromTiles(adapter);
  */
 export class GoogleMapsTileSourceAdapter {
@@ -157,4 +157,3 @@ export default {
   DeepZoomTileSourceAdapter,
   GoogleMapsTileSourceAdapter,
 };
-

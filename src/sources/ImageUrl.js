@@ -80,11 +80,11 @@ class ImageUrlSource {
 
     const loadImage = stage.loadImage.bind(stage, url, rect);
 
-    const loadFn = (done) => 
+    const loadFn = (done) =>
       // TODO: Deduplicate load requests for the same URL. Although the browser
       // might be smart enough to avoid duplicate requests, they are still unduly
       // impacted by the concurrency parameter.
-       this._loadPool.push(loadImage, (err, asset) => {
+      this._loadPool.push(loadImage, (err, asset) => {
         if (err) {
           if (err instanceof NetworkError) {
             // If a network error occurred, wait before retrying.
@@ -97,9 +97,7 @@ class ImageUrlSource {
           delete retryMap[url];
           done(null, tile, asset);
         }
-      })
-    ;
-
+      });
     // Check whether we are retrying a failed request.
     let delayAmount;
     const lastTime = retryMap[url];
@@ -181,14 +179,14 @@ class ImageUrlSource {
 
   /**
    * NEW M1.5: Creates an ImageUrlSource from a TileSourceAdapter.
-   * 
+   *
    * This enables support for custom tiling schemes like IIIF, Deep Zoom,
    * and other tile-based image formats.
    *
    * @param {Object} adapter - A TileSourceAdapter instance with a urlFor() method
    * @param {Object} opts - Options to pass to ImageUrlSource constructor
    * @return {ImageUrlSource}
-   * 
+   *
    * @example
    * const adapter = {
    *   urlFor: (level, face, x, y) => {
@@ -211,7 +209,7 @@ class ImageUrlSource {
       const y = tile.y !== undefined ? tile.y : 0;
 
       const url = adapter.urlFor(level, face, x, y);
-      
+
       return { url };
     };
 

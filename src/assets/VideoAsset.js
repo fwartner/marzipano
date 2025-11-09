@@ -9,10 +9,10 @@ import clearOwnProperties from '../util/clearOwnProperties.js';
 /**
  * @class VideoAsset
  * @classdesc
- * 
+ *
  * A dynamic asset that wraps an HTMLVideoElement for use as a texture source.
  * Emits 'change' events when the video frame updates.
- * 
+ *
  * @param {HTMLVideoElement} videoElement - The video element to wrap
  */
 class VideoAsset {
@@ -50,7 +50,7 @@ class VideoAsset {
         this._rafHandle = requestAnimationFrame(emitChangeIfPlaying);
       }
     };
-    
+
     this._rafHandle = requestAnimationFrame(emitChangeIfPlaying);
   }
 
@@ -75,11 +75,11 @@ class VideoAsset {
   setVideo(videoElement) {
     this._cleanupListeners();
     this._videoElement = videoElement;
-    
+
     if (videoElement) {
       this._setupListeners();
     }
-    
+
     this.emit('change');
   }
 
@@ -119,7 +119,10 @@ class VideoAsset {
    */
   element() {
     // Return empty canvas if no video or video not ready
-    if (!this._videoElement || this._videoElement.readyState < this._videoElement.HAVE_CURRENT_DATA) {
+    if (
+      !this._videoElement ||
+      this._videoElement.readyState < this._videoElement.HAVE_CURRENT_DATA
+    ) {
       return this._emptyCanvas;
     }
     return this._videoElement;
@@ -149,8 +152,9 @@ class VideoAsset {
    * @return {boolean}
    */
   isReady() {
-    return this._videoElement && 
-           this._videoElement.readyState >= this._videoElement.HAVE_CURRENT_DATA;
+    return (
+      this._videoElement && this._videoElement.readyState >= this._videoElement.HAVE_CURRENT_DATA
+    );
   }
 
   /**
@@ -198,4 +202,3 @@ class VideoAsset {
 eventEmitter(VideoAsset);
 
 export default VideoAsset;
-

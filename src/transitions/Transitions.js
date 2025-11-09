@@ -46,26 +46,25 @@ export function crossfade(t, newScene, oldScene) {
  */
 export function zoomMorph(t, newScene, oldScene, opts = {}) {
   const maxZoomOut = opts.maxZoomOut !== undefined ? opts.maxZoomOut : 0.5;
-  
+
   // Calculate zoom curve (zoom out then in)
   // t=0: zoom=1, t=0.5: zoom=maxZoomOut, t=1: zoom=1
-  const zoomCurve = t < 0.5 
-    ? 1 - (1 - maxZoomOut) * (t * 2)
-    : maxZoomOut + (1 - maxZoomOut) * ((t - 0.5) * 2);
-  
+  const zoomCurve =
+    t < 0.5 ? 1 - (1 - maxZoomOut) * (t * 2) : maxZoomOut + (1 - maxZoomOut) * ((t - 0.5) * 2);
+
   // Apply zoom to both scenes
   if (oldScene) {
     const oldView = oldScene.view();
     const oldParams = oldView.parameters();
-    
+
     if (t < 0.5 && oldParams.fov !== undefined) {
       // Zoom out old scene
       const adjustedFov = oldParams.fov / zoomCurve;
       oldView.setParameters({ ...oldParams, fov: adjustedFov });
     }
-    
+
     // Fade out old scene in second half
-    const oldOpacity = t < 0.5 ? 1 : 1 - ((t - 0.5) * 2);
+    const oldOpacity = t < 0.5 ? 1 : 1 - (t - 0.5) * 2;
     const oldLayers = oldScene.listLayers();
     oldLayers.forEach((layer) => {
       layer.mergeEffects({ opacity: oldOpacity });
@@ -78,13 +77,13 @@ export function zoomMorph(t, newScene, oldScene, opts = {}) {
   // Apply zoom to new scene
   const newView = newScene.view();
   const newParams = newView.parameters();
-  
+
   if (t >= 0.5 && newParams.fov !== undefined) {
     // Zoom in new scene
     const adjustedFov = newParams.fov / zoomCurve;
     newView.setParameters({ ...newParams, fov: adjustedFov });
   }
-  
+
   // Fade in new scene in second half
   const newOpacity = t < 0.5 ? 0 : (t - 0.5) * 2;
   const newLayers = newScene.listLayers();
@@ -108,7 +107,7 @@ export function zoomMorph(t, newScene, oldScene, opts = {}) {
 export function orbitToTarget(t, newScene, oldScene, opts = {}) {
   const orbitYaw = opts.orbitYaw !== undefined ? opts.orbitYaw : Math.PI / 2;
   const orbitPitch = opts.orbitPitch !== undefined ? opts.orbitPitch : 0;
-  
+
   // Crossfade opacity
   if (oldScene) {
     const oldLayers = oldScene.listLayers();
@@ -131,16 +130,16 @@ export function orbitToTarget(t, newScene, oldScene, opts = {}) {
   // Orbit the camera
   const newView = newScene.view();
   const newParams = newView.parameters();
-  
+
   if (newParams.yaw !== undefined) {
     // Apply orbital rotation
     const currentYaw = newParams.yaw + orbitYaw * t;
     const currentPitch = newParams.pitch + orbitPitch * t;
-    
+
     newView.setParameters({
       ...newParams,
       yaw: currentYaw,
-      pitch: currentPitch
+      pitch: currentPitch,
     });
   }
 }
@@ -170,4 +169,3 @@ export default {
   orbitToTarget,
   getTransition,
 };
-

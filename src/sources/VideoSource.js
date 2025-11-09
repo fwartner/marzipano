@@ -9,10 +9,10 @@ import VideoAsset from '../assets/VideoAsset.js';
 /**
  * @class VideoSource
  * @classdesc
- * 
+ *
  * A Source that provides video textures from an HTMLVideoElement.
  * Supports equirect 360/180 and cubemap projections.
- * 
+ *
  * @param {HTMLVideoElement} videoElement - The video element to use as source
  * @param {string} projection - Projection type: 'equirect360', 'equirect180', or 'cubemap'
  * @param {Object} opts - Options
@@ -29,7 +29,9 @@ class VideoSource {
     // Validate projection type
     const validProjections = ['equirect360', 'equirect180', 'cubemap'];
     if (!validProjections.includes(this._projection)) {
-      throw new Error(`Invalid projection: ${this._projection}. Must be one of: ${validProjections.join(', ')}`);
+      throw new Error(
+        `Invalid projection: ${this._projection}. Must be one of: ${validProjections.join(', ')}`
+      );
     }
 
     // Create the video asset
@@ -51,7 +53,7 @@ class VideoSource {
   loadAsset(stage, tile, done) {
     // For video sources, we return the same asset for all tiles
     // The asset represents the entire video texture
-    
+
     let cancelled = false;
 
     const checkReady = () => {
@@ -177,4 +179,3 @@ class VideoSource {
 eventEmitter(VideoSource);
 
 export default VideoSource;
-

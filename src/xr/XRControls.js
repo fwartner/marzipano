@@ -9,14 +9,14 @@ import clearOwnProperties from '../util/clearOwnProperties.js';
 /**
  * @class XRControls
  * @classdesc
- * 
+ *
  * Handles WebXR controller input and mapping to application events.
  */
 class XRControls {
   constructor(xrSession) {
     this._xrSession = xrSession;
     this._inputSources = new Map();
-    
+
     // Track controller state
     this._selectStates = new Map();
     this._squeezeStates = new Map();
@@ -32,10 +32,10 @@ class XRControls {
     }
 
     const inputSources = this._xrSession.inputSources;
-    
+
     for (const inputSource of inputSources) {
       this._inputSources.set(inputSource, inputSource);
-      
+
       // Track gamepad state if available
       if (inputSource.gamepad) {
         // Can track button states, axes, etc.
@@ -68,14 +68,14 @@ class XRControls {
    */
   getPrimaryInputSource() {
     const sources = this.getInputSources();
-    
+
     // Prefer right hand, then left hand, then any available
-    const right = sources.find(s => s.handedness === 'right');
+    const right = sources.find((s) => s.handedness === 'right');
     if (right) return right;
-    
-    const left = sources.find(s => s.handedness === 'left');
+
+    const left = sources.find((s) => s.handedness === 'left');
     if (left) return left;
-    
+
     return sources[0] || null;
   }
 
@@ -93,4 +93,3 @@ class XRControls {
 eventEmitter(XRControls);
 
 export default XRControls;
-

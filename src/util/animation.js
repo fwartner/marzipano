@@ -106,9 +106,7 @@ export function easeInOutSine(t) {
 export function easeInOutExpo(t) {
   if (t === 0) return 0;
   if (t === 1) return 1;
-  return t < 0.5
-    ? Math.pow(2, 20 * t - 10) / 2
-    : (2 - Math.pow(2, -20 * t + 10)) / 2;
+  return t < 0.5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2;
 }
 
 /**
@@ -129,10 +127,10 @@ export function easeInOutCirc(t) {
  */
 export function easeOutElastic(t) {
   const c4 = (2 * Math.PI) / 3;
-  
+
   if (t === 0) return 0;
   if (t === 1) return 1;
-  
+
   return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
 }
 
@@ -143,10 +141,10 @@ export function easeOutElastic(t) {
  */
 export function easeInOutElastic(t) {
   const c5 = (2 * Math.PI) / 4.5;
-  
+
   if (t === 0) return 0;
   if (t === 1) return 1;
-  
+
   return t < 0.5
     ? -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * c5)) / 2
     : (Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * c5)) / 2 + 1;
@@ -160,7 +158,7 @@ export function easeInOutElastic(t) {
 export function easeOutBounce(t) {
   const n1 = 7.5625;
   const d1 = 2.75;
-  
+
   if (t < 1 / d1) {
     return n1 * t * t;
   } else if (t < 2 / d1) {
@@ -178,9 +176,7 @@ export function easeOutBounce(t) {
  * @returns {number} Eased value between 0 and 1
  */
 export function easeInOutBounce(t) {
-  return t < 0.5
-    ? (1 - easeOutBounce(1 - 2 * t)) / 2
-    : (1 + easeOutBounce(2 * t - 1)) / 2;
+  return t < 0.5 ? (1 - easeOutBounce(1 - 2 * t)) / 2 : (1 + easeOutBounce(2 * t - 1)) / 2;
 }
 
 /**
@@ -191,7 +187,7 @@ export function easeInOutBounce(t) {
 export function easeInOutBack(t) {
   const c1 = 1.70158;
   const c2 = c1 * 1.525;
-  
+
   return t < 0.5
     ? (Math.pow(2 * t, 2) * ((c2 + 1) * 2 * t - c2)) / 2
     : (Math.pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
@@ -225,10 +221,10 @@ export function interpolateAngle(from, to, t, easing = linear) {
     while (angle < -Math.PI) angle += 2 * Math.PI;
     return angle;
   };
-  
+
   from = normalizeAngle(from);
   to = normalizeAngle(to);
-  
+
   // Calculate shortest distance
   let diff = to - from;
   if (diff > Math.PI) {
@@ -236,7 +232,7 @@ export function interpolateAngle(from, to, t, easing = linear) {
   } else if (diff < -Math.PI) {
     diff += 2 * Math.PI;
   }
-  
+
   const easedT = easing(t);
   return normalizeAngle(from + diff * easedT);
 }
@@ -255,21 +251,21 @@ export function animate(opts) {
   const easing = opts.easing || linear;
   const onUpdate = opts.onUpdate;
   const onComplete = opts.onComplete;
-  
+
   let cancelled = false;
   let rafId = null;
-  
+
   const startTime = performance.now();
-  
+
   function step(currentTime) {
     if (cancelled) return;
-    
+
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
     const easedProgress = easing(progress);
-    
+
     onUpdate(easedProgress);
-    
+
     if (progress < 1) {
       rafId = requestAnimationFrame(step);
     } else {
@@ -278,9 +274,9 @@ export function animate(opts) {
       }
     }
   }
-  
+
   rafId = requestAnimationFrame(step);
-  
+
   // Return cancel function
   return function cancel() {
     cancelled = true;
@@ -316,4 +312,3 @@ export default {
   interpolateAngle,
   animate,
 };
-

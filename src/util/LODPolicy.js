@@ -6,7 +6,7 @@
 /**
  * @class LODPolicy
  * @classdesc
- * 
+ *
  * Manages Level-of-Detail (LOD) policies including memory budgets,
  * eviction strategies, and prefetch behavior.
  */
@@ -21,14 +21,16 @@ class LODPolicy {
     this._maxGpuMB = opts.maxGpuMB || 256;
     this._prefetchAhead = opts.prefetchAhead !== undefined ? opts.prefetchAhead : 2;
     this._evictionStrategy = opts.evictionStrategy || 'hybrid';
-    
+
     // Validate eviction strategy
     const validStrategies = ['lru', 'distance', 'hybrid'];
     if (!validStrategies.includes(this._evictionStrategy)) {
-      throw new Error(`Invalid eviction strategy: ${this._evictionStrategy}. Must be one of: ${validStrategies.join(', ')}`);
+      throw new Error(
+        `Invalid eviction strategy: ${this._evictionStrategy}. Must be one of: ${validStrategies.join(', ')}`
+      );
     }
   }
-  
+
   /**
    * Get maximum GPU memory budget in bytes
    * @return {number}
@@ -36,7 +38,7 @@ class LODPolicy {
   maxGpuBytes() {
     return this._maxGpuMB * 1024 * 1024;
   }
-  
+
   /**
    * Get maximum GPU memory budget in megabytes
    * @return {number}
@@ -44,7 +46,7 @@ class LODPolicy {
   maxGpuMB() {
     return this._maxGpuMB;
   }
-  
+
   /**
    * Set maximum GPU memory budget in megabytes
    * @param {number} mb
@@ -52,7 +54,7 @@ class LODPolicy {
   setMaxGpuMB(mb) {
     this._maxGpuMB = mb;
   }
-  
+
   /**
    * Get prefetch ahead level count
    * @return {number}
@@ -60,7 +62,7 @@ class LODPolicy {
   prefetchAhead() {
     return this._prefetchAhead;
   }
-  
+
   /**
    * Set prefetch ahead level count
    * @param {number} count
@@ -68,7 +70,7 @@ class LODPolicy {
   setPrefetchAhead(count) {
     this._prefetchAhead = count;
   }
-  
+
   /**
    * Get eviction strategy
    * @return {string}
@@ -76,7 +78,7 @@ class LODPolicy {
   evictionStrategy() {
     return this._evictionStrategy;
   }
-  
+
   /**
    * Set eviction strategy
    * @param {string} strategy - 'lru', 'distance', or 'hybrid'
@@ -84,15 +86,17 @@ class LODPolicy {
   setEvictionStrategy(strategy) {
     const validStrategies = ['lru', 'distance', 'hybrid'];
     if (!validStrategies.includes(strategy)) {
-      throw new Error(`Invalid eviction strategy: ${strategy}. Must be one of: ${validStrategies.join(', ')}`);
+      throw new Error(
+        `Invalid eviction strategy: ${strategy}. Must be one of: ${validStrategies.join(', ')}`
+      );
     }
     this._evictionStrategy = strategy;
   }
-  
+
   /**
    * Calculate eviction score for a texture
    * Lower score = more likely to be evicted
-   * 
+   *
    * @param {Object} tile - Tile data
    * @param {number} lastAccessTime - Last access timestamp
    * @param {number} distanceFromCamera - Distance metric from camera
@@ -101,17 +105,17 @@ class LODPolicy {
    */
   calculateEvictionScore(tile, lastAccessTime, distanceFromCamera, currentTime) {
     const strategy = this._evictionStrategy;
-    
+
     // LRU component (time since last access)
     const timeSinceAccess = currentTime - lastAccessTime;
     const lruScore = 1 / (1 + timeSinceAccess);
-    
+
     // Distance component (proximity to camera)
     const distanceScore = 1 / (1 + distanceFromCamera);
-    
+
     // Level component (prefer higher resolution)
     const levelScore = tile.z !== undefined ? tile.z / 10 : 0;
-    
+
     if (strategy === 'lru') {
       return lruScore;
     } else if (strategy === 'distance') {
@@ -121,7 +125,7 @@ class LODPolicy {
       return lruScore * 0.6 + distanceScore * 0.3 + levelScore * 0.1;
     }
   }
-  
+
   /**
    * Determine if prefetch should occur for a given level
    * @param {number} currentLevel - Current visible level
@@ -134,4 +138,3 @@ class LODPolicy {
 }
 
 export default LODPolicy;
-

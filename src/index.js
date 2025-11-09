@@ -37,7 +37,11 @@ export { default as FlatView } from './views/Flat.js';
 export { default as ImageUrlSource } from './sources/ImageUrl.js';
 export { default as SingleAssetSource } from './sources/SingleAsset.js';
 export { default as VideoSource } from './sources/VideoSource.js';
-export { IIIFTileSourceAdapter, DeepZoomTileSourceAdapter, GoogleMapsTileSourceAdapter } from './sources/TileSourceAdapter.js';
+export {
+  IIIFTileSourceAdapter,
+  DeepZoomTileSourceAdapter,
+  GoogleMapsTileSourceAdapter,
+} from './sources/TileSourceAdapter.js';
 
 // Assets
 export { default as StaticAsset } from './assets/Static.js';

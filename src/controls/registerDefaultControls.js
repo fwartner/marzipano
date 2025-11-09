@@ -92,8 +92,24 @@ function registerDefaultControls(controls, element, opts) {
   }
 
   const controlMethodGroups = {
-    arrowKeys: ['leftArrowKey', 'rightArrowKey', 'upArrowKey', 'downArrowKey', 'arrowLeft', 'arrowRight', 'arrowUp', 'arrowDown'],
-    plusMinusKeys: ['plusKey', 'minusKey', 'plusRegular', 'minusRegular', 'plusModern', 'minusModern'],
+    arrowKeys: [
+      'leftArrowKey',
+      'rightArrowKey',
+      'upArrowKey',
+      'downArrowKey',
+      'arrowLeft',
+      'arrowRight',
+      'arrowUp',
+      'arrowDown',
+    ],
+    plusMinusKeys: [
+      'plusKey',
+      'minusKey',
+      'plusRegular',
+      'minusRegular',
+      'plusModern',
+      'minusModern',
+    ],
     wasdKeys: ['wKey', 'aKey', 'sKey', 'dKey'],
     qeKeys: ['qKey', 'eKey'],
   };

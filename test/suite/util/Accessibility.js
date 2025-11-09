@@ -24,10 +24,10 @@ describe('Accessibility', () => {
 
     it('reduces duration when reduced motion preferred', () => {
       vi.spyOn(Accessibility, 'prefersReducedMotion').mockReturnValue(true);
-      
+
       const original = 1000;
       const adjusted = Accessibility.adjustTransitionDuration(original);
-      
+
       expect(adjusted).toBeLessThan(original);
       expect(adjusted).toBeLessThanOrEqual(100); // Capped at 100ms
     });
@@ -41,13 +41,13 @@ describe('Accessibility', () => {
   describe('setAriaAttributes', () => {
     it('sets ARIA attributes on element', () => {
       if (typeof document === 'undefined') return;
-      
+
       const element = document.createElement('div');
-      
+
       Accessibility.setAriaAttributes(element, {
         role: 'button',
         label: 'Test Button',
-        pressed: 'false'
+        pressed: 'false',
       });
 
       expect(element.getAttribute('role')).toBe('button');
@@ -57,12 +57,12 @@ describe('Accessibility', () => {
 
     it('handles null values', () => {
       if (typeof document === 'undefined') return;
-      
+
       const element = document.createElement('div');
       element.setAttribute('aria-label', 'Initial');
-      
+
       Accessibility.setAriaAttributes(element, {
-        label: null
+        label: null,
       });
 
       expect(element.hasAttribute('aria-label')).toBe(false);
@@ -78,11 +78,11 @@ describe('Accessibility', () => {
   describe('setFocusOrder', () => {
     it('sets tabindex and focus order', () => {
       if (typeof document === 'undefined') return;
-      
+
       const elements = [
         document.createElement('div'),
         document.createElement('div'),
-        document.createElement('div')
+        document.createElement('div'),
       ];
 
       Accessibility.setFocusOrder(elements);
@@ -97,7 +97,7 @@ describe('Accessibility', () => {
   describe('getTabbableElements', () => {
     it('finds tabbable elements in container', () => {
       if (typeof document === 'undefined') return;
-      
+
       const container = document.createElement('div');
       container.innerHTML = `
         <button>Button</button>
@@ -120,7 +120,7 @@ describe('Accessibility', () => {
   describe('announce', () => {
     it('creates live region for announcements', () => {
       if (typeof document === 'undefined') return;
-      
+
       // Clean up any existing live region
       const existing = document.getElementById('marzipano-live-region');
       if (existing) {
@@ -137,27 +137,27 @@ describe('Accessibility', () => {
 
     it('reuses existing live region', () => {
       if (typeof document === 'undefined') return;
-      
+
       Accessibility.announce('First message');
       const region1 = document.getElementById('marzipano-live-region');
-      
+
       Accessibility.announce('Second message');
       const region2 = document.getElementById('marzipano-live-region');
-      
+
       expect(region1).toBe(region2); // Same element
       expect(region2.textContent).toBe('Second message');
     });
 
     it('supports assertive priority', () => {
       if (typeof document === 'undefined') return;
-      
+
       // Clean up
       const existing = document.getElementById('marzipano-live-region');
       if (existing) existing.remove();
 
       Accessibility.announce('Important!', 'assertive');
       const liveRegion = document.getElementById('marzipano-live-region');
-      
+
       expect(liveRegion.getAttribute('aria-live')).toBe('assertive');
     });
   });

@@ -6,7 +6,7 @@
 /**
  * @class Telemetry
  * @classdesc
- * 
+ *
  * Collects performance telemetry data including FPS, dropped frames,
  * and GPU memory usage.
  */
@@ -36,7 +36,7 @@ class Telemetry {
   recordFrame(timestamp) {
     if (this._lastFrameTime !== null) {
       const frameTime = timestamp - this._lastFrameTime;
-      
+
       // Track frame times
       this._frameTimes.push(frameTime);
       if (this._frameTimes.length > this._maxFrameTimeSamples) {
@@ -51,7 +51,7 @@ class Telemetry {
       // Update FPS calculation
       this._framesSinceLastFpsUpdate++;
       const timeSinceLastFpsUpdate = timestamp - this._lastFpsUpdate;
-      
+
       if (timeSinceLastFpsUpdate >= this._fpsUpdateInterval) {
         this._fps = Math.round((this._framesSinceLastFpsUpdate / timeSinceLastFpsUpdate) * 1000);
         this._framesSinceLastFpsUpdate = 0;
@@ -110,7 +110,7 @@ class Telemetry {
       droppedFrames: this._droppedFrameCount,
       avgFrameTime: this.getAverageFrameTime(),
       timestamp: Date.now(),
-      ...additionalData
+      ...additionalData,
     };
 
     this._lastSample = sample;
@@ -140,4 +140,3 @@ class Telemetry {
 }
 
 export default Telemetry;
-

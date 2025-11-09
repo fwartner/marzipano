@@ -102,7 +102,7 @@ describe('animation', () => {
   describe('animate', () => {
     it('calls onUpdate and onComplete', (done) => {
       const updates = [];
-      
+
       const cancel = animation.animate({
         duration: 100, // Short duration for test
         onUpdate: (progress) => {
@@ -112,7 +112,7 @@ describe('animation', () => {
           expect(updates.length).toBeGreaterThan(1);
           expect(updates[0]).toBe(0); // First call should be 0
           done();
-        }
+        },
       });
 
       expect(typeof cancel).toBe('function');
@@ -131,13 +131,13 @@ describe('animation', () => {
           // With square easing, middle values should be lower than linear
           expect(updates[0]).toBe(0);
           done();
-        }
+        },
       });
     });
 
     it('returns cancel function that stops animation', (done) => {
       let updateCount = 0;
-      
+
       const cancel = animation.animate({
         duration: 200,
         onUpdate: () => {
@@ -149,7 +149,7 @@ describe('animation', () => {
         onComplete: () => {
           expect(updateCount).toBeLessThan(10); // Should stop early
           done();
-        }
+        },
       });
     });
   });
@@ -163,7 +163,7 @@ describe('animation', () => {
       'easeInOutCubic',
       'easeInCubic',
       'easeOutCubic',
-      'easeInOutSine'
+      'easeInOutSine',
     ];
 
     easingFunctions.forEach((name) => {
@@ -171,7 +171,7 @@ describe('animation', () => {
         const fn = animation[name];
         const start = fn(0);
         const end = fn(1);
-        
+
         // Allow small floating point tolerance
         expect(start).toBeCloseTo(0, 5);
         expect(end).toBeCloseTo(1, 5);
@@ -189,4 +189,3 @@ describe('animation', () => {
     });
   });
 });
-
