@@ -26,7 +26,8 @@ import once from '../util/once.js';
 // See https://caniuse.com/?search=createimagebitmap
 const browserParser = typeof navigator !== 'undefined' ? Bowser.parse(navigator.userAgent) : null;
 const browserName = browserParser?.browser.name || '';
-const useCreateImageBitmap = !!global.createImageBitmap && browserName !== 'Firefox' && browserName !== 'Safari';
+const useCreateImageBitmap =
+  !!global.createImageBitmap && browserName !== 'Firefox' && browserName !== 'Safari';
 
 // Options for createImageBitmap.
 const createImageBitmapOpts = {
@@ -113,11 +114,9 @@ class HtmlImageLoader {
       // Prefer to crop using createImageBitmap, which can potentially offload
       // work to another thread and avoid blocking the user interface.
       // Assume that the promise is never rejected.
-      global
-        .createImageBitmap(img, x, y, width, height, createImageBitmapOpts)
-        .then((bitmap) => {
-          done(null, new StaticAsset(bitmap));
-        });
+      global.createImageBitmap(img, x, y, width, height, createImageBitmapOpts).then((bitmap) => {
+        done(null, new StaticAsset(bitmap));
+      });
     } else {
       // Fall back to cropping using a canvas, which can potentially block the
       // user interface, but is the best we can do.

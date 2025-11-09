@@ -66,7 +66,9 @@ class DragControlMethod {
     this._hammer.on('hammer.input', this._handleHammerEvent.bind(this));
 
     if (this._opts.hammerEvent !== 'pan' && this._opts.hammerEvent !== 'pinch') {
-      throw new Error(`${this._opts.hammerEvent} is not a hammerEvent managed in DragControlMethod`);
+      throw new Error(
+        `${this._opts.hammerEvent} is not a hammerEvent managed in DragControlMethod`
+      );
     }
 
     this._hammer.on(`${this._opts.hammerEvent}start`, this._handleStart.bind(this));

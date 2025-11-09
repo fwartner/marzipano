@@ -214,7 +214,10 @@ class FlatTile {
 
   equals(that) {
     return (
-      this._geometry === that._geometry && this.z === that.z && this.y === that.y && this.x === that.x
+      this._geometry === that._geometry &&
+      this.z === that.z &&
+      this.y === that.y &&
+      this.x === that.x
     );
   }
 

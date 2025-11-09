@@ -269,20 +269,22 @@ describe('TextureStore', function () {
       store.endFrame();
     });
 
-    it('cancel load', function (done) {
-      var store = makeTextureStore();
-      var tile = new MockTile();
-      store.addEventListener('textureCancel', function (eventTile) {
-        assert.strictEqual(eventTile, tile);
-        assert.isFalse(store.query(tile).hasAsset);
-        assert.isFalse(store.query(tile).hasTexture);
-        done();
+    it('cancel load', function () {
+      return new Promise((resolve) => {
+        var store = makeTextureStore();
+        var tile = new MockTile();
+        store.addEventListener('textureCancel', function (eventTile) {
+          assert.strictEqual(eventTile, tile);
+          assert.isFalse(store.query(tile).hasAsset);
+          assert.isFalse(store.query(tile).hasTexture);
+          resolve();
+        });
+        store.startFrame();
+        store.markTile(tile);
+        store.endFrame();
+        store.startFrame();
+        store.endFrame();
       });
-      store.startFrame();
-      store.markTile(tile);
-      store.endFrame();
-      store.startFrame();
-      store.endFrame();
     });
 
     it('unload texture', function (done) {

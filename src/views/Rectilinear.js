@@ -842,7 +842,7 @@ RectilinearView.limit = {
    * @param {number} max The maximum yaw value.
    * @return {RectilinearViewLimiter}
    */
-  yaw (min, max) {
+  yaw(min, max) {
     return function limitYaw(params) {
       params.yaw = clamp(params.yaw, min, max);
       return params;
@@ -855,7 +855,7 @@ RectilinearView.limit = {
    * @param {number} max The maximum pitch value.
    * @return {RectilinearViewLimiter}
    */
-  pitch (min, max) {
+  pitch(min, max) {
     return function limitPitch(params) {
       params.pitch = clamp(params.pitch, min, max);
       return params;
@@ -868,7 +868,7 @@ RectilinearView.limit = {
    * @param {number} max The maximum roll value.
    * @return {RectilinearViewLimiter}
    */
-  roll (min, max) {
+  roll(min, max) {
     return function limitRoll(params) {
       params.roll = clamp(params.roll, min, max);
       return params;
@@ -881,7 +881,7 @@ RectilinearView.limit = {
    * @param {number} max The maximum horizontal field of view.
    * @return {RectilinearViewLimiter}
    */
-  hfov (min, max) {
+  hfov(min, max) {
     return function limitHfov(params) {
       const width = params.width;
       const height = params.height;
@@ -900,7 +900,7 @@ RectilinearView.limit = {
    * @param {number} max The maximum vertical field of view.
    * @return {RectilinearViewLimiter}
    */
-  vfov (min, max) {
+  vfov(min, max) {
     return function limitVfov(params) {
       params.fov = clamp(params.fov, min, max);
       return params;
@@ -914,7 +914,7 @@ RectilinearView.limit = {
    *     fourth of the equirectangular width in pixels.
    * @return {RectilinearViewLimiter}
    */
-  resolution (size) {
+  resolution(size) {
     return function limitResolution(params) {
       const height = params.height;
       if (height) {
@@ -937,7 +937,7 @@ RectilinearView.limit = {
    * @param {number} [maxHFov=maxVFov] The maximum horizontal field of view.
    * @return {RectilinearViewLimiter}
    */
-  traditional (maxResolution, maxVFov, maxHFov) {
+  traditional(maxResolution, maxVFov, maxHFov) {
     maxHFov = maxHFov != null ? maxHFov : maxVFov;
 
     return compose(

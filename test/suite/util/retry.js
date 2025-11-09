@@ -38,48 +38,56 @@ function flaky(nfail) {
 }
 
 describe('retry', function () {
-  it('zero failures', function (done) {
-    var spy = sinon.spy();
-    var fn = retry(cancelize(flaky(0)));
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledOnce);
-      assert.isTrue(spy.calledWithExactly(null, 4));
-      done();
+  it('zero failures', function () {
+    return new Promise((resolve) => {
+      var spy = sinon.spy();
+      var fn = retry(cancelize(flaky(0)));
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledOnce);
+        assert.isTrue(spy.calledWithExactly(null, 4));
+        resolve();
+      });
     });
   });
 
-  it('one failure', function (done) {
-    var spy = sinon.spy();
-    var fn = retry(cancelize(flaky(1)));
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledOnce);
-      assert.isTrue(spy.calledWithExactly(null, 4));
-      done();
+  it('one failure', function () {
+    return new Promise((resolve) => {
+      var spy = sinon.spy();
+      var fn = retry(cancelize(flaky(1)));
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledOnce);
+        assert.isTrue(spy.calledWithExactly(null, 4));
+        resolve();
+      });
     });
   });
 
-  it('two failures', function (done) {
-    var spy = sinon.spy();
-    var fn = retry(cancelize(flaky(2)));
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledOnce);
-      assert.isTrue(spy.calledWithExactly(null, 4));
-      done();
+  it('two failures', function () {
+    return new Promise((resolve) => {
+      var spy = sinon.spy();
+      var fn = retry(cancelize(flaky(2)));
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledOnce);
+        assert.isTrue(spy.calledWithExactly(null, 4));
+        resolve();
+      });
     });
   });
 
-  it('cancel', function (done) {
-    var spy = sinon.spy();
-    var fn = retry(cancelize(flaky(0)));
-    var cancel = fn(2, spy);
-    cancel(error);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledOnce);
-      assert.isTrue(spy.calledWithExactly(error));
-      done();
+  it('cancel', function () {
+    return new Promise((resolve) => {
+      var spy = sinon.spy();
+      var fn = retry(cancelize(flaky(0)));
+      var cancel = fn(2, spy);
+      cancel(error);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledOnce);
+        assert.isTrue(spy.calledWithExactly(error));
+        resolve();
+      });
     });
   });
 });

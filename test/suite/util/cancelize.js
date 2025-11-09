@@ -31,24 +31,28 @@ function twice(x, done) {
 }
 
 describe('cancelize', function () {
-  it('cancel', function (done) {
-    var fn = cancelize(twice);
-    var spy = sinon.spy();
-    var cancel = fn(2, spy);
-    cancel(error);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly(error));
-      done();
+  it('cancel', function () {
+    return new Promise((resolve) => {
+      var fn = cancelize(twice);
+      var spy = sinon.spy();
+      var cancel = fn(2, spy);
+      cancel(error);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly(error));
+        resolve();
+      });
     });
   });
 
-  it('no cancel', function (done) {
-    var fn = cancelize(twice);
-    var spy = sinon.spy();
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly(null, 4));
-      done();
+  it('no cancel', function () {
+    return new Promise((resolve) => {
+      var fn = cancelize(twice);
+      var spy = sinon.spy();
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly(null, 4));
+        resolve();
+      });
     });
   });
 });

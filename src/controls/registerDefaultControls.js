@@ -89,7 +89,7 @@ function registerDefaultControls(controls, element, opts) {
       controlMethods.pinch = new PinchZoomControlMethod(element, 'touch');
       break;
     default:
-      throw new Error(`Unknown drag mode: ${  opts.dragMode}`);
+      throw new Error(`Unknown drag mode: ${opts.dragMode}`);
   }
 
   switch (opts.mouseViewMode) {
@@ -100,7 +100,7 @@ function registerDefaultControls(controls, element, opts) {
       enabledControls.push('mouseViewQtvr');
       break;
     default:
-      throw new Error(`Unknown mouse view mode: ${  opts.mouseViewMode}`);
+      throw new Error(`Unknown mouse view mode: ${opts.mouseViewMode}`);
   }
 
   for (const id in controlMethods) {

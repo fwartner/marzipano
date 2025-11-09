@@ -667,7 +667,7 @@ FlatView.limit = {
    * @param {number} max The maximum y value.
    * @return {FlatViewLimiter}
    */
-  x (min, max) {
+  x(min, max) {
     return function limitX(params) {
       params.x = clamp(params.x, min, max);
       return params;
@@ -680,7 +680,7 @@ FlatView.limit = {
    * @param {number} max The maximum y value.
    * @return {FlatViewLimiter}
    */
-  y (min, max) {
+  y(min, max) {
     return function limitY(params) {
       params.y = clamp(params.y, min, max);
       return params;
@@ -693,7 +693,7 @@ FlatView.limit = {
    * @param {number} max The maximum zoom value.
    * @return {FlatViewLimiter}
    */
-  zoom (min, max) {
+  zoom(min, max) {
     return function limitZoom(params) {
       params.zoom = clamp(params.zoom, min, max);
       return params;
@@ -706,7 +706,7 @@ FlatView.limit = {
    * @param {number} size The image width in pixels.
    * @return {FlatViewLimiter}
    */
-  resolution (size) {
+  resolution(size) {
     return function limitResolution(params) {
       if (params.width <= 0 || params.height <= 0) {
         return params;
@@ -725,7 +725,7 @@ FlatView.limit = {
    * @param {number} max The maximum x value.
    * @return {FlatViewLimiter}
    */
-  visibleX (min, max) {
+  visibleX(min, max) {
     return function limitVisibleX(params) {
       // Calculate the zoom value that makes the specified range fully visible.
       const maxZoom = max - min;
@@ -751,7 +751,7 @@ FlatView.limit = {
    * @param {number} max The maximum y value.
    * @return {FlatViewLimiter}
    */
-  visibleY (min, max) {
+  visibleY(min, max) {
     return function limitVisibleY(params) {
       // Do nothing for a null viewport.
       if (params.width <= 0 || params.height <= 0) {
@@ -786,7 +786,7 @@ FlatView.limit = {
    * this will cause bands to appear around the image.
    * @return {FlatViewLimiter}
    */
-  letterbox () {
+  letterbox() {
     return function limitLetterbox(params) {
       if (params.width <= 0 || params.height <= 0) {
         return params;

@@ -71,88 +71,104 @@ describe('chain', function () {
     });
   });
 
-  it('one async', function (done) {
-    var fn = chain(twiceAsync);
-    var spy = sinon.spy();
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly(null, 4));
-      done();
+  it('one async', function () {
+    return new Promise((resolve) => {
+      var fn = chain(twiceAsync);
+      var spy = sinon.spy();
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly(null, 4));
+        resolve();
+      });
     });
   });
 
-  it('two async', function (done) {
-    var fn = chain(twiceAsync, squareAsync);
-    var spy = sinon.spy();
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly(null, 16));
-      done();
+  it('two async', function () {
+    return new Promise((resolve) => {
+      var fn = chain(twiceAsync, squareAsync);
+      var spy = sinon.spy();
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly(null, 16));
+        resolve();
+      });
     });
   });
 
-  it('one sync', function (done) {
-    var fn = chain(twiceSync);
-    var spy = sinon.spy();
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly(null, 4));
-      done();
+  it('one sync', function () {
+    return new Promise((resolve) => {
+      var fn = chain(twiceSync);
+      var spy = sinon.spy();
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly(null, 4));
+        resolve();
+      });
     });
   });
 
-  it('two sync', function (done) {
-    var fn = chain(twiceSync, squareSync);
-    var spy = sinon.spy();
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly(null, 16));
-      done();
+  it('two sync', function () {
+    return new Promise((resolve) => {
+      var fn = chain(twiceSync, squareSync);
+      var spy = sinon.spy();
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly(null, 16));
+        resolve();
+      });
     });
   });
 
-  it('one sync, one async', function (done) {
-    var fn = chain(twiceSync, squareAsync);
-    var spy = sinon.spy();
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly(null, 16));
-      done();
+  it('one sync, one async', function () {
+    return new Promise((resolve) => {
+      var fn = chain(twiceSync, squareAsync);
+      var spy = sinon.spy();
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly(null, 16));
+        resolve();
+      });
     });
   });
 
-  it('one async, one sync', function (done) {
-    var fn = chain(twiceAsync, squareSync);
-    var spy = sinon.spy();
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly(null, 16));
-      done();
+  it('one async, one sync', function () {
+    return new Promise((resolve) => {
+      var fn = chain(twiceAsync, squareSync);
+      var spy = sinon.spy();
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly(null, 16));
+        resolve();
+      });
     });
   });
 
-  it('error aborts chain', function (done) {
-    var spy = sinon.spy();
-    var neverCalledSpy = sinon.spy(succeed);
-    var fn = chain(fail, neverCalledSpy);
-    fn(2, spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(neverCalledSpy.notCalled);
-      assert.isTrue(spy.calledWithExactly(error));
-      done();
+  it('error aborts chain', function () {
+    return new Promise((resolve) => {
+      var spy = sinon.spy();
+      var neverCalledSpy = sinon.spy(succeed);
+      var fn = chain(fail, neverCalledSpy);
+      fn(2, spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(neverCalledSpy.notCalled);
+        assert.isTrue(spy.calledWithExactly(error));
+        resolve();
+      });
     });
   });
 
-  it('cancel aborts chain', function (done) {
-    var spy = sinon.spy();
-    var neverCalledSpy = sinon.spy(succeed);
-    var fn = chain(cancelize(twiceAsync), neverCalledSpy);
-    var cancel = fn(2, spy);
-    cancel(error);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(neverCalledSpy.notCalled);
-      assert.isTrue(spy.calledWithExactly(error));
-      done();
+  it('cancel aborts chain', function () {
+    return new Promise((resolve) => {
+      var spy = sinon.spy();
+      var neverCalledSpy = sinon.spy(succeed);
+      var fn = chain(cancelize(twiceAsync), neverCalledSpy);
+      var cancel = fn(2, spy);
+      cancel(error);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(neverCalledSpy.notCalled);
+        assert.isTrue(spy.calledWithExactly(error));
+        resolve();
+      });
     });
   });
 });

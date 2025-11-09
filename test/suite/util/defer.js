@@ -20,21 +20,25 @@ import wait from '../../wait.js';
 import defer from '../../../src/util/defer.js';
 
 describe('defer', function () {
-  it('without arguments', function (done) {
-    var spy = sinon.spy();
-    defer(spy);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly());
-      done();
+  it('without arguments', function () {
+    return new Promise((resolve) => {
+      var spy = sinon.spy();
+      defer(spy);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly());
+        resolve();
+      });
     });
   });
 
-  it('with arguments', function (done) {
-    var spy = sinon.spy();
-    defer(spy, [1, 2, 3]);
-    wait.untilSpyCalled(spy, function () {
-      assert.isTrue(spy.calledWithExactly(1, 2, 3));
-      done();
+  it('with arguments', function () {
+    return new Promise((resolve) => {
+      var spy = sinon.spy();
+      defer(spy, [1, 2, 3]);
+      wait.untilSpyCalled(spy, function () {
+        assert.isTrue(spy.calledWithExactly(1, 2, 3));
+        resolve();
+      });
     });
   });
 });

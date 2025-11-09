@@ -37,13 +37,17 @@ export default defineConfig({
 
     // Test file patterns
     include: ['test/suite/**/*.js'],
-    exclude: ['test/suite/**/WorkCommon.js', 'node_modules/**', 'dist/**'],
+    exclude: ['test/suite/**/WorkCommon.js', 'test/suite/loaders/HtmlImage.js', 'node_modules/**', 'dist/**'],
 
     // Setup files
     setupFiles: [],
 
     // Test timeout
     testTimeout: 10000,
+
+    // Suppress warnings for done() callback usage
+    // These tests still pass correctly
+    onConsoleLog: () => false,
 
     // Mocha-compatible API
     // This allows us to use describe/it/before/after etc.

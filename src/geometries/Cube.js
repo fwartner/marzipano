@@ -331,9 +331,7 @@ class CubeLevel extends Level {
     this._tileSize = levelProperties.tileSize;
 
     if (this._size % this._tileSize !== 0) {
-      throw new Error(
-        `Level size is not multiple of tile size: ${this._size} ${this._tileSize}`
-      );
+      throw new Error(`Level size is not multiple of tile size: ${this._size} ${this._tileSize}`);
     }
   }
 
@@ -373,7 +371,9 @@ class CubeLevel extends Level {
     }
 
     if (height % parentHeight !== 0) {
-      throw new Error(`Level height must be multiple of parent level: ${height} vs. ${parentHeight}`);
+      throw new Error(
+        `Level height must be multiple of parent level: ${height} vs. ${parentHeight}`
+      );
     }
 
     if (numHorizontal % parentNumHorizontal !== 0) {
