@@ -1,5 +1,7 @@
 # Marzipano
 
+> **Note:** This project was originally created by Google. [Pixel & Process](https://github.com/Pixel-Process-UG) maintains this fork to keep the project alive and up-to-date with modern web standards.
+
 A 360° media viewer for the modern web.
 
 This is not an official Google product.
@@ -8,7 +10,7 @@ Check out our website at http://www.marzipano.net/,
 including the [demos](http://www.marzipano.net/demos.html)
 and the [documentation](http://www.marzipano.net/docs.html).
 
-Please report bugs using the [issue tracker](https://github.com/google/marzipano/issues). If you have any questions, head over to our [discussion forum](https://groups.google.com/forum/#!forum/marzipano).
+Please report bugs using the [issue tracker](https://github.com/Pixel-Process-UG/marzipano/issues). If you have any questions, head over to our [discussion forum](https://groups.google.com/forum/#!forum/marzipano).
 
 ### User guide
 
