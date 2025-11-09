@@ -3,11 +3,42 @@
 .tmp
 .DS_Store
 npm-debug.log
+*.log
 /tmp/*
 /build/*
-/dist/*
 /docs/*
 /test/test_suite.js*
+/coverage/*
+.husky/
 
-# Publish build to npm.
-!/dist/marzipano.js
+# Development and testing files
+/test/*
+/demos/*
+/scripts/*
+*.test.js
+testem.json
+vitest.config.js
+vite.config.js
+eslint.config.js
+tsconfig.json
+.github/
+
+# Documentation and misc
+*.md
+!README.md
+!LICENSE
+!CHANGELOG
+CLAUDE.md
+jsdoc-conf.json
+convert-*.js
+fix-*.js
+modernize-*.js
+*.sh
+
+# Publish src and built files to npm
+!/src/**
+!/dist/marzipano.es.js
+!/dist/marzipano.es.js.map
+!/dist/marzipano.umd.js
+!/dist/marzipano.umd.js.map
+!/dist/types/**

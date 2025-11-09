@@ -1,0 +1,9 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Discussion Forum
+    url: https://groups.google.com/forum/#!forum/marzipano
+    about: Ask questions and discuss with the community
+  - name: Documentation
+    url: http://www.marzipano.net/docs.html
+    about: Check the official documentation
+

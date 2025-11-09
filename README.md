@@ -73,15 +73,25 @@ The modern build system uses Vite for faster development and ES module support. 
 
 ### Maintainer guide
 
-Before preparing a release, make sure there are no uncommitted changes and
-verify that the tests pass and all of the demos work correctly.
+**Automated CI/CD:**
+This project uses GitHub Actions for continuous integration and automated releases:
+- **CI Pipeline**: Automatically runs tests, linting, and builds on all pushes and PRs
+- **Release Pipeline**: Automatically creates GitHub releases when you push a version tag
+- **Dependency Updates**: Dependabot automatically checks for and proposes dependency updates
 
-Update the `CHANGELOG` file and bump the version number in `package.json`.
-Create a new commit containing only the changes to these two files, tag it with
-`git tag vX.Y.Z`, and push it to GitHub with `git push --tags`.
+**Creating a Release:**
 
-Run `npm run release` to prepare a new release.
+1. Ensure all tests pass locally: `npm test`
+2. Update the `CHANGELOG` file with release notes
+3. Bump the version number in `package.json`
+4. Create a commit: `git commit -am "Release vX.Y.Z"`
+5. Create and push a tag: `git tag vX.Y.Z && git push --tags`
+6. GitHub Actions will automatically:
+   - Run tests and build the project
+   - Create a GitHub release with artifacts
+   - Publish to npm (if `NPM_TOKEN` secret is configured)
 
-Run `npm run deploy` to deploy the release to the website.
-
-Run `npm publish` to publish the release to the npm registry.
+**Manual Release (if needed):**
+- `npm run release` - Build production bundle
+- `npm run deploy` - Deploy to website
+- `npm publish` - Publish to npm registry
