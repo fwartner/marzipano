@@ -156,7 +156,9 @@ ImageUrlSource.fromString = function (url, opts) {
     for (const property in templateProperties) {
       const templateProperty = templateProperties[property];
       const regExp = propertyRegExp(property);
-      const valueFromTile = tile.hasOwnProperty(templateProperty) ? tile[templateProperty] : '';
+      const valueFromTile = Object.prototype.hasOwnProperty.call(tile, templateProperty)
+        ? tile[templateProperty]
+        : '';
       tileUrl = tileUrl.replace(regExp, valueFromTile);
     }
 

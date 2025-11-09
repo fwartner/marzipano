@@ -16,7 +16,7 @@
 
 // Returns whether n is a power of two.
 function ispot(n) {
-  return (n & (n - 1)) == 0;
+  return (n & (n - 1)) === 0;
 }
 
 export default ispot;

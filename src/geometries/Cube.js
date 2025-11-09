@@ -265,7 +265,7 @@ CubeTile.prototype.neighbors = function () {
         newFace = adjacentFace[face][3];
       }
 
-      var rot;
+      let rot;
 
       // Then, rotate the vector into the actual face the initial tile
       // belongs to.

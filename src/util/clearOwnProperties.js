@@ -19,7 +19,7 @@
 // destroyed instances.
 function clearOwnProperties(obj) {
   for (const prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
       obj[prop] = undefined;
     }
   }

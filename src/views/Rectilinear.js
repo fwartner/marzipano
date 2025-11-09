@@ -529,7 +529,7 @@ RectilinearView.prototype.normalizeToClosest = function (coords, result) {
   const nextPitch = coordPitch + 2 * Math.PI;
   if (Math.abs(prevPitch - viewPitch) < Math.abs(coordPitch - viewPitch)) {
     coordPitch = prevPitch;
-  } else if (Math.abs(prevPitch - viewPitch) < Math.abs(coordPitch - viewPitch)) {
+  } else if (Math.abs(nextPitch - viewPitch) < Math.abs(coordPitch - viewPitch)) {
     coordPitch = nextPitch;
   }
 

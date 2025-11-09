@@ -202,7 +202,7 @@ Stage.prototype.setSize = function (size) {
  *
  * @param {Size} size
  */
-Stage.prototype.setSizeForType = function (size) {
+Stage.prototype.setSizeForType = function (_size) {
   throw new Error('Stage implementation must override setSizeForType');
 };
 
@@ -229,7 +229,7 @@ Stage.prototype._emitRenderInvalid = function () {
  * @param {Layer} layer
  * @throws {Error} If the layer is not valid for this stage.
  */
-Stage.prototype.validateLayer = function (layer) {
+Stage.prototype.validateLayer = function (_layer) {
   throw new Error('Stage implementation must override validateLayer');
 };
 
@@ -418,7 +418,7 @@ Stage.prototype.render = function () {
     const textureStore = layer.textureStore();
     const renderer = this._renderers[i];
     const depth = this._layers.length - i;
-    var tile, texture;
+    let tile, texture;
 
     // Convert the rect effect into a normalized rect.
     // TODO: avoid doing this on every frame.
@@ -506,7 +506,7 @@ Stage.prototype._collectTiles = function (layer, textureStore) {
 
   for (let i = 0; i < tmpVisible.length; i++) {
     const tile = tmpVisible[i];
-    var needsFallback;
+    let needsFallback;
     this._collectTileToLoad(tile);
     if (textureStore.texture(tile)) {
       // The preferred texture is available.

@@ -30,7 +30,7 @@ function WorkPool(opts) {
 }
 
 WorkPool.prototype.length = function () {
-  const len = 0;
+  let len = 0;
   for (let i = 0; i < this._pool.length; i++) {
     len += this._pool[i].length();
   }

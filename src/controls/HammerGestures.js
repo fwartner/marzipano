@@ -16,7 +16,7 @@
 
 import Hammer from 'hammerjs';
 
-const nextId = 1;
+let nextId = 1;
 const idProperty = 'MarzipanoHammerElementId';
 function getKeyForElementAndType(element, type) {
   if (!element[idProperty]) {

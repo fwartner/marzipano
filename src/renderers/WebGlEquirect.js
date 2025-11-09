@@ -127,7 +127,7 @@ WebGlEquirectRenderer.prototype.startLayer = function (layer, rect) {
   });
 };
 
-WebGlEquirectRenderer.prototype.endLayer = function (layer, rect) {
+WebGlEquirectRenderer.prototype.endLayer = function (_layer, _rect) {
   const gl = this.gl;
   const shaderProgram = this.shaderProgram;
   disableAttributes(gl, shaderProgram);
