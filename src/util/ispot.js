@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 // Returns whether n is a power of two.
 function ispot(n) {
   return (n & (n - 1)) == 0;
 }
 
-module.exports = ispot;
+export default ispot;

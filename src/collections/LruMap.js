@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var mod = require('../util/mod');
+
+import mod from '../util/mod.js';
 
 // An LruMap holds up to a maximum number of key-value pairs, ordered by their
 // time of insertion. When the addition of a key-value pair would cause the
@@ -46,8 +46,8 @@ LruMap.prototype._index = function(i) {
 
 // Returns the value associated to the specified key, or null if not found.
 LruMap.prototype.get = function(key) {
-  for (var i = 0; i < this._size; i++) {
-    var existingKey = this._keys[this._index(i)];
+  for (let i = 0; i < this._size; i++) {
+    const existingKey = this._keys[this._index(i)];
     if (key.equals(existingKey)) {
       return this._values[this._index(i)];
     }
@@ -65,7 +65,7 @@ LruMap.prototype.set = function(key, value) {
     return key;
   }
   this.del(key);
-  var evictedKey =
+  const evictedKey =
       this._size === this._capacity ? this._keys[this._index(0)] : null;
   this._keys[this._index(this._size)] = key;
   this._values[this._index(this._size)] = value;
@@ -80,10 +80,10 @@ LruMap.prototype.set = function(key, value) {
 // Removes the key-value pair associated with the specified key.
 // Returns the removed value, or null if not found.
 LruMap.prototype.del = function(key) {
-  for (var i = 0; i < this._size; i++) {
+  for (let i = 0; i < this._size; i++) {
     if (key.equals(this._keys[this._index(i)])) {
-      var existingValue = this._values[this._index(i)];
-      for (var j = i; j < this._size - 1; j++) {
+      const existingValue = this._values[this._index(i)];
+      for (const j = i; j < this._size - 1; j++) {
         this._keys[this._index(j)] = this._keys[this._index(j + 1)];
         this._values[this._index(j)] = this._values[this._index(j + 1)];
       }
@@ -96,7 +96,7 @@ LruMap.prototype.del = function(key) {
 
 // Returns whether there is a value associated with the specified key.
 LruMap.prototype.has = function(key) {
-  for (var i = 0; i < this._size; i++) {
+  for (let i = 0; i < this._size; i++) {
     if (key.equals(this._keys[this._index(i)])) {
       return true;
     }
@@ -121,12 +121,12 @@ LruMap.prototype.clear = function() {
 // Returns the number of times fn was called.
 // The result is unspecified if the map is mutated during iteration.
 LruMap.prototype.forEach = function(fn) {
-  var count = 0;
-  for (var i = 0; i < this._size; i++) {
+  const count = 0;
+  for (const i = 0; i < this._size; i++) {
     fn(this._keys[this._index(i)], this._values[this._index(i)]);
     count += 1;
   }
   return count;
 };
 
-module.exports = LruMap;
+export default LruMap;

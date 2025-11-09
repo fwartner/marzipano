@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 function cmp(x, y) {
   if (x < y) {
@@ -25,4 +25,4 @@ function cmp(x, y) {
   return 0;
 }
 
-module.exports = cmp;
+export default cmp;

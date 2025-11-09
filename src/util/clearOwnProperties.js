@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 // Sets an object's own properties to undefined. This may be called by
 // destructors to avoid retaining references and help detect incorrect use of
@@ -26,4 +26,4 @@ function clearOwnProperties(obj) {
   }
 }
 
-module.exports = clearOwnProperties;
+export default clearOwnProperties;

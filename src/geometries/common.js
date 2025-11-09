@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var cmp = require('../util/cmp');
+
+import cmp from '../util/cmp.js';
 
 function makeLevelList(levelPropertiesList, LevelClass) {
-  var list = [];
+  let list = [];
 
-  for (var i = 0; i < levelPropertiesList.length; i++) {
+  for (let i = 0; i < levelPropertiesList.length; i++) {
     list.push(new LevelClass(levelPropertiesList[i]));
   }
 
@@ -32,9 +32,9 @@ function makeLevelList(levelPropertiesList, LevelClass) {
 }
 
 function makeSelectableLevelList(levelList) {
-  var list = [];
+  const list = [];
 
-  for (var i = 0; i < levelList.length; i++) {
+  for (const i = 0; i < levelList.length; i++) {
     if (!levelList[i]._fallbackOnly) {
       list.push(levelList[i]);
     }
@@ -47,7 +47,9 @@ function makeSelectableLevelList(levelList) {
   return list;
 }
 
-module.exports = {
-  makeLevelList: makeLevelList,
-  makeSelectableLevelList: makeSelectableLevelList
+export { makeLevelList, makeSelectableLevelList };
+
+export default {
+  makeLevelList,
+  makeSelectableLevelList,
 };

@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.min.js
+
+# Demos and documentation
+demos/
+docs/
+
+# Test artifacts
+test/test_suite.js
+coverage/
+
+# Config files (keep original formatting)
+package.json
+package-lock.json
+
+# Legacy scripts (don't format shell scripts)
+scripts/

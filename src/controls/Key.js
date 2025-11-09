@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var eventEmitter = require('minimal-event-emitter');
-var Dynamics = require('./Dynamics');
-var clearOwnProperties = require('../util/clearOwnProperties');
+
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics.js';
+import clearOwnProperties from '../util/clearOwnProperties.js';
 
 /**
  * @class KeyControlMethod
@@ -110,4 +110,4 @@ KeyControlMethod.prototype._handleBlur = function() {
   this._pressing = false;
 };
 
-module.exports = KeyControlMethod;
+export default KeyControlMethod;

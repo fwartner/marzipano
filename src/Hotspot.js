@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var eventEmitter = require('minimal-event-emitter');
-var positionAbsolutely = require('./util/positionAbsolutely');
-var setTransform = require('./util/dom').setTransform;
-var clearOwnProperties = require('./util/clearOwnProperties');
+
+import eventEmitter from 'minimal-event-emitter';
+import positionAbsolutely from './util/positionAbsolutely.js';
+import clearOwnProperties from './util/clearOwnProperties.js';
+
+import { setTransform } from './util/dom.js';
 
 /**
  * @class Hotspot
@@ -86,7 +87,6 @@ function Hotspot(domElement, parentDomElement, view, coords, opts) {
 
 eventEmitter(Hotspot);
 
-
 /**
  * Destructor.
  * Clients should call {@link HotspotContainer#destroyHotspot} instead.
@@ -96,7 +96,6 @@ Hotspot.prototype.destroy = function() {
   clearOwnProperties(this);
 };
 
-
 /**
  * @return {Element}
  */
@@ -104,14 +103,12 @@ Hotspot.prototype.domElement = function() {
   return this._domElement;
 };
 
-
 /**
  * @return {Object}
  */
 Hotspot.prototype.position = function() {
   return this._coords;
 };
-
 
 /**
  * @param {Object} coords
@@ -125,14 +122,12 @@ Hotspot.prototype.setPosition = function(coords) {
   // HotspotContainer. What's the best way to do so?
 };
 
-
 /**
  * @return {Object}
  */
 Hotspot.prototype.perspective = function() {
   return this._perspective;
 };
-
 
 /**
  * @param {Object}
@@ -144,7 +139,6 @@ Hotspot.prototype.setPerspective = function(perspective) {
   this._update();
 };
 
-
 /**
  * Show the hotspot
  */
@@ -154,7 +148,6 @@ Hotspot.prototype.show = function() {
     this._update();
   }
 };
-
 
 /**
  * Hide the hotspot
@@ -166,18 +159,17 @@ Hotspot.prototype.hide = function() {
   }
 };
 
-
 Hotspot.prototype._update = function() {
-  var element = this._domElement;
+  const element = this._domElement;
 
-  var params = this._coords;
-  var position = this._position;
+  const params = this._coords;
+  let position = this._position;
   var x, y;
 
-  var isVisible = false;
+  let isVisible = false;
 
   if (this._visible) {
-    var view = this._view;
+    const view = this._view;
 
     if (this._perspective.radius) {
       // Hotspots that are embedded in the panorama may be visible even when
@@ -211,17 +203,14 @@ Hotspot.prototype._update = function() {
 
 };
 
-
 Hotspot.prototype._setEmbeddedPosition = function(view, params) {
-  var transform = view.coordinatesToPerspectiveTransform(
+  const transform = view.coordinatesToPerspectiveTransform(
       params, this._perspective.radius, this._perspective.extraTransforms);
   setTransform(this._domElement, transform);
 };
-
 
 Hotspot.prototype._setPosition = function(x, y) {
   positionAbsolutely(this._domElement, x, y, this._perspective.extraTransforms);
 };
 
-
-module.exports = Hotspot;
+export default Hotspot;

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-module.exports = clamp;
+export default clamp;

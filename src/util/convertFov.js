@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 /**
  * Convert fov
@@ -100,7 +100,7 @@ function dtov(fov, width, height) {
 /**
  * @namespace util.convertFov
  */
-module.exports = {
+export default {
   convert: convert,
   htov: htov,
   htod: htod,

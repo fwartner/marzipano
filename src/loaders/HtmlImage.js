@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var StaticAsset = require('../assets/Static');
-var NetworkError = require('../NetworkError');
-var browser = require('bowser');
-var global = require('../util/global');
-var once = require('../util/once');
+
+import StaticAsset from '../assets/Static.js';
+import NetworkError from '../NetworkError.js';
+import browser from 'bowser';
+import global from '../util/global.js';
+import once from '../util/once.js';
 
 // TODO: Move the load queue into the loader.
 
 // Whether to use createImageBitmap instead of a canvas for cropping.
 // See https://caniuse.com/?search=createimagebitmap
-var useCreateImageBitmap = !!global.createImageBitmap && !browser.firefox && !browser.safari;
+const useCreateImageBitmap = !!global.createImageBitmap && !browser.firefox && !browser.safari;
 
 // Options for createImageBitmap.
-var createImageBitmapOpts = {
+const createImageBitmapOpts = {
   imageOrientation: 'flipY',
   premultiplyAlpha: 'premultiply'
 };
@@ -55,9 +55,9 @@ function HtmlImageLoader(stage) {
  * @return {function()} A function to cancel loading.
  */
 HtmlImageLoader.prototype.loadImage = function(url, rect, done) {
-  var self = this;
+  const self = this;
 
-  var img = new Image();
+  const img = new Image();
 
   // Allow cross-domain image loading.
   // This is required to be able to create WebGL textures from images fetched
@@ -71,10 +71,10 @@ HtmlImageLoader.prototype.loadImage = function(url, rect, done) {
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
   img.crossOrigin = 'anonymous';
 
-  var x = rect && rect.x || 0;
-  var y = rect && rect.y || 0;
-  var width = rect && rect.width || 1;
-  var height = rect && rect.height || 1;
+  const x = rect && rect.x || 0;
+  const y = rect && rect.y || 0;
+  let width = rect && rect.width || 1;
+  let height = rect && rect.height || 1;
 
   done = once(done);
 
@@ -120,10 +120,10 @@ HtmlImageLoader.prototype._handleLoad = function(img, x, y, width, height, done)
   } else {
     // Fall back to cropping using a canvas, which can potentially block the
     // user interface, but is the best we can do.
-    var canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
-    var context = canvas.getContext('2d');
+    const context = canvas.getContext('2d');
     context.drawImage(img, x, y, width, height, 0, 0, width, height);
     done(null, new StaticAsset(canvas));
   }
@@ -133,7 +133,7 @@ HtmlImageLoader.prototype._handleError = function(url, done) {
   // TODO: is there any way to distinguish a network error from other
   // kinds of errors? For now we always return NetworkError since this
   // prevents images to be retried continuously while we are offline.
-  done(new NetworkError('Network error: ' + url));
+  done(new NetworkError(`Network error: ${url}`));
 };
 
-module.exports = HtmlImageLoader;
+export default HtmlImageLoader;

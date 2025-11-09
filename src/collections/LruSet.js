@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var mod = require('../util/mod');
+
+import mod from '../util/mod.js';
 
 // An LruSet holds up to a maximum number of elements, ordered by their time of
 // insertion. When the addition of an element would cause the capacity to be
@@ -52,7 +52,7 @@ LruSet.prototype.add = function(element) {
     return element;
   }
   this.remove(element);
-  var evictedElement =
+  const evictedElement =
       this._size === this._capacity ? this._elements[this._index(0)] : null;
   this._elements[this._index(this._size)] = element;
   if (this._size < this._capacity) {
@@ -66,10 +66,10 @@ LruSet.prototype.add = function(element) {
 // Removes an element from the set.
 // Returns the removed element, or null if the element was not found.
 LruSet.prototype.remove = function(element) {
-  for (var i = 0; i < this._size; i++) {
-    var existingElement = this._elements[this._index(i)];
+  for (let i = 0; i < this._size; i++) {
+    const existingElement = this._elements[this._index(i)];
     if (element.equals(existingElement)) {
-      for (var j = i; j < this._size - 1; j++) {
+      for (const j = i; j < this._size - 1; j++) {
         this._elements[this._index(j)] = this._elements[this._index(j + 1)];
       }
       this._size--;
@@ -81,7 +81,7 @@ LruSet.prototype.remove = function(element) {
 
 // Returns whether an element is in the set.
 LruSet.prototype.has = function(element) {
-  for (var i = 0; i < this._size; i++) {
+  for (let i = 0; i < this._size; i++) {
     if (element.equals(this._elements[this._index(i)])) {
       return true;
     }
@@ -105,12 +105,12 @@ LruSet.prototype.clear = function() {
 // Returns the number of times fn was called.
 // The result is unspecified if the set is mutated during iteration.
 LruSet.prototype.forEach = function(fn) {
-  var count = 0;
-  for (var i = 0; i < this._size; i++) {
+  const count = 0;
+  for (const i = 0; i < this._size; i++) {
     fn(this._elements[this._index(i)]);
     count += 1;
   }
   return count;
 };
 
-module.exports = LruSet;
+export default LruSet;

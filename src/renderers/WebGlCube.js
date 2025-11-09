@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var WebGlBaseRenderer = require('./WebGlBase');
-var inherits = require('../util/inherits');
+
+import WebGlBaseRenderer from './WebGlBase.js';
+import inherits from '../util/inherits.js';
 
 /**
  * @class WebGlCubeRenderer
@@ -35,4 +35,4 @@ function WebGlCubeRenderer() {
 
 inherits(WebGlCubeRenderer, WebGlBaseRenderer);
 
-module.exports = WebGlCubeRenderer;
+export default WebGlCubeRenderer;

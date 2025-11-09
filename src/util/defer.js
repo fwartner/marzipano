@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 function defer(fn, args) {
   function deferred() {
@@ -26,4 +26,4 @@ function defer(fn, args) {
   setTimeout(deferred, 0);
 }
 
-module.exports = defer;
+export default defer;

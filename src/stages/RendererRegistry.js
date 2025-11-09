@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 /**
  * @class RendererRegistry
@@ -52,9 +52,9 @@ RendererRegistry.prototype.set = function(geometryType, viewType, Renderer) {
  * registered.
  */
 RendererRegistry.prototype.get = function(geometryType, viewType) {
-  var Renderer = this._renderers[geometryType] &&
+  const Renderer = this._renderers[geometryType] &&
       this._renderers[geometryType][viewType];
   return Renderer || null;
 };
 
-module.exports = RendererRegistry;
+export default RendererRegistry;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 /**
  * @class SingleAssetSource
@@ -33,9 +33,9 @@ SingleAssetSource.prototype.asset = function() {
 };
 
 SingleAssetSource.prototype.loadAsset = function(stage, tile, done) {
-  var self = this;
+  const self = this;
 
-  var timeout = setTimeout(function() {
+  const timeout = setTimeout(function() {
     done(null, tile, self._asset);
   }, 0);
 
@@ -47,4 +47,4 @@ SingleAssetSource.prototype.loadAsset = function(stage, tile, done) {
   return cancel;
 };
 
-module.exports = SingleAssetSource;
+export default SingleAssetSource;

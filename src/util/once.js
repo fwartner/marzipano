@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 function once(fn) {
-  var called = false;
+  let called = false;
   var value;
   return function onced() {
     if (!called) {
@@ -27,4 +27,4 @@ function once(fn) {
   };
 }
 
-module.exports = once;
+export default once;

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var noop = require('./noop');
+
+import noop from './noop.js';
 
 // Return a cancelable function that executes fn in a loop until it returns
 // successfully.
@@ -23,14 +23,14 @@ function retry(fn) {
 
   return function retried() {
 
-    var args = arguments.length ? Array.prototype.slice.call(arguments, 0, arguments.length - 1) : [];
-    var done = arguments.length ? arguments[arguments.length - 1] : noop;
+    const args = arguments.length ? Array.prototype.slice.call(arguments, 0, arguments.length - 1) : [];
+    const done = arguments.length ? arguments[arguments.length - 1] : noop;
 
-    var cfn = null;
-    var canceled = false;
+    let cfn = null;
+    let canceled = false;
 
     function exec() {
-      var err = arguments[0];
+      const err = arguments[0];
       if (!err || canceled) {
         done.apply(null, arguments);
       } else {
@@ -50,4 +50,4 @@ function retry(fn) {
 
 }
 
-module.exports = retry;
+export default retry;

@@ -13,107 +13,138 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-module.exports = {
 
-  // Stages.
-  WebGlStage: require('./stages/WebGl'),
 
-  // Renderers.
-  WebGlCubeRenderer: require('./renderers/WebGlCube'),
-  WebGlFlatRenderer: require('./renderers/WebGlFlat'),
-  WebGlEquirectRenderer: require('./renderers/WebGlEquirect'),
-  registerDefaultRenderers: require('./renderers/registerDefaultRenderers'),
+// Stages
+export { default as WebGlStage } from './stages/WebGl.js';
 
-  // Geometries.
-  CubeGeometry: require('./geometries/Cube'),
-  FlatGeometry: require('./geometries/Flat'),
-  EquirectGeometry: require('./geometries/Equirect'),
+// Renderers
+export { default as WebGlCubeRenderer } from './renderers/WebGlCube.js';
+export { default as WebGlFlatRenderer } from './renderers/WebGlFlat.js';
+export { default as WebGlEquirectRenderer } from './renderers/WebGlEquirect.js';
+export { default as registerDefaultRenderers } from './renderers/registerDefaultRenderers.js';
 
-  // Views.
-  RectilinearView: require('./views/Rectilinear'),
-  FlatView: require('./views/Flat'),
+// Geometries
+export { default as CubeGeometry } from './geometries/Cube.js';
+export { default as FlatGeometry } from './geometries/Flat.js';
+export { default as EquirectGeometry } from './geometries/Equirect.js';
 
-  // Sources.
-  ImageUrlSource: require('./sources/ImageUrl'),
-  SingleAssetSource: require('./sources/SingleAsset'),
+// Views
+export { default as RectilinearView } from './views/Rectilinear.js';
+export { default as FlatView } from './views/Flat.js';
 
-  // Assets.
-  StaticAsset: require('./assets/Static'),
-  DynamicAsset: require('./assets/Dynamic'),
+// Sources
+export { default as ImageUrlSource } from './sources/ImageUrl.js';
+export { default as SingleAssetSource } from './sources/SingleAsset.js';
 
-  // Texture store.
-  TextureStore: require('./TextureStore'),
+// Assets
+export { default as StaticAsset } from './assets/Static.js';
+export { default as DynamicAsset } from './assets/Dynamic.js';
 
-  // Layer.
-  Layer: require('./Layer'),
+// Texture store
+export { default as TextureStore } from './TextureStore.js';
 
-  // Render loop.
-  RenderLoop: require('./RenderLoop'),
+// Layer
+export { default as Layer } from './Layer.js';
 
-  // Controls.
-  KeyControlMethod: require('./controls/Key'),
-  DragControlMethod: require('./controls/Drag'),
-  QtvrControlMethod: require('./controls/Qtvr'),
-  ScrollZoomControlMethod: require('./controls/ScrollZoom'),
-  PinchZoomControlMethod: require('./controls/PinchZoom'),
-  VelocityControlMethod: require('./controls/Velocity'),
-  ElementPressControlMethod: require('./controls/ElementPress'),
-  Controls: require('./controls/Controls'),
-  Dynamics: require('./controls/Dynamics'),
+// Render loop
+export { default as RenderLoop } from './RenderLoop.js';
 
-  // High-level API.
-  Viewer: require('./Viewer'),
-  Scene: require('./Scene'),
+// Controls
+export { default as KeyControlMethod } from './controls/Key.js';
+export { default as DragControlMethod } from './controls/Drag.js';
+export { default as QtvrControlMethod } from './controls/Qtvr.js';
+export { default as ScrollZoomControlMethod } from './controls/ScrollZoom.js';
+export { default as PinchZoomControlMethod } from './controls/PinchZoom.js';
+export { default as VelocityControlMethod } from './controls/Velocity.js';
+export { default as ElementPressControlMethod } from './controls/ElementPress.js';
+export { default as Controls } from './controls/Controls.js';
+export { default as Dynamics } from './controls/Dynamics.js';
 
-  // Hotspots.
-  Hotspot: require('./Hotspot'),
-  HotspotContainer: require('./HotspotContainer'),
+// High-level API
+export { default as Viewer } from './Viewer.js';
+export { default as Scene } from './Scene.js';
 
-  // Effects.
-  colorEffects: require('./colorEffects'),
+// Hotspots
+export { default as Hotspot } from './Hotspot.js';
+export { default as HotspotContainer } from './HotspotContainer.js';
 
-  // Miscellaneous functions.
-  registerDefaultControls: require('./controls/registerDefaultControls'),
-  autorotate: require('./autorotate'),
+// Effects
+export { default as colorEffects } from './colorEffects.js';
 
-  // Utility functions.
-  util: {
-    async: require('./util/async'),
-    cancelize: require('./util/cancelize'),
-    chain: require('./util/chain'),
-    clamp: require('./util/clamp'),
-    clearOwnProperties: require('./util/clearOwnProperties'),
-    cmp: require('./util/cmp'),
-    compose: require('./util/compose'),
-    convertFov: require('./util/convertFov'),
-    decimal: require('./util/decimal'),
-    defaults: require('./util/defaults'),
-    defer: require('./util/defer'),
-    degToRad: require('./util/degToRad'),
-    delay: require('./util/delay'),
-    dom: require('./util/dom'),
-    extend: require('./util/extend'),
-    hash: require('./util/hash'),
-    inherits: require('./util/inherits'),
-    mod: require('./util/mod'),
-    noop: require('./util/noop'),
-    now: require('./util/now'),
-    once: require('./util/once'),
-    pixelRatio: require('./util/pixelRatio'),
-    radToDeg: require('./util/radToDeg'),
-    real: require('./util/real'),
-    retry: require('./util/retry'),
-    tween: require('./util/tween'),
-    type: require('./util/type')
-  },
+// Miscellaneous functions
+export { default as registerDefaultControls } from './controls/registerDefaultControls.js';
+export { default as autorotate } from './autorotate.js';
 
-  // Expose dependencies for clients to use.
-  dependencies: {
-    bowser: require('bowser'),
-    glMatrix: require('gl-matrix'),
-    eventEmitter: require('minimal-event-emitter'),
-    hammerjs: require('hammerjs')
-  }
+// Utility functions
+import async from './util/async.js';
+import cancelize from './util/cancelize.js';
+import chain from './util/chain.js';
+import clamp from './util/clamp.js';
+import clearOwnProperties from './util/clearOwnProperties.js';
+import cmp from './util/cmp.js';
+import compose from './util/compose.js';
+import convertFov from './util/convertFov.js';
+import decimal from './util/decimal.js';
+import defaults from './util/defaults.js';
+import defer from './util/defer.js';
+import degToRad from './util/degToRad.js';
+import delay from './util/delay.js';
+import dom from './util/dom.js';
+import extend from './util/extend.js';
+import hash from './util/hash.js';
+import inherits from './util/inherits.js';
+import mod from './util/mod.js';
+import noop from './util/noop.js';
+import now from './util/now.js';
+import once from './util/once.js';
+import pixelRatio from './util/pixelRatio.js';
+import radToDeg from './util/radToDeg.js';
+import real from './util/real.js';
+import retry from './util/retry.js';
+import tween from './util/tween.js';
+import type from './util/type.js';
+
+export const util = {
+  async,
+  cancelize,
+  chain,
+  clamp,
+  clearOwnProperties,
+  cmp,
+  compose,
+  convertFov,
+  decimal,
+  defaults,
+  defer,
+  degToRad,
+  delay,
+  dom,
+  extend,
+  hash,
+  inherits,
+  mod,
+  noop,
+  now,
+  once,
+  pixelRatio,
+  radToDeg,
+  real,
+  retry,
+  tween,
+  type,
+};
+
+// Expose dependencies for clients to use
+import bowser from 'bowser';
+import * as glMatrix from 'gl-matrix';
+import eventEmitter from 'minimal-event-emitter';
+import hammerjs from 'hammerjs';
+
+export const dependencies = {
+  bowser,
+  glMatrix,
+  eventEmitter,
+  hammerjs,
 };

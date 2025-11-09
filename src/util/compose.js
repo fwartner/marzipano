@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 /**
   * Compose multiple functions
@@ -25,15 +25,15 @@
   * @return {Function}
   */
 function compose() {
-  var fnList = arguments;
+  const fnList = arguments;
   return function composed(initialArg) {
-    var ret = initialArg;
-    for (var i = 0; i < fnList.length; i++) {
-      var fn = fnList[i];
+    let ret = initialArg;
+    for (const i = 0; i < fnList.length; i++) {
+      const fn = fnList[i];
       ret = fn.call(null, ret);
     }
     return ret;
   };
 }
 
-module.exports = compose;
+export default compose;

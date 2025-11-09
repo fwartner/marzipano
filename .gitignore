@@ -11,3 +11,10 @@ package-lock.json
 /docs/*
 /test/test_suite.js*
 .idea
+
+# Modern tooling
+coverage/
+.vite/
+*.log
+.husky/_
+.husky/pre-commit

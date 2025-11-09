@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var now = require('../util/now');
 
+import now from '../util/now.js';
 
 function WorkTask(fn, cb) {
   this.fn = fn;
   this.cb = cb;
   this.cfn = null;
 }
-
 
 function WorkQueue(opts) {
   this._queue = [];
@@ -33,17 +31,15 @@ function WorkQueue(opts) {
   this._lastFinished = null;
 }
 
-
 WorkQueue.prototype.length = function() {
   return this._queue.length;
 };
 
-
 WorkQueue.prototype.push = function(fn, cb) {
 
-  var task = new WorkTask(fn, cb);
+  let task = new WorkTask(fn, cb);
 
-  var cancel = this._cancel.bind(this, task);
+  const cancel = this._cancel.bind(this, task);
 
   // Push the task into the queue.
   this._queue.push(task);
@@ -55,13 +51,11 @@ WorkQueue.prototype.push = function(fn, cb) {
 
 };
 
-
 WorkQueue.prototype.pause = function() {
   if (!this._paused) {
     this._paused = true;
   }
 };
-
 
 WorkQueue.prototype.resume = function() {
   if (this._paused) {
@@ -69,7 +63,6 @@ WorkQueue.prototype.resume = function() {
     this._next();
   }
 };
-
 
 WorkQueue.prototype._start = function(task) {
 
@@ -82,7 +75,7 @@ WorkQueue.prototype._start = function(task) {
   this._currentTask = task;
 
   // Execute the task.
-  var finish = this._finish.bind(this, task);
+  const finish = this._finish.bind(this, task);
   task.cfn = task.fn(finish);
 
   // Detect when a non-cancellable function has been queued.
@@ -92,10 +85,9 @@ WorkQueue.prototype._start = function(task) {
 
 };
 
-
 WorkQueue.prototype._finish = function(task) {
 
-  var args = Array.prototype.slice.call(arguments, 1);
+  let args = Array.prototype.slice.call(arguments, 1);
 
   // Consistency check.
   if (this._currentTask !== task) {
@@ -112,10 +104,9 @@ WorkQueue.prototype._finish = function(task) {
 
 };
 
-
 WorkQueue.prototype._cancel = function(task) {
 
-  var args = Array.prototype.slice.call(arguments, 1);
+  const args = Array.prototype.slice.call(arguments, 1);
 
   if (this._currentTask === task) {
 
@@ -126,7 +117,7 @@ WorkQueue.prototype._cancel = function(task) {
   } else {
 
     // Remove task from queue.
-    var pos = this._queue.indexOf(task);
+    const pos = this._queue.indexOf(task);
     if (pos >= 0) {
       this._queue.splice(pos, 1);
       task.cb.apply(null, args);
@@ -135,7 +126,6 @@ WorkQueue.prototype._cancel = function(task) {
   }
 
 };
-
 
 WorkQueue.prototype._next = function() {
 
@@ -155,8 +145,8 @@ WorkQueue.prototype._next = function() {
   }
 
   if (this._lastFinished != null) {
-    var elapsed = now() - this._lastFinished;
-    var remaining = this._delay - elapsed;
+    const elapsed = now() - this._lastFinished;
+    const remaining = this._delay - elapsed;
     if (remaining > 0) {
       // Too soon. Run again after the inter-task delay.
       setTimeout(this._next.bind(this), remaining);
@@ -165,10 +155,9 @@ WorkQueue.prototype._next = function() {
   }
 
   // Run the next task.
-  var task = this._queue.shift();
+  const task = this._queue.shift();
   this._start(task);
 
 };
 
-
-module.exports = WorkQueue;
+export default WorkQueue;

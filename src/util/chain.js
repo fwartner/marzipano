@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var noop = require('./noop');
+
+import noop from './noop.js';
 
 // Return a function that executes its arguments (which should be cancelables)
 // in sequence, so that each of them passes its return values to the next.
@@ -25,33 +25,33 @@ var noop = require('./noop');
 function chain() {
 
   // The list of functions to chain together.
-  var argList = Array.prototype.slice.call(arguments, 0);
+  const argList = Array.prototype.slice.call(arguments, 0);
 
   return function chained() {
 
     // List of remaining functions to be executed.
     // Make a copy of the original list so we can mutate the former while
     // preserving the latter intact for future invocations of the chain.
-    var fnList = argList.slice(0);
+    const fnList = argList.slice(0);
 
     // Currently executing function.
-    var fn = null;
+    let fn = null;
 
     // Cancel method for the currently executing function.
-    var cfn = null;
+    let cfn = null;
 
     // Arguments for the first function.
-    var args = arguments.length ? Array.prototype.slice.call(arguments, 0, arguments.length - 1) : [];
+    const args = arguments.length ? Array.prototype.slice.call(arguments, 0, arguments.length - 1) : [];
 
     // Callback for the chain.
-    var done = arguments.length ? arguments[arguments.length - 1] : noop;
+    const done = arguments.length ? arguments[arguments.length - 1] : noop;
 
     // Execute the next function in the chain.
     // Receives the error and return values from the previous function.
     function exec() {
 
       // Extract error from arguments.
-      var err = arguments[0];
+      const err = arguments[0];
 
       // Abort chain on error.
       if (err) {
@@ -69,14 +69,14 @@ function chain() {
 
       // Advance to the next function in the chain.
       fn = fnList.shift();
-      var _fn = fn;
+      const _fn = fn;
 
       // Extract arguments to pass into the next function.
-      var ret = Array.prototype.slice.call(arguments, 1);
+      const ret = Array.prototype.slice.call(arguments, 1);
 
       // Call next function with previous return value and call back exec.
       ret.push(exec);
-      var _cfn = fn.apply(null, ret); // fn(null, ret..., exec)
+      const _cfn = fn.apply(null, ret); // fn(null, ret..., exec)
 
       // Detect when fn has completed synchronously and do not clobber the
       // internal state in that case. You're not expected to understand this.
@@ -114,4 +114,4 @@ function chain() {
 
 }
 
-module.exports = chain;
+export default chain;

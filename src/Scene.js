@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var Layer = require('./Layer');
-var TextureStore = require('./TextureStore');
-var HotspotContainer = require('./HotspotContainer');
-var eventEmitter = require('minimal-event-emitter');
-var now = require('./util/now');
-var noop = require('./util/noop');
-var type = require('./util/type');
-var defaults = require('./util/defaults');
-var clearOwnProperties = require('./util/clearOwnProperties');
+
+import Layer from './Layer.js';
+import TextureStore from './TextureStore.js';
+import HotspotContainer from './HotspotContainer.js';
+import eventEmitter from 'minimal-event-emitter';
+import now from './util/now.js';
+import noop from './util/noop.js';
+import type from './util/type.js';
+import defaults from './util/defaults.js';
+import clearOwnProperties from './util/clearOwnProperties.js';
 
 /**
  * Signals that the scene's view has changed. See {@link View#event:change}.
@@ -86,7 +86,6 @@ function Scene(viewer, view) {
 
 eventEmitter(Scene);
 
-
 /**
  * Destructor. Clients should call {@link Viewer#destroyScene} instead.
  */
@@ -104,8 +103,6 @@ Scene.prototype.destroy = function() {
 
   clearOwnProperties(this);
 };
-
-
 
 /**
  * Returns the {@link HotspotContainer hotspot container} for the scene.
@@ -137,7 +134,6 @@ Scene.prototype.listLayers = function() {
   return [].concat(this._layers);
 };
 
-
 /**
  * Returns the scene's underlying {@link View view}.
  * @return {View}
@@ -145,7 +141,6 @@ Scene.prototype.listLayers = function() {
 Scene.prototype.view = function() {
   return this._view;
 };
-
 
 /**
  * Returns the {@link Viewer viewer} the scene belongs to.
@@ -155,7 +150,6 @@ Scene.prototype.viewer = function() {
   return this._viewer;
 };
 
-
 /**
  * Returns whether the scene is currently visible.
  * @return {boolean}
@@ -163,7 +157,6 @@ Scene.prototype.viewer = function() {
 Scene.prototype.visible = function() {
   return this._viewer.scene() === this;
 };
-
 
 /**
  * Creates a new {@link Layer layer} and adds it into the scene in the
@@ -183,15 +176,15 @@ Scene.prototype.visible = function() {
 Scene.prototype.createLayer = function(opts) {
   opts = opts || {};
 
-  var textureStoreOpts = opts.textureStoreOpts || {};
-  var layerOpts = opts.layerOpts || {};
+  const textureStoreOpts = opts.textureStoreOpts || {};
+  const layerOpts = opts.layerOpts || {};
 
-  var source = opts.source;
-  var geometry = opts.geometry;
-  var view = this._view;
-  var stage = this._viewer.stage();
-  var textureStore = new TextureStore(source, stage, textureStoreOpts);
-  var layer = new Layer(source, geometry, view, textureStore, layerOpts);
+  const source = opts.source;
+  const geometry = opts.geometry;
+  let view = this._view;
+  const stage = this._viewer.stage();
+  const textureStore = new TextureStore(source, stage, textureStoreOpts);
+  const layer = new Layer(source, geometry, view, textureStore, layerOpts);
 
   this._layers.push(layer);
 
@@ -205,14 +198,13 @@ Scene.prototype.createLayer = function(opts) {
   return layer;
 };
 
-
 /**
  * Destroys a {@link Layer layer} and removes it from the scene.
  * @param {Layer} layer
  * @throws An error if the layer does not belong to the scene.
  */
 Scene.prototype.destroyLayer = function(layer) {
-  var i = this._layers.indexOf(layer);
+  const i = this._layers.indexOf(layer);
   if (i < 0) {
     throw new Error('No such layer in scene');
   }
@@ -226,7 +218,6 @@ Scene.prototype.destroyLayer = function(layer) {
   layer.destroy();
 };
 
-
 /**
  * Destroys all {@link Layer layers} and removes them from the scene.
  */
@@ -235,7 +226,6 @@ Scene.prototype.destroyAllLayers = function() {
     this.destroyLayer(this._layers[0]);
   }
 };
-
 
 /**
  * Switches to the scene.
@@ -248,7 +238,6 @@ Scene.prototype.destroyAllLayers = function() {
 Scene.prototype.switchTo = function(opts, done) {
   return this._viewer.switchScene(this, opts, done);
 };
-
 
 /**
  * Tweens the scene's underlying {@link View view}.
@@ -268,7 +257,7 @@ Scene.prototype.switchTo = function(opts, done) {
  *    interrupted.
  */
 Scene.prototype.lookTo = function(params, opts, done) {
-  var self = this;
+  const self = this;
 
   opts = opts || {};
   done = done || noop;
@@ -278,23 +267,23 @@ Scene.prototype.lookTo = function(params, opts, done) {
   }
 
   // Quadratic in/out easing.
-  var easeInOutQuad = function (k) {
+  const easeInOutQuad = function (k) {
     if ((k *= 2) < 1) {
       return 0.5 * k * k;
     }
     return -0.5 * (--k * (k - 2) - 1);
   };
 
-  var ease = opts.ease != null ? opts.ease : easeInOutQuad;
-  var controlsInterrupt = opts.controlsInterrupt != null ? opts.controlsInterrupt : false;
-  var duration = opts.transitionDuration != null ? opts.transitionDuration : 1000;
-  var shortest = opts.shortest != null ? opts.shortest : true;
+  const ease = opts.ease != null ? opts.ease : easeInOutQuad;
+  const controlsInterrupt = opts.controlsInterrupt != null ? opts.controlsInterrupt : false;
+  const duration = opts.transitionDuration != null ? opts.transitionDuration : 1000;
+  const shortest = opts.shortest != null ? opts.shortest : true;
 
-  var view = this._view;
+  let view = this._view;
 
-  var initialParams = view.parameters();
+  const initialParams = view.parameters();
 
-  var finalParams = {};
+  const finalParams = {};
   defaults(finalParams, params);
   defaults(finalParams, initialParams);
 
@@ -304,9 +293,9 @@ Scene.prototype.lookTo = function(params, opts, done) {
     view.normalizeToClosest(finalParams, finalParams);
   }
 
-  var movement = function() {
+  let movement = function() {
 
-    var finalUpdate = false;
+    let finalUpdate = false;
 
     return function(params, elapsed) {
 
@@ -314,11 +303,11 @@ Scene.prototype.lookTo = function(params, opts, done) {
         return null;
       }
 
-      var delta = Math.min(elapsed / duration, 1);
+      const delta = Math.min(elapsed / duration, 1);
 
       for (var param in params) {
-        var start = initialParams[param];
-        var end = finalParams[param];
+        const start = initialParams[param];
+        const end = finalParams[param];
         params[param] = start + ease(delta) * (end - start);
       }
 
@@ -329,7 +318,7 @@ Scene.prototype.lookTo = function(params, opts, done) {
     };
   };
 
-  var reenableControls = this._viewer.controls().enabled();
+  const reenableControls = this._viewer.controls().enabled();
 
   if (!controlsInterrupt) {
     this._viewer.controls().disable();
@@ -344,7 +333,6 @@ Scene.prototype.lookTo = function(params, opts, done) {
 
 };
 
-
 /**
  * Starts a movement, possibly replacing the current movement.
  *
@@ -354,13 +342,13 @@ Scene.prototype.lookTo = function(params, opts, done) {
  */
 Scene.prototype.startMovement = function(fn, done) {
 
-  var renderLoop = this._viewer.renderLoop();
+  let renderLoop = this._viewer.renderLoop();
 
   if (this._movement) {
     this.stopMovement();
   }
 
-  var step = fn();
+  let step = fn();
   if (typeof step !== 'function') {
     throw new Error('Bad movement');
   }
@@ -375,14 +363,13 @@ Scene.prototype.startMovement = function(fn, done) {
   renderLoop.renderOnNextFrame();
 };
 
-
 /**
  * Stops the current movement.
  */
 Scene.prototype.stopMovement = function() {
 
-  var done = this._movementCallback;
-  var renderLoop = this._viewer.renderLoop();
+  const done = this._movementCallback;
+  let renderLoop = this._viewer.renderLoop();
 
   if (!this._movement) {
     return;
@@ -403,7 +390,6 @@ Scene.prototype.stopMovement = function() {
   }
 };
 
-
 /**
  * Returns the current movement.
  * @return {function}
@@ -412,19 +398,18 @@ Scene.prototype.movement = function() {
   return this._movement;
 };
 
-
 Scene.prototype._updateMovement = function() {
 
   if (!this._movement) {
     throw new Error('Should not call update');
   }
 
-  var renderLoop = this._viewer.renderLoop();
-  var view = this._view;
+  const renderLoop = this._viewer.renderLoop();
+  const view = this._view;
 
-  var elapsed = now() - this._movementStartTime;
-  var step = this._movementStep;
-  var params = this._movementParams;
+  const elapsed = now() - this._movementStartTime;
+  const step = this._movementStep;
+  let params = this._movementParams;
 
   params = view.parameters(params);
   params = step(params, elapsed);
@@ -437,7 +422,6 @@ Scene.prototype._updateMovement = function() {
 
 };
 
-
 Scene.prototype._updateHotspotContainer = function() {
   if (this.visible()) {
     this._hotspotContainer.show();
@@ -446,5 +430,4 @@ Scene.prototype._updateHotspotContainer = function() {
   }
 };
 
-
-module.exports = Scene;
+export default Scene;

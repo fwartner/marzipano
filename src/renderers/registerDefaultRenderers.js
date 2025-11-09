@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var WebGlCube = require('./WebGlCube');
-var WebGlFlat = require('./WebGlFlat');
-var WebGlEquirect = require('./WebGlEquirect');
+
+import WebGlCube from './WebGlCube.js';
+import WebGlFlat from './WebGlFlat.js';
+import WebGlEquirect from './WebGlEquirect.js';
 
 /**
  * Registers all known renderers for the given stage type into that stage.
@@ -35,8 +35,8 @@ function registerDefaultRenderers(stage) {
       stage.registerRenderer('equirect', 'rectilinear', WebGlEquirect);
       break;
     default:
-      throw new Error('Unknown stage type: ' + stage.type);
+      throw new Error(`Unknown stage type: ${stage}`.type);
   }
 }
 
-module.exports = registerDefaultRenderers;
+export default registerDefaultRenderers;

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var eventEmitter = require('minimal-event-emitter');
-var clearOwnProperties = require('./util/clearOwnProperties');
+
+import eventEmitter from 'minimal-event-emitter';
+import clearOwnProperties from './util/clearOwnProperties.js';
 
 /**
  * Signals that {@link Stage#render} is about to be called.
@@ -43,7 +43,7 @@ var clearOwnProperties = require('./util/clearOwnProperties');
  */
 function RenderLoop(stage) {
 
-  var self = this;
+  const self = this;
 
   // The stage wrapped by the loop.
   this._stage = stage;
@@ -76,7 +76,6 @@ function RenderLoop(stage) {
 
 eventEmitter(RenderLoop);
 
-
 /**
  * Destructor.
  */
@@ -86,7 +85,6 @@ RenderLoop.prototype.destroy = function() {
   clearOwnProperties(this);
 };
 
-
 /**
  * Returns the underlying stage.
  * @return {Stage}
@@ -95,7 +93,6 @@ RenderLoop.prototype.stage = function() {
   return this._stage;
 };
 
-
 /**
  * Starts the render loop.
  */
@@ -103,7 +100,6 @@ RenderLoop.prototype.start = function() {
   this._running = true;
   this.renderOnNextFrame();
 };
-
 
 /**
  * Stops the render loop.
@@ -116,7 +112,6 @@ RenderLoop.prototype.stop = function() {
   this._running = false;
 };
 
-
 /**
  * Forces the stage to render on the next frame, even if its contents remain
  * valid. Does nothing if the loop is stopped.
@@ -126,7 +121,6 @@ RenderLoop.prototype.renderOnNextFrame = function() {
     this._requestHandle = window.requestAnimationFrame(this._boundLoop);
   }
 };
-
 
 RenderLoop.prototype._loop = function() {
   if (!this._running) {
@@ -140,5 +134,4 @@ RenderLoop.prototype._loop = function() {
   this.emit('afterRender');
 };
 
-
-module.exports = RenderLoop;
+export default RenderLoop;

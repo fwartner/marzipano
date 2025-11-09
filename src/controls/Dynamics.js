@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 /**
  * @class Dynamics
@@ -47,7 +47,7 @@ Dynamics.prototype.update = function(other, elapsed) {
     this.offset += other.offset;
   }
 
-  var offsetFromVelocity = this.offsetFromVelocity(elapsed);
+  let offsetFromVelocity = this.offsetFromVelocity(elapsed);
   if (offsetFromVelocity) {
     // If there is an offset to add from the velocity, make this offset a number instead of null
     this.offset = this.offset || 0;
@@ -64,7 +64,6 @@ Dynamics.prototype.reset = function() {
   this.offset = null;
 };
 
-
 Dynamics.prototype.velocityAfter = function(elapsed) {
   if (!this.velocity) {
     return null;
@@ -78,12 +77,11 @@ Dynamics.prototype.velocityAfter = function(elapsed) {
 Dynamics.prototype.offsetFromVelocity = function(elapsed) {
   elapsed = Math.min(elapsed, this.nullVelocityTime());
 
-  var velocityEnd = this.velocityAfter(elapsed);
-  var averageVelocity = (this.velocity + velocityEnd) / 2;
+  const velocityEnd = this.velocityAfter(elapsed);
+  const averageVelocity = (this.velocity + velocityEnd) / 2;
 
   return averageVelocity * elapsed;
 };
-
 
 Dynamics.prototype.nullVelocityTime = function() {
   if (this.velocity == null) {
@@ -105,4 +103,4 @@ function decreaseAbs(num, dec) {
   return 0;
 }
 
-module.exports = Dynamics;
+export default Dynamics;

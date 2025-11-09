@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 /**
  * Converts a {@link RectSpec} into an equivalent {@link Rect}.
@@ -80,4 +80,4 @@ function calcRect(totalWidth, totalHeight, spec, result) {
   return result;
 }
 
-module.exports = calcRect;
+export default calcRect;

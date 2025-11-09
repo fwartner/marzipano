@@ -13,38 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var mat4 = require('gl-matrix').mat4;
-var clearOwnProperties = require('../util/clearOwnProperties');
 
-var WebGlCommon = require('./WebGlCommon');
-var createConstantBuffers = WebGlCommon.createConstantBuffers;
-var destroyConstantBuffers = WebGlCommon.destroyConstantBuffers;
-var createShaderProgram = WebGlCommon.createShaderProgram;
-var destroyShaderProgram = WebGlCommon.destroyShaderProgram;
-var enableAttributes = WebGlCommon.enableAttributes;
-var disableAttributes = WebGlCommon.disableAttributes;
-var setViewport = WebGlCommon.setViewport;
-var setupPixelEffectUniforms = WebGlCommon.setupPixelEffectUniforms;
+import clearOwnProperties from '../util/clearOwnProperties.js';
+import WebGlCommon from './WebGlCommon.js';
+import vertexSrc from '../shaders/vertexEquirect.js';
+import fragmentSrc from '../shaders/fragmentEquirect.js';
 
-var setDepth = WebGlCommon.setDepth;
-var setTexture = WebGlCommon.setTexture;
+import { mat4 } from 'gl-matrix';
 
-var vertexSrc = require('../shaders/vertexEquirect');
-var fragmentSrc = require('../shaders/fragmentEquirect');
+const createConstantBuffers = WebGlCommon.createConstantBuffers;
+const destroyConstantBuffers = WebGlCommon.destroyConstantBuffers;
+const createShaderProgram = WebGlCommon.createShaderProgram;
+const destroyShaderProgram = WebGlCommon.destroyShaderProgram;
+const enableAttributes = WebGlCommon.enableAttributes;
+const disableAttributes = WebGlCommon.disableAttributes;
+const setViewport = WebGlCommon.setViewport;
+const setupPixelEffectUniforms = WebGlCommon.setupPixelEffectUniforms;
 
-var vertexIndices = [0, 1, 2, 0, 2, 3];
-var vertexPositions = [-1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 1.0, 0.0, -1.0, 1.0, 0.0];
-var textureCoords = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+const setDepth = WebGlCommon.setDepth;
+const setTexture = WebGlCommon.setTexture;
 
-var attribList = ['aVertexPosition'];
-var uniformList = [
+const vertexIndices = [0, 1, 2, 0, 2, 3];
+const vertexPositions = [-1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 1.0, 0.0, -1.0, 1.0, 0.0];
+const textureCoords = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+
+const attribList = ['aVertexPosition'];
+const uniformList = [
   'uDepth', 'uOpacity', 'uSampler', 'uInvProjMatrix', 'uViewportMatrix',
   'uColorOffset', 'uColorMatrix', 'uTextureX', 'uTextureY', 'uTextureWidth',
   'uTextureHeight'
 ];
-
 
 /**
  * @class WebGlEquirectRenderer
@@ -78,13 +77,12 @@ WebGlEquirectRenderer.prototype.destroy = function() {
   clearOwnProperties(this);
 };
 
-
 WebGlEquirectRenderer.prototype.startLayer = function(layer, rect) {
-  var gl = this.gl;
-  var shaderProgram = this.shaderProgram;
-  var constantBuffers = this.constantBuffers;
-  var invProjMatrix = this.invProjMatrix;
-  var viewportMatrix = this.viewportMatrix;
+  let gl = this.gl;
+  let shaderProgram = this.shaderProgram;
+  let constantBuffers = this.constantBuffers;
+  const invProjMatrix = this.invProjMatrix;
+  const viewportMatrix = this.viewportMatrix;
 
   gl.useProgram(shaderProgram);
 
@@ -104,11 +102,11 @@ WebGlEquirectRenderer.prototype.startLayer = function(layer, rect) {
   gl.uniformMatrix4fv(shaderProgram.uInvProjMatrix, false, invProjMatrix);
 
   // Compute and set the texture scale and crop offsets.
-  var textureCrop = layer.effects().textureCrop || {};
-  var textureX = textureCrop.x != null ? textureCrop.x : 0;
-  var textureY = textureCrop.y != null ? textureCrop.y : 0;
-  var textureWidth = textureCrop.width != null ? textureCrop.width : 1;
-  var textureHeight = textureCrop.height != null ? textureCrop.height : 1;
+  const textureCrop = layer.effects().textureCrop || {};
+  const textureX = textureCrop.x != null ? textureCrop.x : 0;
+  const textureY = textureCrop.y != null ? textureCrop.y : 0;
+  const textureWidth = textureCrop.width != null ? textureCrop.width : 1;
+  const textureHeight = textureCrop.height != null ? textureCrop.height : 1;
 
   gl.uniform1f(shaderProgram.uTextureX, textureX);
   gl.uniform1f(shaderProgram.uTextureY, textureY);
@@ -122,18 +120,16 @@ WebGlEquirectRenderer.prototype.startLayer = function(layer, rect) {
   });
 };
 
-
 WebGlEquirectRenderer.prototype.endLayer = function(layer, rect) {
-  var gl = this.gl;
-  var shaderProgram = this.shaderProgram;
+  let gl = this.gl;
+  let shaderProgram = this.shaderProgram;
   disableAttributes(gl, shaderProgram);
 };
 
-
 WebGlEquirectRenderer.prototype.renderTile = function(tile, texture, layer, layerZ) {
-  var gl = this.gl;
-  var shaderProgram = this.shaderProgram;
-  var constantBuffers = this.constantBuffers;
+  const gl = this.gl;
+  const shaderProgram = this.shaderProgram;
+  const constantBuffers = this.constantBuffers;
 
   setDepth(gl, shaderProgram, layerZ, tile.z);
 
@@ -143,5 +139,4 @@ WebGlEquirectRenderer.prototype.renderTile = function(tile, texture, layer, laye
   gl.drawElements(gl.TRIANGLES, vertexIndices.length, gl.UNSIGNED_SHORT, 0);
 };
 
-
-module.exports = WebGlEquirectRenderer;
+export default WebGlEquirectRenderer;

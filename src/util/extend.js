@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 function extend(obj, sourceObj) {
   for (var key in sourceObj) {
@@ -22,4 +22,4 @@ function extend(obj, sourceObj) {
   return obj;
 }
 
-module.exports = extend;
+export default extend;

@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var eventEmitter = require('minimal-event-emitter');
-var defaults = require('./util/defaults');
-var now = require('./util/now');
 
-var defaultOptions = {
+import eventEmitter from 'minimal-event-emitter';
+import defaults from './util/defaults.js';
+import now from './util/now.js';
+
+const defaultOptions = {
   duration: Infinity
 };
-
 
 /**
  * Signals a timeout.
  * @event Timer#timeout
  */
-
 
 /**
  * @class Timer
@@ -60,7 +58,6 @@ function Timer(opts) {
 
 eventEmitter(Timer);
 
-
 /**
  * Starts the timer. If the timer is already started, this has the effect of
  * stopping and starting again (i.e. resetting the timer).
@@ -72,7 +69,6 @@ Timer.prototype.start = function() {
   }
 };
 
-
 /**
  * Returns whether the timer is in the started state.
  * @return {boolean}
@@ -80,7 +76,6 @@ Timer.prototype.start = function() {
 Timer.prototype.started = function() {
   return this._startTime != null;
 };
-
 
 /**
  * Stops the timer.
@@ -93,22 +88,19 @@ Timer.prototype.stop = function() {
   }
 };
 
-
 Timer.prototype._setup = function(interval) {
   this._handle = setTimeout(this._check, interval);
 };
-
 
 Timer.prototype._teardown = function() {
   clearTimeout(this._handle);
   this._handle = null;
 };
 
-
 Timer.prototype._check = function() {
-  var currentTime = now();
-  var elapsed = currentTime - this._startTime;
-  var remaining = this._duration - elapsed;
+  const currentTime = now();
+  const elapsed = currentTime - this._startTime;
+  const remaining = this._duration - elapsed;
 
   this._teardown();
 
@@ -120,14 +112,12 @@ Timer.prototype._check = function() {
   }
 };
 
-
 /**
  * Returns the currently set duration.
  */
 Timer.prototype.duration = function() {
   return this._duration;
 };
-
 
 /**
  * Sets the duration. If the timer is already started, the timeout event is
@@ -143,5 +133,4 @@ Timer.prototype.setDuration = function(duration) {
   }
 };
 
-
-module.exports = Timer;
+export default Timer;

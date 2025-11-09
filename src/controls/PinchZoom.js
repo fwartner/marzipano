@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var eventEmitter = require('minimal-event-emitter');
-var Dynamics = require('./Dynamics');
-var HammerGestures = require('./HammerGestures');
-var clearOwnProperties = require('../util/clearOwnProperties');
+
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics.js';
+import HammerGestures from './HammerGestures.js';
+import clearOwnProperties from '../util/clearOwnProperties.js';
 
 /**
  * @class PinchZoomControlMethod
@@ -56,14 +56,12 @@ PinchZoomControlMethod.prototype.destroy = function() {
   clearOwnProperties(this);
 };
 
-
 PinchZoomControlMethod.prototype._handleStart = function() {
   if (!this._active) {
     this._active = true;
     this.emit('active');
   }
 };
-
 
 PinchZoomControlMethod.prototype._handleEnd = function() {
   this._lastEvent = null;
@@ -74,9 +72,8 @@ PinchZoomControlMethod.prototype._handleEnd = function() {
   }
 };
 
-
 PinchZoomControlMethod.prototype._handleEvent = function(e) {
-  var scale = e.scale;
+  const scale = e.scale;
 
   if (this._lastEvent) {
     scale /= this._lastEvent.scale;
@@ -88,5 +85,4 @@ PinchZoomControlMethod.prototype._handleEvent = function(e) {
   this._lastEvent = e;
 };
 
-
-module.exports = PinchZoomControlMethod;
+export default PinchZoomControlMethod;

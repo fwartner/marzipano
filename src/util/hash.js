@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 // Jenkins one-at-a-time hash
 // http://www.burtleburtle.net/bob/hash/doobs.html
@@ -21,9 +21,9 @@
 // Output: an integer
 
 function hash() {
-  var h = 0;
-  for (var i = 0; i < arguments.length; i++) {
-    var k = arguments[i];
+  const h = 0;
+  for (const i = 0; i < arguments.length; i++) {
+    const k = arguments[i];
     h += k;
     h += k << 10;
     h ^= k >> 6;
@@ -34,4 +34,4 @@ function hash() {
   return h >= 0 ? h : -h;
 }
 
-module.exports = hash;
+export default hash;

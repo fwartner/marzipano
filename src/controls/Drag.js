@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var eventEmitter = require('minimal-event-emitter');
-var Dynamics = require('./Dynamics');
-var HammerGestures = require('./HammerGestures');
-var defaults = require('../util/defaults');
-var maxFriction = require('./util').maxFriction;
-var clearOwnProperties = require('../util/clearOwnProperties');
 
-var defaultOptions = {
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics.js';
+import HammerGestures from './HammerGestures.js';
+import defaults from '../util/defaults.js';
+import clearOwnProperties from '../util/clearOwnProperties.js';
+
+import { maxFriction } from './util.js';
+
+const defaultOptions = {
   friction: 6,
   maxFrictionTime: 0.3,
   hammerEvent: 'pan'
 };
 
-var debug = typeof MARZIPANODEBUG !== 'undefined' && MARZIPANODEBUG.controls;
+const debug = typeof MARZIPANODEBUG !== 'undefined' && MARZIPANODEBUG.controls;
 
 /**
  * @class DragControlMethod
@@ -65,13 +66,13 @@ function DragControlMethod(element, pointerType, opts) {
   this._hammer.on("hammer.input", this._handleHammerEvent.bind(this));
 
   if (this._opts.hammerEvent != 'pan' && this._opts.hammerEvent != 'pinch') {
-    throw new Error(this._opts.hammerEvent + ' is not a hammerEvent managed in DragControlMethod');
+    throw new Error(`${this._opts.hammerEvent} is not a hammerEvent managed in DragControlMethod`);
   }
 
-  this._hammer.on(this._opts.hammerEvent + 'start', this._handleStart.bind(this));
-  this._hammer.on(this._opts.hammerEvent + 'move', this._handleMove.bind(this));
-  this._hammer.on(this._opts.hammerEvent + 'end', this._handleEnd.bind(this));
-  this._hammer.on(this._opts.hammerEvent + 'cancel', this._handleEnd.bind(this));
+  this._hammer.on(this._opts.`${hammerEvent}start`, this._handleStart.bind(this));
+  this._hammer.on(this._opts.`${hammerEvent}move`, this._handleMove.bind(this));
+  this._hammer.on(this._opts.`${hammerEvent}end`, this._handleEnd.bind(this));
+  this._hammer.on(this._opts.`${hammerEvent}cancel`, this._handleEnd.bind(this));
 }
 
 eventEmitter(DragControlMethod);
@@ -109,7 +110,6 @@ DragControlMethod.prototype._handleStart = function(e) {
   this._startEvent = e;
 };
 
-
 DragControlMethod.prototype._handleMove = function(e) {
   // Prevent this event from dragging other DOM elements, causing
   // unexpected behavior on Chrome.
@@ -121,7 +121,6 @@ DragControlMethod.prototype._handleMove = function(e) {
     this.emit('parameterDynamics', 'axisScaledY', this._dynamics.y);
   }
 };
-
 
 DragControlMethod.prototype._handleEnd = function(e) {
   // Prevent this event from dragging other DOM elements, causing
@@ -138,23 +137,22 @@ DragControlMethod.prototype._handleEnd = function(e) {
   this._lastEvent = false;
 };
 
-
 DragControlMethod.prototype._updateDynamicsMove = function(e) {
-  var x = e.deltaX;
-  var y = e.deltaY;
+  let x = e.deltaX;
+  let y = e.deltaY;
 
   // When a second finger touches the screen, panstart sometimes has a large
   // offset at start; subtract that offset to prevent a sudden jump.
-  var eventToSubtract = this._lastEvent || this._startEvent;
+  const eventToSubtract = this._lastEvent || this._startEvent;
 
   if (eventToSubtract) {
     x -= eventToSubtract.deltaX;
     y -= eventToSubtract.deltaY;
   }
 
-  var elementRect = this._element.getBoundingClientRect();
-  var width = elementRect.right - elementRect.left;
-  var height = elementRect.bottom - elementRect.top;
+  let elementRect = this._element.getBoundingClientRect();
+  let width = elementRect.right - elementRect.left;
+  let height = elementRect.bottom - elementRect.top;
 
   x /= width;
   y /= height;
@@ -167,15 +165,14 @@ DragControlMethod.prototype._updateDynamicsMove = function(e) {
   this._lastEvent = e;
 };
 
-
-var tmpReleaseFriction = [ null, null ];
+const tmpReleaseFriction = [ null, null ];
 DragControlMethod.prototype._updateDynamicsRelease = function(e) {
-  var elementRect = this._element.getBoundingClientRect();
-  var width = elementRect.right - elementRect.left;
-  var height = elementRect.bottom - elementRect.top;
+  const elementRect = this._element.getBoundingClientRect();
+  const width = elementRect.right - elementRect.left;
+  const height = elementRect.bottom - elementRect.top;
 
-  var x = 1000 * e.velocityX / width;
-  var y = 1000 * e.velocityY / height;
+  const x = 1000 * e.velocityX / width;
+  const y = 1000 * e.velocityY / height;
 
   this._dynamics.x.reset();
   this._dynamics.y.reset();
@@ -187,5 +184,4 @@ DragControlMethod.prototype._updateDynamicsRelease = function(e) {
   this._dynamics.y.friction = tmpReleaseFriction[1];
 };
 
-
-module.exports = DragControlMethod;
+export default DragControlMethod;

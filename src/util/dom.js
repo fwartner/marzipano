@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
 
 function prefixProperty(property) {
 
-  var style = document.documentElement.style;
-  var prefixList = ['Moz', 'Webkit', 'Khtml', 'O', 'ms'];
+  const style = document.documentElement.style;
+  const prefixList = ['Moz', 'Webkit', 'Khtml', 'O', 'ms'];
 
-  for (var i = 0; i < prefixList.length; i++) {
-    var prefix = prefixList[i];
-    var capitalizedProperty = property[0].toUpperCase() + property.slice(1);
-    var prefixedProperty = prefix + capitalizedProperty;
+  for (const i = 0; i < prefixList.length; i++) {
+    const prefix = prefixList[i];
+    const capitalizedProperty = property[0].toUpperCase() + property.slice(1);
+    let prefixedProperty = prefix + capitalizedProperty;
 
     if (prefixedProperty in style) {
       return prefixedProperty;
@@ -35,94 +34,98 @@ function prefixProperty(property) {
 
 }
 
-
 function getWithVendorPrefix(property) {
-  var prefixedProperty = prefixProperty(property);
+  let prefixedProperty = prefixProperty(property);
   return function getPropertyWithVendorPrefix(element) {
     return element.style[prefixedProperty];
   };
 
 }
 
-
 function setWithVendorPrefix(property) {
-  var prefixedProperty = prefixProperty(property);
+  const prefixedProperty = prefixProperty(property);
   return function setPropertyWithVendorPrefix(element, val) {
     return (element.style[prefixedProperty] = val);
   };
 }
 
-
-var setTransform = setWithVendorPrefix('transform');
-var setTransformOrigin = setWithVendorPrefix('transformOrigin');
-
+const setTransform = setWithVendorPrefix('transform');
+const setTransformOrigin = setWithVendorPrefix('transformOrigin');
 
 function setNullTransform(element) {
   setTransform(element, 'translateZ(0)');
 }
 
-
 function setNullTransformOrigin(element) {
   setTransformOrigin(element, '0 0 0');
 }
-
 
 function setAbsolute(element) {
   element.style.position = 'absolute';
 }
 
-
 function setPixelPosition(element, x, y) {
-  element.style.left = x + 'px';
-  element.style.top = y + 'px';
+  element.style.left = `${x}px`;
+  element.style.top = `${y}px`;
 }
-
 
 function setPixelSize(element, width, height) {
-  element.style.width = width + 'px';
-  element.style.height = height + 'px';
+  element.style.width = `${width}px`;
+  element.style.height = `${height}px`;
 }
-
 
 function setNullSize(element) {
   element.style.width = element.style.height = 0;
 }
 
-
 function setFullSize(element) {
   element.style.width = element.style.height = '100%';
 }
-
 
 function setOverflowHidden(element) {
   element.style.overflow = 'hidden';
 }
 
-
 function setOverflowVisible(element) {
   element.style.overflow = 'visible';
 }
-
 
 function setNoPointerEvents(element) {
   element.style.pointerEvents = 'none';
 }
 
+export {
+  prefixProperty,
+  getWithVendorPrefix,
+  setWithVendorPrefix,
+  setTransform,
+  setTransformOrigin,
+  setNullTransform,
+  setNullTransformOrigin,
+  setAbsolute,
+  setPixelPosition,
+  setPixelSize,
+  setNullSize,
+  setFullSize,
+  setOverflowHidden,
+  setOverflowVisible,
+  setNoPointerEvents,
+};
 
-module.exports = {
-  prefixProperty: prefixProperty,
-  getWithVendorPrefix: getWithVendorPrefix,
-  setWithVendorPrefix: setWithVendorPrefix,
-  setTransform: setTransform,
-  setTransformOrigin: setTransformOrigin,
-  setNullTransform: setNullTransform,
-  setNullTransformOrigin: setNullTransformOrigin,
-  setAbsolute: setAbsolute,
-  setPixelPosition: setPixelPosition,
-  setPixelSize: setPixelSize,
-  setNullSize: setNullSize,
-  setFullSize: setFullSize,
-  setOverflowHidden: setOverflowHidden,
-  setOverflowVisible: setOverflowVisible,
-  setNoPointerEvents: setNoPointerEvents
+export default {
+  prefixProperty,
+  getWithVendorPrefix,
+  setWithVendorPrefix,
+  setTransform,
+  setTransformOrigin,
+  setNullTransform,
+  setNullTransformOrigin,
+  setAbsolute,
+  setPixelPosition,
+  setPixelSize,
+  setNullSize,
+  setFullSize,
+  setOverflowHidden,
+  setOverflowVisible,
+  setNoPointerEvents,
 };

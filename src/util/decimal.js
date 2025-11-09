@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 // Convert a number to a string in decimal notation.
 function decimal(x) {
@@ -21,4 +21,4 @@ function decimal(x) {
   return x.toPrecision(15);
 }
 
-module.exports = decimal;
+export default decimal;

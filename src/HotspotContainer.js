@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var eventEmitter = require('minimal-event-emitter');
-var Hotspot = require('./Hotspot');
-var calcRect = require('./util/calcRect');
-var positionAbsolutely = require('./util/positionAbsolutely');
-var setAbsolute = require('./util/dom').setAbsolute;
-var setOverflowHidden = require('./util/dom').setOverflowHidden;
-var setOverflowVisible = require('./util/dom').setOverflowVisible;
-var setNullSize = require('./util/dom').setNullSize;
-var setPixelSize = require('./util/dom').setPixelSize;
-var setPointerEvents = require('./util/dom').setWithVendorPrefix('pointer-events');
-var clearOwnProperties = require('./util/clearOwnProperties');
+
+import eventEmitter from 'minimal-event-emitter';
+import Hotspot from './Hotspot.js';
+import calcRect from './util/calcRect.js';
+import positionAbsolutely from './util/positionAbsolutely.js';
+import clearOwnProperties from './util/clearOwnProperties.js';
+
+import {
+  setAbsolute,
+  setOverflowHidden,
+  setOverflowVisible,
+  setNullSize,
+  setPixelSize,
+  setWithVendorPrefix,
+} from './util/dom.js';
+
+const setPointerEvents = setWithVendorPrefix('pointer-events');
 
 /**
  * Signals that a hotspot has been created or destroyed on the container.
@@ -99,7 +104,6 @@ function HotspotContainer(parentDomElement, stage, view, renderLoop, opts) {
 
 eventEmitter(HotspotContainer);
 
-
 /**
  * Destructor.
  */
@@ -115,14 +119,12 @@ HotspotContainer.prototype.destroy = function() {
   clearOwnProperties(this);
 };
 
-
 /**
  * @return {Element}
  */
 HotspotContainer.prototype.domElement = function() {
   return this._hotspotContainer;
 };
-
 
 /**
  * @param {Rect} rect
@@ -132,14 +134,12 @@ HotspotContainer.prototype.setRect = function(rect) {
   this._visibilityOrRectChanged = true;
 };
 
-
 /**
  * @return {Rect}
  */
 HotspotContainer.prototype.rect = function() {
   return this._rect;
 };
-
 
 /**
  * Creates a new hotspot in this container.
@@ -155,7 +155,7 @@ HotspotContainer.prototype.rect = function() {
 HotspotContainer.prototype.createHotspot = function(domElement, coords, opts) {
   coords = coords || {};
 
-  var hotspot = new Hotspot(
+  const hotspot = new Hotspot(
       domElement, this._hotspotContainer, this._view, coords, opts);
   this._hotspots.push(hotspot);
   hotspot._update();
@@ -165,7 +165,6 @@ HotspotContainer.prototype.createHotspot = function(domElement, coords, opts) {
   return hotspot;
 };
 
-
 /**
  * @param {Hotspot} hotspot
  * @return {boolean}
@@ -174,7 +173,6 @@ HotspotContainer.prototype.hasHotspot = function(hotspot) {
   return this._hotspots.indexOf(hotspot) >= 0;
 };
 
-
 /**
  * @return {Hotspot[]}
  */
@@ -182,14 +180,13 @@ HotspotContainer.prototype.listHotspots = function() {
   return [].concat(this._hotspots);
 };
 
-
 /**
  * Removes a hotspot from the container.
  *
  * @param {Hotspot} hotspot
  */
 HotspotContainer.prototype.destroyHotspot = function(hotspot) {
-  var i = this._hotspots.indexOf(hotspot);
+  let i = this._hotspots.indexOf(hotspot);
   if (i < 0) {
     throw new Error('No such hotspot');
   }
@@ -198,7 +195,6 @@ HotspotContainer.prototype.destroyHotspot = function(hotspot) {
   hotspot.destroy();
   this.emit('hotspotsChange');
 };
-
 
 /**
  * Hide the container's DOM element, causing every contained {@link Hotspot} to
@@ -212,7 +208,6 @@ HotspotContainer.prototype.hide = function() {
   }
 };
 
-
 /**
  * Show the container's DOM element, causing every contained {@link Hotspot} to
  * be shown.
@@ -225,17 +220,16 @@ HotspotContainer.prototype.show = function() {
   }
 };
 
-
 HotspotContainer.prototype._update = function() {
-  var wrapper = this._hotspotContainerWrapper;
-  var width = this._stage.width();
-  var height = this._stage.height();
-  var tmpRect = this._tmpRect;
+  const wrapper = this._hotspotContainerWrapper;
+  const width = this._stage.width();
+  const height = this._stage.height();
+  const tmpRect = this._tmpRect;
 
   // Avoid updating the wrapper DOM unless necessary.
   if (this._visibilityOrRectChanged ||
       (this._rect && (width !== this._stageWidth || height !== this._stageHeight))) {
-    var visible = this._visible;
+    const visible = this._visible;
     wrapper.style.display = visible ? 'block' : 'none';
 
     if (visible) {
@@ -257,10 +251,9 @@ HotspotContainer.prototype._update = function() {
   }
 
   // Update hotspots unconditionally, as the view parameters may have changed.
-  for (var i = 0; i < this._hotspots.length; i++) {
+  for (const i = 0; i < this._hotspots.length; i++) {
     this._hotspots[i]._update();
   }
 };
 
-
-module.exports = HotspotContainer;
+export default HotspotContainer;

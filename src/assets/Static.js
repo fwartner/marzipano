@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var global = require('../util/global');
-var eventEmitter = require('minimal-event-emitter');
-var clearOwnProperties = require('../util/clearOwnProperties');
 
-var propertyMap = {
+import global from '../util/global.js';
+import eventEmitter from 'minimal-event-emitter';
+import clearOwnProperties from '../util/clearOwnProperties.js';
+
+const propertyMap = {
   HTMLImageElement: ['naturalWidth', 'naturalHeight'],
   HTMLCanvasElement: ['width', 'height'],
   ImageBitmap: ['width', 'height']
@@ -37,7 +37,7 @@ var propertyMap = {
  * @throws If the pixel source is unsupported.
  */
 function StaticAsset(element) {
-  var supported = false;
+  let supported = false;
   for (var type in propertyMap) {
     if (global[type] && element instanceof global[type]) {
       supported = true;
@@ -82,4 +82,4 @@ StaticAsset.prototype.isDynamic = function() {
   return false;
 };
 
-module.exports = StaticAsset;
+export default StaticAsset;

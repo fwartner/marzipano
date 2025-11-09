@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var inherits = require('./util/inherits');
+
+import inherits from './util/inherits.js';
 
 /**
  * @class NetworkError
@@ -33,4 +33,4 @@ function NetworkError(message) {
 
 inherits(NetworkError, Error);
 
-module.exports = NetworkError;
+export default NetworkError;

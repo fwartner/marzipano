@@ -13,60 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var WorkQueue = require('./WorkQueue');
-var mod = require('../util/mod');
 
+import WorkQueue from './WorkQueue.js';
+import mod from '../util/mod.js';
 
 function WorkPool(opts) {
   this._concurrency = opts && opts.concurrency || 1;
   this._paused = opts && !!opts.paused || false;
 
   this._pool = [];
-  for (var i = 0; i < this._concurrency; i++) {
+  for (let i = 0; i < this._concurrency; i++) {
     this._pool.push(new WorkQueue(opts));
   }
 
   this._next = 0;
 }
 
-
 WorkPool.prototype.length = function() {
-  var len = 0;
-  for (var i = 0; i < this._pool.length; i++) {
+  const len = 0;
+  for (let i = 0; i < this._pool.length; i++) {
     len += this._pool[i].length();
   }
   return len;
 };
 
-
 WorkPool.prototype.push = function(fn, cb) {
-  var i = this._next;
-  var cancel = this._pool[i].push(fn, cb);
+  let i = this._next;
+  const cancel = this._pool[i].push(fn, cb);
   this._next = mod(this._next + 1, this._concurrency);
   return cancel;
 };
 
-
 WorkPool.prototype.pause = function() {
   if (!this._paused) {
     this._paused = true;
-    for (var i = 0; i < this._concurrency; i++) {
+    for (let i = 0; i < this._concurrency; i++) {
       this._pool[i].pause();
     }
   }
 };
 
-
 WorkPool.prototype.resume = function() {
   if (this._paused) {
     this._paused = false;
-    for (var i = 0; i < this._concurrency; i++) {
+    for (const i = 0; i < this._concurrency; i++) {
       this._pool[i].resume();
     }
   }
 };
 
-
-module.exports = WorkPool;
+export default WorkPool;

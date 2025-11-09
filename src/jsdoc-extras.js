@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+
+
 // This file contains no executable code, only documentation.
 
 /**
@@ -25,7 +27,6 @@
  * @property {number} height The height in pixels.
  */
 
-
 /**
  * @interface Coords
  *
@@ -36,7 +37,6 @@
  * @property {number} y The vertical coordinate.
  *     The vertical axis points down.
  */
-
 
 /**
  * @interface RectSpec

@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var now = require('./now');
+
+import now from './now.js';
 
 function tween(duration, update, done) {
-  var cancelled = false;
+  let cancelled = false;
 
-  var startTime = now();
+  const startTime = now();
 
   function runUpdate() {
     if(cancelled) { return; }
-    var tweenVal = (now() - startTime)/duration;
+    const tweenVal = (now() - startTime)/duration;
     if(tweenVal < 1) {
       update(tweenVal);
       requestAnimationFrame(runUpdate);
@@ -44,4 +44,4 @@ function tween(duration, update, done) {
   }
 }
 
-module.exports = tween;
+export default tween;

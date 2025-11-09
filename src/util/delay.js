@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 // Perform a cancelable delay.
 // See util/cancelize.js for an explanation of what cancelables are.
@@ -21,7 +21,7 @@ function delay(ms, done) {
 
   // Work around IE8 bug whereby a setTimeout callback may still be called
   // after the corresponding clearTimeout is invoked.
-  var timer = null;
+  let timer = null;
 
   function finish() {
     if (timer != null) {
@@ -44,4 +44,4 @@ function delay(ms, done) {
 
 }
 
-module.exports = delay;
+export default delay;

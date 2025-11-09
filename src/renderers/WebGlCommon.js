@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
+
+import clamp from '../util/clamp.js';
 
 // These are used to set the WebGl depth for a tile.
-var MAX_LAYERS = 256; // Max number of layers per stage.
-var MAX_LEVELS = 256; // Max number of levels per layer.
+const MAX_LAYERS = 256; // Max number of layers per stage.
+const MAX_LEVELS = 256; // Max number of levels per layer.
 
-var clamp = require('../util/clamp');
-var vec4 = require('gl-matrix').vec4;
-var vec3 = require('gl-matrix').vec3;
-var mat4 = require('gl-matrix').mat4;
-
+import { vec4 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
 
 function createShader(gl, type, src) {
-  var shader = gl.createShader(type);
+  let shader = gl.createShader(type);
   gl.shaderSource(shader, src);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -35,13 +35,12 @@ function createShader(gl, type, src) {
   return shader;
 }
 
-
 function createShaderProgram(gl, vertexSrc, fragmentSrc, attribList, uniformList) {
 
-  var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSrc);
-  var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSrc);
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSrc);
+  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSrc);
 
-  var shaderProgram = gl.createProgram();
+  const shaderProgram = gl.createProgram();
 
   gl.attachShader(shaderProgram, vertexShader);
   gl.attachShader(shaderProgram, fragmentShader);
@@ -51,44 +50,41 @@ function createShaderProgram(gl, vertexSrc, fragmentSrc, attribList, uniformList
     throw gl.getProgramInfoLog(shaderProgram);
   }
 
-  for (var i = 0; i < attribList.length; i++) {
-    var attrib = attribList[i];
+  for (let i = 0; i < attribList.length; i++) {
+    const attrib = attribList[i];
     shaderProgram[attrib] = gl.getAttribLocation(shaderProgram, attrib);
     if (shaderProgram[attrib] === -1) {
-      throw new Error('Shader program has no ' + attrib + ' attribute');
+      throw new Error(`Shader program has no ${attrib} attribute`);
     }
   }
 
-  for (var j = 0; j < uniformList.length; j++) {
-    var uniform = uniformList[j];
+  for (const j = 0; j < uniformList.length; j++) {
+    const uniform = uniformList[j];
     shaderProgram[uniform] = gl.getUniformLocation(shaderProgram, uniform);
     if (shaderProgram[uniform] === -1) {
-      throw new Error('Shader program has no ' + uniform + ' uniform');
+      throw new Error(`Shader program has no ${uniform} uniform`);
     }
   }
 
   return shaderProgram;
 }
 
-
 function destroyShaderProgram(gl, shaderProgram) {
-  var shaderList = gl.getAttachedShaders(shaderProgram);
-  for (var i = 0; i < shaderList.length; i++) {
-    var shader = shaderList[i];
+  const shaderList = gl.getAttachedShaders(shaderProgram);
+  for (let i = 0; i < shaderList.length; i++) {
+    const shader = shaderList[i];
     gl.detachShader(shaderProgram, shader);
     gl.deleteShader(shader);
   }
   gl.deleteProgram(shaderProgram);
 }
 
-
 function createConstantBuffer(gl, target, usage, value) {
-  var buffer = gl.createBuffer();
+  const buffer = gl.createBuffer();
   gl.bindBuffer(target, buffer);
   gl.bufferData(target, value, usage);
   return buffer;
 }
-
 
 function createConstantBuffers(gl, vertexIndices, vertexPositions, textureCoords) {
   return {
@@ -98,29 +94,25 @@ function createConstantBuffers(gl, vertexIndices, vertexPositions, textureCoords
   };
 }
 
-
 function destroyConstantBuffers(gl, constantBuffers) {
   gl.deleteBuffer(constantBuffers.vertexIndices);
   gl.deleteBuffer(constantBuffers.vertexPositions);
   gl.deleteBuffer(constantBuffers.textureCoords);
 }
 
-
 function enableAttributes(gl, shaderProgram) {
-  var numAttrs = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
-  for (var i = 0; i < numAttrs; i++) {
+  let numAttrs = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
+  for (let i = 0; i < numAttrs; i++) {
     gl.enableVertexAttribArray(i);
   }
 }
 
-
 function disableAttributes(gl, shaderProgram) {
-  var numAttrs = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
-  for (var i = 0; i < numAttrs; i++) {
+  const numAttrs = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
+  for (const i = 0; i < numAttrs; i++) {
     gl.disableVertexAttribArray(i);
   }
 }
-
 
 function setTexture(gl, shaderProgram, texture) {
   gl.activeTexture(gl.TEXTURE0);
@@ -128,43 +120,39 @@ function setTexture(gl, shaderProgram, texture) {
   gl.uniform1i(shaderProgram.uSampler, 0);
 }
 
-
 function setDepth(gl, shaderProgram, layerZ, tileZ) {
-  var depth = (((layerZ + 1) * MAX_LEVELS) - tileZ) / (MAX_LEVELS * MAX_LAYERS);
+  const depth = (((layerZ + 1) * MAX_LEVELS) - tileZ) / (MAX_LEVELS * MAX_LAYERS);
   gl.uniform1f(shaderProgram.uDepth, depth);
 }
 
-
-var defaultOpacity = 1.0;
-var defaultColorOffset = vec4.create();
-var defaultColorMatrix = mat4.create();
+const defaultOpacity = 1.0;
+const defaultColorOffset = vec4.create();
+const defaultColorMatrix = mat4.create();
 mat4.identity(defaultColorMatrix);
 
 function setupPixelEffectUniforms(gl, effects, uniforms) {
-  var opacity = defaultOpacity;
+  let opacity = defaultOpacity;
   if (effects && effects.opacity != null) {
     opacity = effects.opacity;
   }
   gl.uniform1f(uniforms.opacity, opacity);
 
-  var colorOffset = defaultColorOffset;
+  let colorOffset = defaultColorOffset;
   if (effects && effects.colorOffset) {
     colorOffset = effects.colorOffset;
   }
   gl.uniform4fv(uniforms.colorOffset, colorOffset);
 
-  var colorMatrix = defaultColorMatrix;
+  let colorMatrix = defaultColorMatrix;
   if (effects && effects.colorMatrix) {
     colorMatrix = effects.colorMatrix;
   }
   gl.uniformMatrix4fv(uniforms.colorMatrix, false, colorMatrix);
 }
 
-
 // Temporary vectors for setViewport.
-var translateVector = vec3.create();
-var scaleVector = vec3.create();
-
+const translateVector = vec3.create();
+const scaleVector = vec3.create();
 
 // Sets the WebGL viewport and returns a viewport clamping compensation matrix.
 //
@@ -182,19 +170,19 @@ function setViewport(gl, layer, rect, viewportMatrix) {
     return;
   }
 
-  var offsetX = rect.x;
-  var clampedOffsetX = clamp(offsetX, 0, 1);
-  var leftExcess = clampedOffsetX - offsetX;
-  var maxClampedWidth = 1 - clampedOffsetX;
-  var clampedWidth = clamp(rect.width - leftExcess, 0, maxClampedWidth);
-  var rightExcess = rect.width - clampedWidth;
+  const offsetX = rect.x;
+  const clampedOffsetX = clamp(offsetX, 0, 1);
+  const leftExcess = clampedOffsetX - offsetX;
+  const maxClampedWidth = 1 - clampedOffsetX;
+  const clampedWidth = clamp(rect.width - leftExcess, 0, maxClampedWidth);
+  const rightExcess = rect.width - clampedWidth;
 
-  var offsetY = 1 - rect.height - rect.y;
-  var clampedOffsetY = clamp(offsetY, 0, 1);
-  var bottomExcess = clampedOffsetY - offsetY;
-  var maxClampedHeight = 1 - clampedOffsetY;
-  var clampedHeight = clamp(rect.height - bottomExcess, 0, maxClampedHeight);
-  var topExcess = rect.height - clampedHeight;
+  const offsetY = 1 - rect.height - rect.y;
+  const clampedOffsetY = clamp(offsetY, 0, 1);
+  const bottomExcess = clampedOffsetY - offsetY;
+  const maxClampedHeight = 1 - clampedOffsetY;
+  const clampedHeight = clamp(rect.height - bottomExcess, 0, maxClampedHeight);
+  const topExcess = rect.height - clampedHeight;
 
   vec3.set(
     scaleVector,
@@ -218,7 +206,7 @@ function setViewport(gl, layer, rect, viewportMatrix) {
               gl.drawingBufferHeight * clampedHeight);
 }
 
-module.exports = {
+export default {
   createShaderProgram: createShaderProgram,
   destroyShaderProgram: destroyShaderProgram,
   createConstantBuffers: createConstantBuffers,

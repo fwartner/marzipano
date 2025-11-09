@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marzipano Development</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1 {
+      margin: 0 0 1rem 0;
+    }
+    .info {
+      background: #2a2a2a;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .demo-viewer {
+      width: 100%;
+      height: 600px;
+      background: #000;
+      border-radius: 8px;
+    }
+    a {
+      color: #4a9eff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .links {
+      margin-top: 2rem;
+      display: flex;
+      gap: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌐 Marzipano Development Server</h1>
+
+    <div class="info">
+      <h2>Development Status</h2>
+      <p>✅ Vite dev server is running</p>
+      <p>📦 ES Module system ready</p>
+      <p>🔧 Hot Module Replacement enabled</p>
+    </div>
+
+    <div class="info">
+      <h3>Next Steps:</h3>
+      <ol>
+        <li>Convert CommonJS modules to ES6 modules</li>
+        <li>Run tests with Vitest</li>
+        <li>View existing <a href="/demos/">demos</a></li>
+      </ol>
+    </div>
+
+    <div class="links">
+      <div>
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="https://www.marzipano.net">Official Website</a></li>
+          <li><a href="https://github.com/google/marzipano">GitHub Repository</a></li>
+          <li><a href="./MODERNIZATION_PLAN.md">Modernization Plan</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Scripts</h3>
+        <ul>
+          <li><code>npm run dev</code> - This dev server</li>
+          <li><code>npm test</code> - Run tests</li>
+          <li><code>npm run build</code> - Build for production</li>
+          <li><code>npm run lint</code> - Lint code</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Once modules are converted, this will load the library -->
+  <!-- <script type="module">
+    import Marzipano from './src/index.js';
+    console.log('Marzipano loaded:', Marzipano);
+  </script> -->
+
+  <script>
+    console.log('🌐 Marzipano modernization in progress...');
+    console.log('📝 Check MODERNIZATION_PLAN.md for details');
+  </script>
+</body>
+</html>

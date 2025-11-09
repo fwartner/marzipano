@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var mod = require('../util/mod');
 
-var defaultCapacity = 64;
+import mod from '../util/mod.js';
+
+const defaultCapacity = 64;
 
 // A map data structure for keys implementing hash() and equals() and arbitrary
 // values. The capacity, if given, is just a hint; the map is allowed to exceed
@@ -31,7 +31,7 @@ function Map(capacity) {
 
   this._keyBuckets = [];
   this._valBuckets = [];
-  for (var i = 0; i < this._capacity; i++) {
+  for (let i = 0; i < this._capacity; i++) {
     this._keyBuckets.push([]);
     this._valBuckets.push([]);
   }
@@ -40,13 +40,13 @@ function Map(capacity) {
 
 // Returns the value associated with the specified key, or null if not found.
 Map.prototype.get = function(key) {
-  var h = mod(key.hash(), this._capacity);
-  var keyBucket = this._keyBuckets[h];
-  for (var i = 0; i < keyBucket.length; i++) {
-    var existingKey = keyBucket[i];
+  let h = mod(key.hash(), this._capacity);
+  let keyBucket = this._keyBuckets[h];
+  for (let i = 0; i < keyBucket.length; i++) {
+    let existingKey = keyBucket[i];
     if (key.equals(existingKey)) {
-      var valBucket = this._valBuckets[h];
-      var existingValue = valBucket[i];
+      let valBucket = this._valBuckets[h];
+      let existingValue = valBucket[i];
       return existingValue;
     }
   }
@@ -57,13 +57,13 @@ Map.prototype.get = function(key) {
 // currently associated value.
 // Returns the replaced value, or null if no value was replaced.
 Map.prototype.set = function(key, val) {
-  var h = mod(key.hash(), this._capacity);
-  var keyBucket = this._keyBuckets[h];
-  var valBucket = this._valBuckets[h];
-  for (var i = 0; i < keyBucket.length; i++) {
-    var existingKey = keyBucket[i];
+  let h = mod(key.hash(), this._capacity);
+  let keyBucket = this._keyBuckets[h];
+  let valBucket = this._valBuckets[h];
+  for (let i = 0; i < keyBucket.length; i++) {
+    let existingKey = keyBucket[i];
     if (key.equals(existingKey)) {
-      var existingValue = valBucket[i];
+      let existingValue = valBucket[i];
       keyBucket[i] = key;
       valBucket[i] = val;
       return existingValue;
@@ -78,15 +78,15 @@ Map.prototype.set = function(key, val) {
 // Removes the key-value pair associated with the specified key.
 // Returns the removed value, or null if not found.
 Map.prototype.del = function(key) {
-  var h = mod(key.hash(), this._capacity);
-  var keyBucket = this._keyBuckets[h];
-  var valBucket = this._valBuckets[h];
-  for (var i = 0; i < keyBucket.length; i++) {
-    var existingKey = keyBucket[i];
+  let h = mod(key.hash(), this._capacity);
+  let keyBucket = this._keyBuckets[h];
+  let valBucket = this._valBuckets[h];
+  for (let i = 0; i < keyBucket.length; i++) {
+    let existingKey = keyBucket[i];
     if (key.equals(existingKey)) {
-      var existingValue = valBucket[i];
+      const existingValue = valBucket[i];
       // Splice manually to avoid Array#splice return value allocation.
-      for (var j = i; j < keyBucket.length - 1; j++) {
+      for (let j = i; j < keyBucket.length - 1; j++) {
         keyBucket[j] = keyBucket[j+1];
         valBucket[j] = valBucket[j+1];
       }
@@ -101,10 +101,10 @@ Map.prototype.del = function(key) {
 
 // Returns whether there is a value associated with the specified key.
 Map.prototype.has = function(key) {
-  var h = mod(key.hash(), this._capacity);
-  var keyBucket = this._keyBuckets[h];
-  for (var i = 0; i < keyBucket.length; i++) {
-    var existingKey = keyBucket[i];
+  const h = mod(key.hash(), this._capacity);
+  let keyBucket = this._keyBuckets[h];
+  for (let i = 0; i < keyBucket.length; i++) {
+    const existingKey = keyBucket[i];
     if (key.equals(existingKey)) {
       return true;
     }
@@ -119,7 +119,7 @@ Map.prototype.size = function() {
 
 // Removes all key-value pairs from the map.
 Map.prototype.clear = function() {
-  for (var i = 0; i < this._capacity; i++) {
+  for (let i = 0; i < this._capacity; i++) {
     this._keyBuckets[i].length = 0;
     this._valBuckets[i].length = 0;
   }
@@ -130,11 +130,11 @@ Map.prototype.clear = function() {
 // order. Returns the number of times fn was called.
 // The result is unspecified if the map is mutated during iteration.
 Map.prototype.forEach = function(fn) {
-  var count = 0;
-  for (var i = 0; i < this._capacity; i++) {
-    var keyBucket = this._keyBuckets[i];
-    var valBucket = this._valBuckets[i];
-    for (var j = 0; j < keyBucket.length; j++) {
+  const count = 0;
+  for (const i = 0; i < this._capacity; i++) {
+    const keyBucket = this._keyBuckets[i];
+    const valBucket = this._valBuckets[i];
+    for (const j = 0; j < keyBucket.length; j++) {
       fn(keyBucket[j], valBucket[j]);
       count += 1;
     }
@@ -142,4 +142,4 @@ Map.prototype.forEach = function(fn) {
   return count;
 };
 
-module.exports = Map;
+export default Map;

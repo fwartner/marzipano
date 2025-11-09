@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 /**
  * @memberof util
@@ -24,4 +24,4 @@ function degToRad(deg) {
   return deg * Math.PI / 180;
 }
 
-module.exports = degToRad;
+export default degToRad;

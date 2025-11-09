@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var defaultPixelRatio = 1;
+
+const defaultPixelRatio = 1;
 
 function pixelRatio() {
   if (typeof window !== 'undefined') {
@@ -23,7 +23,7 @@ function pixelRatio() {
       return window.devicePixelRatio;
     }
     else {
-      var screen = window.screen;
+      const screen = window.screen;
       if (screen && screen.deviceXDPI && screen.logicalXDPI) {
         return screen.deviceXDPI / screen.logicalXDPI;
       } else if (screen && screen.systemXDPI && screen.logicalXDPI) {
@@ -34,4 +34,4 @@ function pixelRatio() {
   return defaultPixelRatio;
 }
 
-module.exports = pixelRatio;
+export default pixelRatio;

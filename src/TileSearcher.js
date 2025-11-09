@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var Set = require('./collections/Set');
+
+import Set from './collections/Set.js';
 
 /**
  * @class TileSearcher
@@ -45,11 +45,11 @@ function TileSearcher() {
  * @return {number} The number of visible tiles found.
  */
 TileSearcher.prototype.search = function(view, startingTile, result) {
-  var stack = this._stack;
-  var visited = this._visited;
-  var vertices = this._vertices;
+  const stack = this._stack;
+  const visited = this._visited;
+  const vertices = this._vertices;
 
-  var count = 0;
+  const count = 0;
 
   // Clear internal state.
   this._clear();
@@ -57,7 +57,7 @@ TileSearcher.prototype.search = function(view, startingTile, result) {
   stack.push(startingTile);
 
   while (stack.length > 0) {
-    var tile = stack.pop();
+    const tile = stack.pop();
 
     if (visited.has(tile)) {
       // Skip already visited tile.
@@ -73,8 +73,8 @@ TileSearcher.prototype.search = function(view, startingTile, result) {
     visited.add(tile);
 
     // Add neighbors to the stack of tiles to explore.
-    var neighbors = tile.neighbors();
-    for (var i = 0; i < neighbors.length; i++) {
+    const neighbors = tile.neighbors();
+    for (const i = 0; i < neighbors.length; i++) {
       stack.push(neighbors[i]);
     }
 
@@ -98,4 +98,4 @@ TileSearcher.prototype._clear = function() {
   this._visited.clear();
 };
 
-module.exports = TileSearcher;
+export default TileSearcher;

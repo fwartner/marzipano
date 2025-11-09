@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var defaults = require('../util/defaults');
-var clearOwnProperties = require('../util/clearOwnProperties');
 
-var defaultOpts = {
+import defaults from '../util/defaults.js';
+import clearOwnProperties from '../util/clearOwnProperties.js';
+
+const defaultOpts = {
   active: 'move',
   inactive: 'default',
   disabled: 'default'
@@ -90,8 +90,8 @@ ControlCursor.prototype.destroy = function() {
 };
 
 ControlCursor.prototype._updateAttachment = function() {
-  var controls = this._controls;
-  var id = this._id;
+  const controls = this._controls;
+  const id = this._id;
   if (controls.enabled() && controls.method(id).enabled) {
     this._attachToControlMethod(controls.method(id));
   } else {
@@ -129,4 +129,4 @@ ControlCursor.prototype._setCursor = function(cursor) {
   this._element.style.cursor = cursor;
 }
 
-module.exports = ControlCursor;
+export default ControlCursor;

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var defaults = require('../util/defaults');
-var DragControlMethod = require('./Drag');
-var QtvrControlMethod = require('./Qtvr');
-var ScrollZoomControlMethod = require('./ScrollZoom');
-var PinchZoomControlMethod = require('./PinchZoom');
-var KeyControlMethod = require('./Key');
 
-var defaultOptions = {
+import defaults from '../util/defaults.js';
+import DragControlMethod from './Drag.js';
+import QtvrControlMethod from './Qtvr.js';
+import ScrollZoomControlMethod from './ScrollZoom.js';
+import PinchZoomControlMethod from './PinchZoom.js';
+import KeyControlMethod from './Key.js';
+
+const defaultOptions = {
   mouseViewMode: 'drag',
   dragMode: 'pan'
 };
@@ -49,7 +49,7 @@ var defaultOptions = {
 function registerDefaultControls(controls, element, opts) {
   opts = defaults(opts || {}, defaultOptions);
 
-  var controlMethods = {
+  const controlMethods = {
     mouseViewDrag: new DragControlMethod(element, 'mouse'),
     mouseViewQtvr: new QtvrControlMethod(element, 'mouse'),
 
@@ -68,19 +68,18 @@ function registerDefaultControls(controls, element, opts) {
     eKey: new KeyControlMethod(69, 'roll', -0.7, 3)
   };
 
-  var enabledControls = ['scrollZoom', 'touchView', 'pinch' ];
+  const enabledControls = ['scrollZoom', 'touchView', 'pinch' ];
 
   if (opts.scrollZoom !== false) {
     controlMethods.scrollZoom = new ScrollZoomControlMethod(element); //{ frictionTime: 0 }
   }
 
-  var controlMethodGroups = {
+  const controlMethodGroups = {
     arrowKeys: [ 'leftArrowKey', 'rightArrowKey', 'upArrowKey', 'downArrowKey' ],
     plusMinusKeys: [ 'plusKey', 'minusKey' ],
     wasdKeys: [ 'wKey', 'aKey', 'sKey', 'dKey' ],
     qeKeys: [ 'qKey', 'eKey' ]
   };
-
 
   switch (opts.dragMode) {
     case 'pinch':
@@ -106,7 +105,7 @@ function registerDefaultControls(controls, element, opts) {
   }
 
   for (var id in controlMethods) {
-    var method = controlMethods[id];
+    const method = controlMethods[id];
     controls.registerMethod(id, method);
     if (enabledControls.indexOf(id) >= 0) {
       controls.enableMethod(id);
@@ -114,11 +113,11 @@ function registerDefaultControls(controls, element, opts) {
   }
 
   for (var groupId in controlMethodGroups) {
-    var methodGroup = controlMethodGroups[groupId];
+    const methodGroup = controlMethodGroups[groupId];
     controls.addMethodGroup(groupId, methodGroup);
   }
 
   return controlMethods;
 }
 
-module.exports = registerDefaultControls;
+export default registerDefaultControls;

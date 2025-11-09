@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var once = require('./once');
+
+import once from './once.js';
 
 // A cancelable function is an asynchronous function (i.e., one whose last
 // argument is a callback receiving an error plus zero or more return values)
@@ -37,8 +37,8 @@ function cancelize(fn) {
     if (!arguments.length) {
       throw new Error('cancelized: expected at least one argument');
     }
-    var args = Array.prototype.slice.call(arguments, 0);
-    var done = args[args.length - 1] = once(args[args.length - 1]);
+    const args = Array.prototype.slice.call(arguments, 0);
+    const done = args[args.length - 1] = once(args[args.length - 1]);
 
     function cancel() {
       done.apply(null, arguments);
@@ -50,4 +50,4 @@ function cancelize(fn) {
   };
 }
 
-module.exports = cancelize;
+export default cancelize;

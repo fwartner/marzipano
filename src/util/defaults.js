@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 function defaults(obj, defaultsObj) {
   for (var key in defaultsObj) {
@@ -24,4 +24,4 @@ function defaults(obj, defaultsObj) {
   return obj;
 }
 
-module.exports = defaults;
+export default defaults;

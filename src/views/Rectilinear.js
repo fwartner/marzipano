@@ -13,39 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var eventEmitter = require('minimal-event-emitter');
-var mat4 = require('gl-matrix').mat4;
-var vec4 = require('gl-matrix').vec4;
-var pixelRatio = require('../util/pixelRatio');
-var convertFov = require('../util/convertFov');
-var mod = require('../util/mod');
-var real = require('../util/real');
-var clamp = require('../util/clamp');
-var decimal = require('../util/decimal');
-var compose = require('../util/compose');
-var clearOwnProperties = require('../util/clearOwnProperties');
+
+import eventEmitter from 'minimal-event-emitter';
+import pixelRatio from '../util/pixelRatio.js';
+import convertFov from '../util/convertFov.js';
+import mod from '../util/mod.js';
+import real from '../util/real.js';
+import clamp from '../util/clamp.js';
+import decimal from '../util/decimal.js';
+import compose from '../util/compose.js';
+import clearOwnProperties from '../util/clearOwnProperties.js';
+
+import { mat4 } from 'gl-matrix';
+import { vec4 } from 'gl-matrix';
 
 // Default viewport dimensions.
 // Start with zero to ensure that those values are handled correctly.
-var defaultWidth = 0;
-var defaultHeight = 0;
+const defaultWidth = 0;
+const defaultHeight = 0;
 
 // Default view parameters.
-var defaultYaw = 0;
-var defaultPitch = 0;
-var defaultRoll = 0;
-var defaultFov = Math.PI/4;
-var defaultProjectionCenterX = 0;
-var defaultProjectionCenterY = 0;
+const defaultYaw = 0;
+const defaultPitch = 0;
+const defaultRoll = 0;
+const defaultFov = Math.PI/4;
+const defaultProjectionCenterX = 0;
+const defaultProjectionCenterY = 0;
 
 // A fov of exactly 0 or π breaks some computations, so we constrain it to the
 // [fovLimitEpsilon, π - fovLimitEpsilon] interval. We use 6 decimal places for
 // the epsilon value to avoid broken rendering due to loss of precision in
 // floating point computations.
-var fovLimitEpsilon = 0.000001;
-
+const fovLimitEpsilon = 0.000001;
 
 /**
  * @interface RectilinearViewParams
@@ -67,7 +67,6 @@ var fovLimitEpsilon = 0.000001;
  * @property {fov} fov The vertical field of view, in the [0, π] range.
  */
 
-
 /**
  * @interface RectilinearViewCoords
  *
@@ -76,7 +75,6 @@ var fovLimitEpsilon = 0.000001;
  * @property {number} yaw The yaw angle, in the [-π, π] range.
  * @property {number} pitch The pitch angle, in the [-π, π] range.
  */
-
 
 /**
  * @typedef {function} RectilinearViewLimiter
@@ -152,14 +150,12 @@ function RectilinearView(params, limiter) {
 
 eventEmitter(RectilinearView);
 
-
 /**
  * Destructor.
  */
 RectilinearView.prototype.destroy = function() {
   clearOwnProperties(this);
 };
-
 
 /**
  * Get the yaw angle.
@@ -169,7 +165,6 @@ RectilinearView.prototype.yaw = function() {
   return this._yaw;
 };
 
-
 /**
  * Get the pitch angle.
  * @return {number}
@@ -177,7 +172,6 @@ RectilinearView.prototype.yaw = function() {
 RectilinearView.prototype.pitch = function() {
   return this._pitch;
 };
-
 
 /**
  * Get the roll angle.
@@ -187,16 +181,13 @@ RectilinearView.prototype.roll = function() {
   return this._roll;
 };
 
-
 RectilinearView.prototype.projectionCenterX = function() {
   return this._projectionCenterX;
 };
 
-
 RectilinearView.prototype.projectionCenterY = function() {
   return this._projectionCenterY;
 };
-
 
 /**
  * Get the fov value.
@@ -206,7 +197,6 @@ RectilinearView.prototype.fov = function() {
   return this._fov;
 };
 
-
 /**
  * Get the viewport width.
  * @return {number}
@@ -215,7 +205,6 @@ RectilinearView.prototype.width = function() {
   return this._width;
 };
 
-
 /**
  * Get the viewport height.
  * @return {number}
@@ -223,7 +212,6 @@ RectilinearView.prototype.width = function() {
 RectilinearView.prototype.height = function() {
   return this._height;
 };
-
 
 /**
  * Get the viewport dimensions. If an argument is supplied, it is filled in with
@@ -237,7 +225,6 @@ RectilinearView.prototype.size = function(size) {
   size.height = this._height;
   return size;
 };
-
 
 /**
  * Get the view parameters. If an argument is supplied, it is filled in with the
@@ -254,7 +241,6 @@ RectilinearView.prototype.parameters = function(params) {
   return params;
 };
 
-
 /**
  * Get the view limiter, or null if unset.
  * @return {?RectilinearViewLimiter}
@@ -262,7 +248,6 @@ RectilinearView.prototype.parameters = function(params) {
 RectilinearView.prototype.limiter = function() {
   return this._limiter;
 };
-
 
 /**
  * Set the yaw angle.
@@ -274,7 +259,6 @@ RectilinearView.prototype.setYaw = function(yaw) {
   this._update(this._params);
 };
 
-
 /**
  * Set the pitch angle.
  * @param {number} pitch
@@ -284,7 +268,6 @@ RectilinearView.prototype.setPitch = function(pitch) {
   this._params.pitch = pitch;
   this._update(this._params);
 };
-
 
 /**
  * Set the roll angle.
@@ -296,7 +279,6 @@ RectilinearView.prototype.setRoll = function(roll) {
   this._update(this._params);
 };
 
-
 /**
  * Set the fov value.
  * @param {number} fov
@@ -307,20 +289,17 @@ RectilinearView.prototype.setFov = function(fov) {
   this._update(this._params);
 };
 
-
 RectilinearView.prototype.setProjectionCenterX = function(projectionCenterX) {
   this._resetParams();
   this._params.projectionCenterX = projectionCenterX;
   this._update(this._params);
 };
 
-
 RectilinearView.prototype.setProjectionCenterY = function(projectionCenterY) {
   this._resetParams();
   this._params.projectionCenterY = projectionCenterY;
   this._update(this._params);
 };
-
 
 /**
  * Add yawOffset to the current yaw value.
@@ -330,7 +309,6 @@ RectilinearView.prototype.offsetYaw = function(yawOffset) {
   this.setYaw(this._yaw + yawOffset);
 };
 
-
 /**
  * Add pitchOffset to the current pitch value.
  * @param {number} pitchOffset
@@ -338,7 +316,6 @@ RectilinearView.prototype.offsetYaw = function(yawOffset) {
 RectilinearView.prototype.offsetPitch = function(pitchOffset) {
   this.setPitch(this._pitch + pitchOffset);
 };
-
 
 /**
  * Add rollOffset to the current roll value.
@@ -348,7 +325,6 @@ RectilinearView.prototype.offsetRoll = function(rollOffset) {
   this.setRoll(this._roll + rollOffset);
 };
 
-
 /**
  * Add fovOffset to the current fov value.
  * @param {number} fovOffset
@@ -356,7 +332,6 @@ RectilinearView.prototype.offsetRoll = function(rollOffset) {
 RectilinearView.prototype.offsetFov = function(fovOffset) {
   this.setFov(this._fov + fovOffset);
 };
-
 
 /**
  * Set the viewport dimensions.
@@ -368,7 +343,6 @@ RectilinearView.prototype.setSize = function(size) {
   this._params.height = size.height;
   this._update(this._params);
 };
-
 
 /**
  * Set the view parameters. Unspecified parameters are left unchanged.
@@ -385,7 +359,6 @@ RectilinearView.prototype.setParameters = function(params) {
   this._update(this._params);
 };
 
-
 /**
  * Set the view limiter.
  * @param {?RectilinearViewLimiter} limiter The new limiter, or null to unset.
@@ -395,9 +368,8 @@ RectilinearView.prototype.setLimiter = function(limiter) {
   this._update();
 };
 
-
 RectilinearView.prototype._resetParams = function() {
-  var params = this._params;
+  let params = this._params;
   params.yaw = null;
   params.pitch = null;
   params.roll = null;
@@ -405,7 +377,6 @@ RectilinearView.prototype._resetParams = function() {
   params.width = null;
   params.height = null;
 };
-
 
 RectilinearView.prototype._update = function(params) {
 
@@ -416,14 +387,14 @@ RectilinearView.prototype._update = function(params) {
   }
 
   // Save old parameters for later comparison.
-  var oldYaw = this._yaw;
-  var oldPitch = this._pitch;
-  var oldRoll = this._roll;
-  var oldFov = this._fov;
-  var oldProjectionCenterX = this._projectionCenterX;
-  var oldProjectionCenterY = this._projectionCenterY;
-  var oldWidth = this._width;
-  var oldHeight = this._height;
+  const oldYaw = this._yaw;
+  const oldPitch = this._pitch;
+  const oldRoll = this._roll;
+  const oldFov = this._fov;
+  const oldProjectionCenterX = this._projectionCenterX;
+  const oldProjectionCenterY = this._projectionCenterY;
+  const oldWidth = this._width;
+  const oldHeight = this._height;
 
   // Fill in object with the new set of parameters to pass into the limiter.
   params.yaw = params.yaw != null ? params.yaw : oldYaw;
@@ -449,14 +420,14 @@ RectilinearView.prototype._update = function(params) {
   params = this._normalize(params);
 
   // Grab the limited parameters.
-  var newYaw = params.yaw;
-  var newPitch = params.pitch;
-  var newRoll = params.roll;
-  var newFov = params.fov;
-  var newWidth = params.width;
-  var newHeight = params.height;
-  var newProjectionCenterX = params.projectionCenterX;
-  var newProjectionCenterY = params.projectionCenterY;
+  const newYaw = params.yaw;
+  const newPitch = params.pitch;
+  const newRoll = params.roll;
+  const newFov = params.fov;
+  const newWidth = params.width;
+  const newHeight = params.height;
+  const newProjectionCenterX = params.projectionCenterX;
+  const newProjectionCenterY = params.projectionCenterY;
 
   // Consistency check.
   if (!real(newYaw) || !real(newPitch) || !real(newRoll) ||
@@ -489,20 +460,18 @@ RectilinearView.prototype._update = function(params) {
 
 };
 
-
 RectilinearView.prototype._normalize = function(params) {
 
   this._normalizeCoordinates(params);
 
   // Make sure that neither the horizontal nor the vertical fields of view
   // exceed π - fovLimitEpsilon.
-  var hfovPi = convertFov.htov(Math.PI, params.width, params.height);
-  var maxFov = isNaN(hfovPi) ? Math.PI : Math.min(Math.PI, hfovPi);
+  const hfovPi = convertFov.htov(Math.PI, params.width, params.height);
+  const maxFov = isNaN(hfovPi) ? Math.PI : Math.min(Math.PI, hfovPi);
   params.fov = clamp(params.fov, fovLimitEpsilon, maxFov - fovLimitEpsilon);
 
   return params;
 };
-
 
 RectilinearView.prototype._normalizeCoordinates = function(params) {
   // Constrain yaw, pitch and roll to the [-π, π] interval.
@@ -518,7 +487,6 @@ RectilinearView.prototype._normalizeCoordinates = function(params) {
   return params;
 };
 
-
 /**
  * Normalize view coordinates so that they are the closest to the current view.
  * Useful for tweening the view through the shortest path. If a result argument
@@ -531,15 +499,15 @@ RectilinearView.prototype._normalizeCoordinates = function(params) {
  */
 RectilinearView.prototype.normalizeToClosest = function(coords, result) {
 
-  var viewYaw = this._yaw;
-  var viewPitch = this._pitch;
+  const viewYaw = this._yaw;
+  const viewPitch = this._pitch;
 
-  var coordYaw = coords.yaw;
-  var coordPitch = coords.pitch;
+  let coordYaw = coords.yaw;
+  let coordPitch = coords.pitch;
 
   // Check if the yaw is closer after subtracting or adding a full circle.
-  var prevYaw = coordYaw - 2*Math.PI;
-  var nextYaw = coordYaw + 2*Math.PI;
+  const prevYaw = coordYaw - 2*Math.PI;
+  const nextYaw = coordYaw + 2*Math.PI;
   if (Math.abs(prevYaw - viewYaw) < Math.abs(coordYaw - viewYaw)) {
     coordYaw = prevYaw;
   }
@@ -548,8 +516,8 @@ RectilinearView.prototype.normalizeToClosest = function(coords, result) {
   }
 
   // Check if the pitch is closer after subtracting or adding a full circle.
-  var prevPitch = coordPitch - 2*Math.PI;
-  var nextPitch = coordPitch + 2*Math.PI;
+  const prevPitch = coordPitch - 2*Math.PI;
+  const nextPitch = coordPitch + 2*Math.PI;
   if (Math.abs(prevPitch - viewPitch) < Math.abs(coordPitch - viewPitch)) {
     coordPitch = prevPitch;
   }
@@ -564,15 +532,14 @@ RectilinearView.prototype.normalizeToClosest = function(coords, result) {
 
 };
 
-
 RectilinearView.prototype.updateWithControlParameters = function(parameters) {
   // axisScaledX and axisScaledY are scaled according to their own axis
   // x and y are scaled by the same value
 
   // If the viewport dimensions are zero, assume a square viewport
   // when converting from hfov to vfov.
-  var vfov = this._fov;
-  var hfov = convertFov.vtoh(vfov, this._width, this._height);
+  let vfov = this._fov;
+  let hfov = convertFov.vtoh(vfov, this._width, this._height);
   if (isNaN(hfov)) {
     hfov = vfov;
   }
@@ -584,27 +551,26 @@ RectilinearView.prototype.updateWithControlParameters = function(parameters) {
   this.offsetFov(parameters.zoom * vfov);
 };
 
-
 RectilinearView.prototype._updateProjection = function() {
-  var projMatrix = this._projMatrix;
-  var invProjMatrix = this._invProjMatrix;
-  var frustum = this._frustum;
+  const projMatrix = this._projMatrix;
+  const invProjMatrix = this._invProjMatrix;
+  let frustum = this._frustum;
 
   if (this._projectionChanged) {
-    var width = this._width;
-    var height = this._height;
+    let width = this._width;
+    let height = this._height;
 
-    var vfov = this._fov;
-    var hfov = convertFov.vtoh(vfov, width, height);
-    var aspect = width / height;
+    const vfov = this._fov;
+    const hfov = convertFov.vtoh(vfov, width, height);
+    const aspect = width / height;
 
-    var projectionCenterX = this._projectionCenterX;
-    var projectionCenterY = this._projectionCenterY;
+    const projectionCenterX = this._projectionCenterX;
+    const projectionCenterY = this._projectionCenterY;
 
     if (projectionCenterX !== 0 || projectionCenterY !== 0) {
-      var offsetAngleX = Math.atan(projectionCenterX * 2 * Math.tan(hfov/2));
-      var offsetAngleY = Math.atan(projectionCenterY * 2 * Math.tan(vfov/2));
-      var fovs = this._fovs;
+      const offsetAngleX = Math.atan(projectionCenterX * 2 * Math.tan(hfov/2));
+      const offsetAngleY = Math.atan(projectionCenterY * 2 * Math.tan(vfov/2));
+      const fovs = this._fovs;
       fovs.leftDegrees = (hfov/2 + offsetAngleX) * 180/Math.PI;
       fovs.rightDegrees = (hfov/2 - offsetAngleX) * 180/Math.PI;
       fovs.upDegrees = (vfov/2 + offsetAngleY) * 180/Math.PI;
@@ -626,7 +592,6 @@ RectilinearView.prototype._updateProjection = function() {
   }
 };
 
-
 RectilinearView.prototype._matrixToFrustum = function(p, f) {
   // Extract frustum planes from projection matrix.
   // http://www8.cs.umu.se/kurser/5DV051/HT12/lab/plane_extraction.pdf
@@ -637,7 +602,6 @@ RectilinearView.prototype._matrixToFrustum = function(p, f) {
   vec4.set(f[4], p[3] + p[2], p[7] + p[6], p[11] + p[10], 0); // camera
 };
 
-
 /**
  * Returns the projection matrix for the current view.
  * @returns {mat4}
@@ -647,7 +611,6 @@ RectilinearView.prototype.projection = function() {
   return this._projMatrix;
 };
 
-
 /**
  * Returns the inverse projection matrix for the current view.
  * @returns {mat4}
@@ -656,7 +619,6 @@ RectilinearView.prototype.inverseProjection = function() {
   this._updateProjection();
   return this._invProjMatrix;
 };
-
 
 /**
  * Return whether the view frustum intersects the given rectangle.
@@ -670,17 +632,17 @@ RectilinearView.prototype.inverseProjection = function() {
 RectilinearView.prototype.intersects = function(rectangle) {
   this._updateProjection();
 
-  var frustum = this._frustum;
-  var vertex = this._tmpVec;
+  const frustum = this._frustum;
+  const vertex = this._tmpVec;
 
   // Check whether the rectangle is on the outer side of any of the frustum
   // planes. This is a sufficient condition, though not necessary, for the
   // rectangle to be completely outside the frustum.
-  for (var i = 0; i < frustum.length; i++) {
-    var plane = frustum[i];
-    var inside = false;
-    for (var j = 0; j < rectangle.length; j++) {
-      var corner = rectangle[j];
+  for (let i = 0; i < frustum.length; i++) {
+    const plane = frustum[i];
+    let inside = false;
+    for (const j = 0; j < rectangle.length; j++) {
+      const corner = rectangle[j];
       vec4.set(vertex, corner[0], corner[1], corner[2], 0);
       if (vec4.dot(plane, vertex) >= 0) {
         inside = true;
@@ -692,7 +654,6 @@ RectilinearView.prototype.intersects = function(rectangle) {
   }
   return true;
 };
-
 
 /**
  * Select the level that should be used to render the view.
@@ -712,11 +673,11 @@ RectilinearView.prototype.selectLevel = function(levelList) {
   // Search for the smallest level that satifies the the required height,
   // falling back on the largest level if none do.
 
-  var requiredPixels = pixelRatio() * this._height;
-  var coverFactor = Math.tan(0.5 * this._fov);
+  let requiredPixels = pixelRatio() * this._height;
+  const coverFactor = Math.tan(0.5 * this._fov);
 
-  for (var i = 0; i < levelList.length; i++) {
-    var level = levelList[i];
+  for (const i = 0; i < levelList.length; i++) {
+    const level = levelList[i];
     if (coverFactor * level.height() >= requiredPixels) {
       return level;
     }
@@ -725,7 +686,6 @@ RectilinearView.prototype.selectLevel = function(levelList) {
   return levelList[levelList.length - 1];
 
 };
-
 
 /**
  * Convert view parameters into screen position. If a result argument is
@@ -737,14 +697,14 @@ RectilinearView.prototype.selectLevel = function(levelList) {
  * @return {Coords}
  */
 RectilinearView.prototype.coordinatesToScreen = function(coords, result) {
-  var ray = this._tmpVec;
+  let ray = this._tmpVec;
 
   if (!result) {
     result = {};
   }
 
-  var width = this._width;
-  var height = this._height;
+  let width = this._width;
+  let height = this._height;
 
   // Undefined on a null viewport.
   if (width <= 0 || height <= 0) {
@@ -754,11 +714,11 @@ RectilinearView.prototype.coordinatesToScreen = function(coords, result) {
   }
 
   // Compute view ray pointing into the (yaw, pitch) direction.
-  var yaw = coords.yaw;
-  var pitch = coords.pitch;
-  var x = Math.sin(yaw) * Math.cos(pitch);
-  var y = -Math.sin(pitch);
-  var z = -Math.cos(yaw) * Math.cos(pitch);
+  let yaw = coords.yaw;
+  let pitch = coords.pitch;
+  let x = Math.sin(yaw) * Math.cos(pitch);
+  let y = -Math.sin(pitch);
+  const z = -Math.cos(yaw) * Math.cos(pitch);
   vec4.set(ray, x, y, z, 1);
 
   // Project view ray onto clip space.
@@ -780,7 +740,6 @@ RectilinearView.prototype.coordinatesToScreen = function(coords, result) {
   return result;
 };
 
-
 /**
  * Convert screen coordinates into view coordinates. If a result argument is
  * provided, it is filled in with the result and returned. Otherwise, a fresh
@@ -791,25 +750,25 @@ RectilinearView.prototype.coordinatesToScreen = function(coords, result) {
  * @return {RectilinearViewCoords}
  */
 RectilinearView.prototype.screenToCoordinates = function(coords, result) {
-  var ray = this._tmpVec;
+  const ray = this._tmpVec;
 
   if (!result) {
     result = {};
   }
 
-  var width = this._width;
-  var height = this._height;
+  let width = this._width;
+  let height = this._height;
 
   // Convert viewport coordinates to clip space.
-  var vecx = 2 * coords.x / width - 1;
-  var vecy = 1 - 2 * coords.y / height;
+  const vecx = 2 * coords.x / width - 1;
+  const vecy = 1 - 2 * coords.y / height;
   vec4.set(ray, vecx, vecy, 1, 1);
 
   // Project back to world space.
   vec4.transformMat4(ray, ray, this.inverseProjection());
 
   // Convert to spherical coordinates.
-  var r = Math.sqrt(ray[0] * ray[0] + ray[1] * ray[1] + ray[2] * ray[2]);
+  const r = Math.sqrt(ray[0] * ray[0] + ray[1] * ray[1] + ray[2] * ray[2]);
   result.yaw = Math.atan2(ray[0], -ray[2]);
   result.pitch = Math.acos(ray[1] / r) - Math.PI/2;
 
@@ -817,7 +776,6 @@ RectilinearView.prototype.screenToCoordinates = function(coords, result) {
 
   return result;
 };
-
 
 /**
  * Calculate the perspective transform required to position an element with
@@ -833,40 +791,39 @@ RectilinearView.prototype.coordinatesToPerspectiveTransform = function(
     coords, radius, extraTransforms) {
   extraTransforms = extraTransforms || "";
 
-  var height = this._height;
-  var width = this._width;
-  var fov = this._fov;
-  var perspective = 0.5 * height / Math.tan(fov / 2);
+  let height = this._height;
+  let width = this._width;
+  let fov = this._fov;
+  const perspective = 0.5 * height / Math.tan(fov / 2);
 
-  var transform = '';
+  let transform = '';
 
   // Center hotspot in screen.
-  transform += 'translateX(' + decimal(width/2) + 'px) ';
-  transform += 'translateY(' + decimal(height/2) + 'px) ';
+  transform += `translateX(${decimal(width/2)}px) `;
+  transform += `translateY(${decimal(height/2)}px) `;
   transform += 'translateX(-50%) translateY(-50%) ';
 
   // Set the perspective depth.
-  transform += 'perspective(' + decimal(perspective) + 'px) ';
-  transform += 'translateZ(' + decimal(perspective) + 'px) ';
+  transform += `perspective(${decimal(perspective)}px) `;
+  transform += `translateZ(${decimal(perspective)}px) `;
 
   // Set the camera rotation.
-  transform += 'rotateZ(' + decimal(-this._roll) + 'rad) ';
-  transform += 'rotateX(' + decimal(-this._pitch) + 'rad) ';
-  transform += 'rotateY(' + decimal(this._yaw) + 'rad) ';
+  transform += `rotateZ(${decimal(-this._roll)}rad) `;
+  transform += `rotateX(${decimal(-this._pitch)}rad) `;
+  transform += `rotateY(${decimal(this._yaw)}rad) `;
 
   // Set the hotspot rotation.
-  transform += 'rotateY(' + decimal(-coords.yaw) + 'rad) ';
-  transform += 'rotateX(' + decimal(coords.pitch) + 'rad) ';
+  transform += `rotateY(${decimal(-coords.yaw)}rad) `;
+  transform += `rotateX(${decimal(coords.pitch)}rad) `;
 
   // Move back to sphere.
-  transform += 'translateZ(' + decimal(-radius) + 'px) ';
+  transform += `translateZ(${decimal(-radius)}px) `;
 
   // Apply the extra transformations
-  transform += extraTransforms + ' ';
+  transform += `${extraTransforms} `;
 
   return transform;
 };
-
 
 /**
  * Factory functions for view limiters. See {@link RectilinearViewLimiter}.
@@ -921,11 +878,11 @@ RectilinearView.limit = {
    */
   hfov: function(min, max) {
     return function limitHfov(params) {
-      var width = params.width;
-      var height = params.height;
+      const width = params.width;
+      let height = params.height;
       if (width > 0 && height > 0) {
-        var vmin = convertFov.htov(min, width, height);
-        var vmax = convertFov.htov(max, width, height);
+        const vmin = convertFov.htov(min, width, height);
+        const vmax = convertFov.htov(max, width, height);
         params.fov = clamp(params.fov, vmin, vmax);
       }
       return params;
@@ -954,10 +911,10 @@ RectilinearView.limit = {
    */
   resolution: function(size) {
     return function limitResolution(params) {
-      var height = params.height;
+      const height = params.height;
       if (height) {
-        var requiredPixels = pixelRatio() * height;
-        var minFov = 2 * Math.atan(requiredPixels / size);
+        const requiredPixels = pixelRatio() * height;
+        const minFov = 2 * Math.atan(requiredPixels / size);
         params.fov = clamp(params.fov, minFov, Infinity);
       }
       return params;
@@ -987,8 +944,6 @@ RectilinearView.limit = {
 
 };
 
-
 RectilinearView.type = RectilinearView.prototype.type = 'rectilinear';
 
-
-module.exports = RectilinearView;
+export default RectilinearView;

@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var Stage = require('./Stage');
-var HtmlImageLoader = require('../loaders/HtmlImage');
-var browser = require('bowser');
-var inherits = require('../util/inherits');
-var pixelRatio = require('../util/pixelRatio');
-var ispot = require('../util/ispot');
-var setAbsolute = require('../util/dom').setAbsolute;
-var setFullSize = require('../util/dom').setFullSize;
-var clearOwnProperties = require('../util/clearOwnProperties');
+
+import Stage from './Stage.js';
+import HtmlImageLoader from '../loaders/HtmlImage.js';
+import browser from 'bowser';
+import inherits from '../util/inherits.js';
+import pixelRatio from '../util/pixelRatio.js';
+import ispot from '../util/ispot.js';
+import clearOwnProperties from '../util/clearOwnProperties.js';
+
+import { setAbsolute } from '../util/dom.js';
+import { setFullSize } from '../util/dom.js';
 
 // TODO(tjgq): Unify Stage and WebGlStage.
 
 // Browser-specific workarounds.
-var browserQuirks = {
+const browserQuirks = {
   // Whether to use texImage2D instead of texSubImage2D when repainting an
   // existing texture from a video element. On most browsers texSubImage2D is
   // faster, but on Chrome the performance degrades significantly. See:
@@ -36,16 +37,15 @@ var browserQuirks = {
   videoUseTexImage2D: browser.chrome
 };
 
-
 function initWebGlContext(canvas, opts) {
-  var options = {
+  let options = {
     alpha: true,
     premultipliedAlpha: true,
     antialias: !!(opts && opts.antialias),
     preserveDrawingBuffer: !!(opts && opts.preserveDrawingBuffer)
   };
 
-  var gl = (canvas.getContext) && (canvas.getContext('webgl', options) || canvas.getContext('experimental-webgl', options));
+  let gl = (canvas.getContext) && (canvas.getContext('webgl', options) || canvas.getContext('experimental-webgl', options));
 
   if (!gl) {
     throw new Error('Could not get WebGL context');
@@ -94,7 +94,7 @@ function initWebGlContext(canvas, opts) {
 function WebGlStage(opts) {
   opts = opts || {};
 
-  var self = this;
+  const self = this;
 
   this.constructor.super_.call(this, opts);
 
@@ -126,7 +126,6 @@ function WebGlStage(opts) {
 
 inherits(WebGlStage, Stage);
 
-
 /**
  * Destructor.
  */
@@ -135,7 +134,6 @@ WebGlStage.prototype.destroy = function() {
   // Delegate clearing own properties to the Stage destructor.
   this.constructor.super_.prototype.destroy.call(this);
 };
-
 
 /**
  * Returns the underlying DOM element.
@@ -146,7 +144,6 @@ WebGlStage.prototype.domElement = function() {
   return this._domElement;
 };
 
-
 /**
  * Returns the underlying WebGL rendering context.
  *
@@ -155,7 +152,6 @@ WebGlStage.prototype.domElement = function() {
 WebGlStage.prototype.webGlContext = function() {
   return this._gl;
 };
-
 
 WebGlStage.prototype.setSizeForType = function() {
   // Update the size of the canvas coordinate space.
@@ -167,59 +163,53 @@ WebGlStage.prototype.setSizeForType = function() {
   // `drawingBufferHeight` properties on the WebGLRenderingContext. Failing to
   // do so will break the rendering if the pixel ratio changes but the stage
   // size does not, e.g. when moving the window across screens.
-  var ratio = pixelRatio();
+  const ratio = pixelRatio();
   this._domElement.width = ratio * this._width;
   this._domElement.height = ratio * this._height;
 };
-
 
 WebGlStage.prototype.loadImage = function(url, rect, done) {
   return this._loader.loadImage(url, rect, done);
 };
 
-
 WebGlStage.prototype.maxTextureSize = function() {
   return this._gl.getParameter(this._gl.MAX_TEXTURE_SIZE);
 };
 
-
 WebGlStage.prototype.validateLayer = function(layer) {
-  var tileSize = layer.geometry().maxTileSize();
-  var maxTextureSize = this.maxTextureSize();
+  const tileSize = layer.geometry().maxTileSize();
+  const maxTextureSize = this.maxTextureSize();
   if (tileSize > maxTextureSize) {
-    throw new Error('Layer has level with tile size larger than maximum texture size (' + tileSize + ' vs. ' + maxTextureSize + ')');
+    throw new Error(`Layer has level with tile size larger than maximum texture size (${tileSize} vs. ` + `${maxTextureSize})`);
   }
 };
 
-
 WebGlStage.prototype.createRenderer = function(Renderer) {
-  var rendererInstances = this._rendererInstances;
-  for (var i = 0; i < rendererInstances.length; i++) {
+  let rendererInstances = this._rendererInstances;
+  for (const i = 0; i < rendererInstances.length; i++) {
     if (rendererInstances[i] instanceof Renderer) {
       return rendererInstances[i];
     }
   }
-  var renderer = new Renderer(this._gl);
+  const renderer = new Renderer(this._gl);
   rendererInstances.push(renderer);
   return renderer;
 };
 
-
 WebGlStage.prototype.destroyRenderer = function(renderer) {
-  var rendererInstances = this._rendererInstances;
+  const rendererInstances = this._rendererInstances;
   if (this._renderers.indexOf(renderer) < 0) {
     renderer.destroy();
-    var index = rendererInstances.indexOf(renderer);
+    const index = rendererInstances.indexOf(renderer);
     if (index >= 0) {
       rendererInstances.splice(index, 1);
     }
   }
 };
 
-
 WebGlStage.prototype.startFrame = function() {
 
-  var gl = this._gl;
+  let gl = this._gl;
 
   if (!gl) {
     throw new Error('Bad WebGL context - maybe context was lost?');
@@ -242,9 +232,7 @@ WebGlStage.prototype.startFrame = function() {
 
 };
 
-
 WebGlStage.prototype.endFrame = function() {};
-
 
 WebGlStage.prototype.takeSnapshot = function(options) {
 
@@ -253,7 +241,7 @@ WebGlStage.prototype.takeSnapshot = function(options) {
     options = {};
   }
 
-  var quality = options.quality;
+  let quality = options.quality;
 
   // Set default quality if it is not passed
   if (typeof quality == 'undefined') {
@@ -273,9 +261,7 @@ WebGlStage.prototype.takeSnapshot = function(options) {
   return this._domElement.toDataURL('image/jpeg', quality / 100);
 }
 
-
 WebGlStage.type = WebGlStage.prototype.type = 'webgl';
-
 
 function WebGlTexture(stage, tile, asset) {
   this._stage = stage;
@@ -286,25 +272,24 @@ function WebGlTexture(stage, tile, asset) {
   this.refresh(tile, asset);
 }
 
-
 WebGlTexture.prototype.refresh = function(tile, asset) {
 
-  var gl = this._gl;
-  var stage = this._stage;
+  const gl = this._gl;
+  const stage = this._stage;
   var texture;
 
   // Check whether the texture needs to be updated.
-  var timestamp = asset.timestamp();
+  const timestamp = asset.timestamp();
   if (timestamp === this._timestamp) {
     return;
   }
 
   // Get asset element.
-  var element = asset.element();
+  const element = asset.element();
 
   // Get asset dimensions.
-  var width = asset.width();
-  var height = asset.height();
+  const width = asset.width();
+  const height = asset.height();
 
   if (width !== this._width || height !== this._height) {
 
@@ -312,12 +297,12 @@ WebGlTexture.prototype.refresh = function(tile, asset) {
     // a new texture with the correct size.
 
     // Check if texture dimensions would exceed the maximum texture size.
-    var maxSize = stage.maxTextureSize();
+    const maxSize = stage.maxTextureSize();
     if (width > maxSize) {
-      throw new Error('Texture width larger than max size (' + width + ' vs. ' + maxSize + ')');
+      throw new Error(`Texture width larger than max size (${width} vs. ` + `${maxSize})`);
     }
     if (height > maxSize) {
-      throw new Error('Texture height larger than max size (' + height + ' vs. ' + maxSize + ')');
+      throw new Error(`Texture height larger than max size (${height} vs. ` + `${maxSize})`);
     }
 
     // Delete the current texture if it exists.
@@ -380,7 +365,6 @@ WebGlTexture.prototype.refresh = function(tile, asset) {
 
 };
 
-
 WebGlTexture.prototype.destroy = function() {
   if (this._texture) {
     this._gl.deleteTexture(this._texture);
@@ -388,8 +372,6 @@ WebGlTexture.prototype.destroy = function() {
   clearOwnProperties(this);
 };
 
-
 WebGlStage.TextureClass = WebGlStage.prototype.TextureClass = WebGlTexture;
 
-
-module.exports = WebGlStage;
+export default WebGlStage;

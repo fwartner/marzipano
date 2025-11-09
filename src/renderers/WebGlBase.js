@@ -13,38 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var mat4 = require('gl-matrix').mat4;
-var vec3 = require('gl-matrix').vec3;
-var clearOwnProperties = require('../util/clearOwnProperties');
 
-var WebGlCommon = require('./WebGlCommon');
-var createConstantBuffers = WebGlCommon.createConstantBuffers;
-var destroyConstantBuffers = WebGlCommon.destroyConstantBuffers;
-var createShaderProgram = WebGlCommon.createShaderProgram;
-var destroyShaderProgram = WebGlCommon.destroyShaderProgram;
-var enableAttributes = WebGlCommon.enableAttributes;
-var disableAttributes = WebGlCommon.disableAttributes;
-var setViewport = WebGlCommon.setViewport;
-var setupPixelEffectUniforms = WebGlCommon.setupPixelEffectUniforms;
+import clearOwnProperties from '../util/clearOwnProperties.js';
+import WebGlCommon from './WebGlCommon.js';
+import vertexSrc from '../shaders/vertexNormal.js';
+import fragmentSrc from '../shaders/fragmentNormal.js';
 
-var setDepth = WebGlCommon.setDepth;
-var setTexture = WebGlCommon.setTexture;
+import { mat4 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 
-var vertexSrc = require('../shaders/vertexNormal');
-var fragmentSrc = require('../shaders/fragmentNormal');
+const createConstantBuffers = WebGlCommon.createConstantBuffers;
+const destroyConstantBuffers = WebGlCommon.destroyConstantBuffers;
+const createShaderProgram = WebGlCommon.createShaderProgram;
+const destroyShaderProgram = WebGlCommon.destroyShaderProgram;
+const enableAttributes = WebGlCommon.enableAttributes;
+const disableAttributes = WebGlCommon.disableAttributes;
+const setViewport = WebGlCommon.setViewport;
+const setupPixelEffectUniforms = WebGlCommon.setupPixelEffectUniforms;
 
-var vertexIndices = [0, 1, 2, 0, 2, 3];
-var vertexPositions = [-0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 0.0];
-var textureCoords = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+const setDepth = WebGlCommon.setDepth;
+const setTexture = WebGlCommon.setTexture;
 
-var attribList = ['aVertexPosition', 'aTextureCoord'];
-var uniformList = [
+const vertexIndices = [0, 1, 2, 0, 2, 3];
+const vertexPositions = [-0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 0.0];
+const textureCoords = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+
+const attribList = ['aVertexPosition', 'aTextureCoord'];
+const uniformList = [
   'uDepth', 'uOpacity', 'uSampler', 'uProjMatrix', 'uViewportMatrix',
   'uColorOffset', 'uColorMatrix'
 ];
-
 
 function WebGlBaseRenderer(gl) {
   this.gl = gl;
@@ -74,10 +73,10 @@ WebGlBaseRenderer.prototype.destroy = function() {
 };
 
 WebGlBaseRenderer.prototype.startLayer = function(layer, rect) {
-  var gl = this.gl;
-  var shaderProgram = this.shaderProgram;
-  var constantBuffers = this.constantBuffers;
-  var viewportMatrix = this.viewportMatrix;
+  let gl = this.gl;
+  let shaderProgram = this.shaderProgram;
+  let constantBuffers = this.constantBuffers;
+  const viewportMatrix = this.viewportMatrix;
 
   gl.useProgram(shaderProgram);
 
@@ -98,21 +97,19 @@ WebGlBaseRenderer.prototype.startLayer = function(layer, rect) {
   });
 };
 
-
 WebGlBaseRenderer.prototype.endLayer = function(layer, rect) {
-  var gl = this.gl;
-  var shaderProgram = this.shaderProgram;
+  let gl = this.gl;
+  let shaderProgram = this.shaderProgram;
   disableAttributes(gl, shaderProgram);
 };
 
-
 WebGlBaseRenderer.prototype.renderTile = function(tile, texture, layer, layerZ) {
-  var gl = this.gl;
-  var shaderProgram = this.shaderProgram;
-  var constantBuffers = this.constantBuffers;
-  var projMatrix = this.projMatrix;
-  var translateVector = this.translateVector;
-  var scaleVector = this.scaleVector;
+  const gl = this.gl;
+  const shaderProgram = this.shaderProgram;
+  const constantBuffers = this.constantBuffers;
+  const projMatrix = this.projMatrix;
+  const translateVector = this.translateVector;
+  const scaleVector = this.scaleVector;
 
   translateVector[0] = tile.centerX();
   translateVector[1] = tile.centerY();
@@ -138,5 +135,4 @@ WebGlBaseRenderer.prototype.renderTile = function(tile, texture, layer, layerZ) 
   gl.drawElements(gl.TRIANGLES, vertexIndices.length, gl.UNSIGNED_SHORT, 0);
 };
 
-
-module.exports = WebGlBaseRenderer;
+export default WebGlBaseRenderer;

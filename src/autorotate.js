@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var defaults = require('./util/defaults');
 
-var defaultSpeed = 0.1;
-var defaultAccel = 0.01;
+import defaults from './util/defaults.js';
 
-var defaultOptions = {
+const defaultSpeed = 0.1;
+const defaultAccel = 0.01;
+
+const defaultOptions = {
   yawSpeed: defaultSpeed,
   pitchSpeed: defaultSpeed,
   fovSpeed: defaultSpeed,
@@ -47,25 +47,25 @@ function autorotate(opts) {
 
   opts = defaults(opts || {}, defaultOptions);
 
-  var yawSpeed = opts.yawSpeed;
-  var pitchSpeed = opts.pitchSpeed;
-  var fovSpeed = opts.fovSpeed;
-  var yawAccel = opts.yawAccel;
-  var pitchAccel = opts.pitchAccel;
-  var fovAccel = opts.fovAccel;
-  var targetPitch = opts.targetPitch;
-  var targetFov = opts.targetFov;
+  const yawSpeed = opts.yawSpeed;
+  const pitchSpeed = opts.pitchSpeed;
+  const fovSpeed = opts.fovSpeed;
+  const yawAccel = opts.yawAccel;
+  const pitchAccel = opts.pitchAccel;
+  const fovAccel = opts.fovAccel;
+  const targetPitch = opts.targetPitch;
+  const targetFov = opts.targetFov;
 
   return function start() {
 
-    var lastTime = 0;
-    var lastYawSpeed = 0;
-    var lastPitchSpeed = 0;
-    var lastFovSpeed = 0;
+    let lastTime = 0;
+    let lastYawSpeed = 0;
+    let lastPitchSpeed = 0;
+    let lastFovSpeed = 0;
 
-    var currentYawSpeed = 0;
-    var currentPitchSpeed = 0;
-    var currentFovSpeed = 0;
+    let currentYawSpeed = 0;
+    let currentPitchSpeed = 0;
+    let currentFovSpeed = 0;
 
     var timeDelta;
     var yawDelta;
@@ -80,7 +80,7 @@ function autorotate(opts) {
       params.yaw = params.yaw + yawDelta;
 
       if (targetPitch != null && params.pitch !== targetPitch) {
-        var pitchThresh = 0.5 * lastPitchSpeed * lastPitchSpeed / pitchAccel;
+        const pitchThresh = 0.5 * lastPitchSpeed * lastPitchSpeed / pitchAccel;
         if (Math.abs(targetPitch - params.pitch) > pitchThresh) {
           // Acceleration phase
           currentPitchSpeed = Math.min(lastPitchSpeed + timeDelta * pitchAccel, pitchSpeed);
@@ -99,7 +99,7 @@ function autorotate(opts) {
       }
 
       if (targetFov != null && params.fov !== targetPitch) {
-        var fovThresh = 0.5 * lastFovSpeed * lastFovSpeed / fovAccel;
+        const fovThresh = 0.5 * lastFovSpeed * lastFovSpeed / fovAccel;
         if (Math.abs(targetFov - params.fov) > fovThresh) {
           // Acceleration phase
           currentFovSpeed = Math.min(lastFovSpeed + timeDelta * fovAccel, fovSpeed);
@@ -130,4 +130,4 @@ function autorotate(opts) {
 
 }
 
-module.exports = autorotate;
+export default autorotate;

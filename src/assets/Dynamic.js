@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var StaticAsset = require('./Static');
-var inherits = require('../util/inherits');
-var eventEmitter = require('minimal-event-emitter');
-var clearOwnProperties = require('../util/clearOwnProperties');
+
+import StaticAsset from './Static.js';
+import inherits from '../util/inherits.js';
+import eventEmitter from 'minimal-event-emitter';
+import clearOwnProperties from '../util/clearOwnProperties.js';
 
 /**
  * @class DynamicAsset
@@ -66,4 +66,4 @@ DynamicAsset.prototype.markDirty = function() {
   this.emit('change');
 };
 
-module.exports = DynamicAsset;
+export default DynamicAsset;

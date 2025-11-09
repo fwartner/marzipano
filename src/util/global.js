@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 // The global object.
-var globalObject = (function() {
+const globalObject = (function() {
   if (typeof window !== 'undefined') {
     return window;
   }
@@ -29,4 +29,4 @@ var globalObject = (function() {
   return null;
 })();
 
-module.exports = globalObject;
+export default globalObject;

@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var inherits = require('../util/inherits');
-var hash = require('../util/hash');
-var TileSearcher = require('../TileSearcher');
-var LruMap = require('../collections/LruMap');
-var Level = require('./Level');
-var makeLevelList = require('./common').makeLevelList;
-var makeSelectableLevelList = require('./common').makeSelectableLevelList;
-var clamp = require('../util/clamp');
-var cmp = require('../util/cmp');
-var type = require('../util/type');
-var vec3 = require('gl-matrix').vec3;
-var vec4 = require('gl-matrix').vec4;
 
-var neighborsCacheSize = 64;
+import inherits from '../util/inherits.js';
+import hash from '../util/hash.js';
+import TileSearcher from '../TileSearcher.js';
+import LruMap from '../collections/LruMap.js';
+import Level from './Level.js';
+import clamp from '../util/clamp.js';
+import cmp from '../util/cmp.js';
+import type from '../util/type.js';
+
+import { makeLevelList } from './common.js';
+import { makeSelectableLevelList } from './common.js';
+
+import { vec3 } from 'gl-matrix';
+import { vec4 } from 'gl-matrix';
+
+const neighborsCacheSize = 64;
 
 // Initials for cube faces.
-var faceList = 'fudlrb';
+const faceList = 'fudlrb';
 
 // Rotation of each face, relative to the front face.
-var faceRotation = {
+const faceRotation = {
   f: { x: 0, y: 0 },
   b: { x: 0, y: Math.PI },
   l: { x: 0, y: Math.PI/2 },
@@ -44,7 +46,7 @@ var faceRotation = {
 };
 
 // Zero vector.
-var origin = vec3.create();
+const origin = vec3.create();
 
 // Rotate a vector in ZXY order.
 function rotateVector(vec, z, x, y) {
@@ -60,18 +62,18 @@ function rotateVector(vec, z, x, y) {
 }
 
 // Normalized vectors pointing to the center of each face.
-var faceVectors = {};
-for (var i = 0; i < faceList.length; i++) {
-  var face = faceList[i];
-  var rotation = faceRotation[face];
-  var v = vec3.fromValues(0,  0, -1);
+const faceVectors = {};
+for (let i = 0; i < faceList.length; i++) {
+  let face = faceList[i];
+  const rotation = faceRotation[face];
+  let v = vec3.fromValues(0,  0, -1);
   rotateVector(v, 0, rotation.x, rotation.y);
   faceVectors[face] = v;
 }
 
 // Map each face to its adjacent faces.
 // The order is as suggested by the front face.
-var adjacentFace = {
+const adjacentFace = {
   f: [ 'l', 'r', 'u', 'd' ],
   b: [ 'r', 'l', 'u', 'd' ],
   l: [ 'b', 'f', 'u', 'd' ],
@@ -81,13 +83,12 @@ var adjacentFace = {
 };
 
 // Offsets to apply to the (x,y) coordinates of a tile to get its neighbors.
-var neighborOffsets = [
+const neighborOffsets = [
   [  0,  1 ], // top
   [  1,  0 ], // right
   [  0, -1 ], // bottom
   [ -1,  0 ]  // left
 ];
-
 
 /**
  * @class CubeTile
@@ -105,53 +106,46 @@ function CubeTile(face, x, y, z, geometry) {
   this._level = geometry.levelList[z];
 }
 
-
 CubeTile.prototype.rotX = function() {
   return faceRotation[this.face].x;
 };
-
 
 CubeTile.prototype.rotY = function() {
   return faceRotation[this.face].y;
 };
 
-
 CubeTile.prototype.centerX = function() {
   return (this.x + 0.5) / this._level.numHorizontalTiles() - 0.5;
 };
-
 
 CubeTile.prototype.centerY = function() {
   return 0.5 - (this.y + 0.5) / this._level.numVerticalTiles();
 };
 
-
 CubeTile.prototype.scaleX = function() {
   return 1 / this._level.numHorizontalTiles();
 };
 
-
 CubeTile.prototype.scaleY = function() {
   return 1 / this._level.numVerticalTiles();
 };
-
 
 CubeTile.prototype.vertices = function(result) {
   if (!result) {
     result = [vec3.create(), vec3.create(), vec3.create(), vec3.create()];
   }
 
-  var rot = faceRotation[this.face];
+  let rot = faceRotation[this.face];
 
   function makeVertex(vec, x, y) {
     vec3.set(vec, x, y, -0.5);
     rotateVector(vec, 0, rot.x, rot.y);
   }
 
-  var left = this.centerX() - this.scaleX() / 2;
-  var right = this.centerX() + this.scaleX() / 2;
-  var bottom = this.centerY() - this.scaleY() / 2;
-  var top = this.centerY() + this.scaleY() / 2;
+  const left = this.centerX() - this.scaleX() / 2;
+  const right = this.centerX() + this.scaleX() / 2;
+  const bottom = this.centerY() - this.scaleY() / 2;
+  const top = this.centerY() + this.scaleY() / 2;
 
   makeVertex(result[0], left, top);
   makeVertex(result[1], right, top);
@@ -161,30 +155,28 @@ CubeTile.prototype.vertices = function(result) {
   return result;
 };
 
-
 CubeTile.prototype.parent = function() {
 
   if (this.z === 0) {
     return null;
   }
 
-  var face = this.face;
-  var z = this.z;
-  var x = this.x;
-  var y = this.y;
+  let face = this.face;
+  let z = this.z;
+  let x = this.x;
+  let y = this.y;
 
-  var geometry = this._geometry;
-  var level = geometry.levelList[z];
-  var parentLevel = geometry.levelList[z-1];
+  let geometry = this._geometry;
+  let level = geometry.levelList[z];
+  const parentLevel = geometry.levelList[z-1];
 
-  var tileX = Math.floor(x / level.numHorizontalTiles() * parentLevel.numHorizontalTiles());
-  var tileY = Math.floor(y / level.numVerticalTiles() * parentLevel.numVerticalTiles());
-  var tileZ = z-1;
+  let tileX = Math.floor(x / level.numHorizontalTiles() * parentLevel.numHorizontalTiles());
+  let tileY = Math.floor(y / level.numVerticalTiles() * parentLevel.numVerticalTiles());
+  let tileZ = z-1;
 
   return new CubeTile(face, tileX, tileY, tileZ, geometry);
 
 };
-
 
 CubeTile.prototype.children = function(result) {
 
@@ -192,25 +184,25 @@ CubeTile.prototype.children = function(result) {
     return null;
   }
 
-  var face = this.face;
-  var z = this.z;
-  var x = this.x;
-  var y = this.y;
+  let face = this.face;
+  let z = this.z;
+  let x = this.x;
+  let y = this.y;
 
-  var geometry = this._geometry;
-  var level = geometry.levelList[z];
-  var childLevel = geometry.levelList[z+1];
+  let geometry = this._geometry;
+  let level = geometry.levelList[z];
+  const childLevel = geometry.levelList[z+1];
 
-  var nHoriz = childLevel.numHorizontalTiles() / level.numHorizontalTiles();
-  var nVert = childLevel.numVerticalTiles() / level.numVerticalTiles();
+  const nHoriz = childLevel.numHorizontalTiles() / level.numHorizontalTiles();
+  const nVert = childLevel.numVerticalTiles() / level.numVerticalTiles();
 
   result = result || [];
 
-  for (var h = 0; h < nHoriz; h++) {
-    for (var v = 0; v < nVert; v++) {
-      var tileX = nHoriz * x + h;
-      var tileY = nVert * y + v;
-      var tileZ = z+1;
+  for (const h = 0; h < nHoriz; h++) {
+    for (const v = 0; v < nVert; v++) {
+      let tileX = nHoriz * x + h;
+      let tileY = nVert * y + v;
+      let tileZ = z+1;
       result.push(new CubeTile(face, tileX, tileY, tileZ, geometry));
     }
   }
@@ -219,39 +211,38 @@ CubeTile.prototype.children = function(result) {
 
 };
 
-
 CubeTile.prototype.neighbors = function() {
 
-  var geometry = this._geometry;
-  var cache = geometry._neighborsCache;
+  const geometry = this._geometry;
+  const cache = geometry._neighborsCache;
 
   // Satisfy from cache when available.
-  var cachedResult = cache.get(this);
+  const cachedResult = cache.get(this);
   if (cachedResult) {
     return cachedResult;
   }
 
-  var vec = geometry._vec;
+  const vec = geometry._vec;
 
-  var face = this.face;
-  var x = this.x;
-  var y = this.y;
-  var z = this.z;
-  var level = this._level;
+  let face = this.face;
+  let x = this.x;
+  let y = this.y;
+  const z = this.z;
+  let level = this._level;
 
-  var numX = level.numHorizontalTiles();
-  var numY = level.numVerticalTiles();
+  let numX = level.numHorizontalTiles();
+  let numY = level.numVerticalTiles();
 
-  var result = [];
+  let result = [];
 
-  for (var i = 0; i < neighborOffsets.length; i++) {
-    var xOffset = neighborOffsets[i][0];
-    var yOffset = neighborOffsets[i][1];
+  for (let i = 0; i < neighborOffsets.length; i++) {
+    const xOffset = neighborOffsets[i][0];
+    const yOffset = neighborOffsets[i][1];
 
-    var newX = x + xOffset;
-    var newY = y + yOffset;
-    var newZ = z;
-    var newFace = face;
+    let newX = x + xOffset;
+    let newY = y + yOffset;
+    const newZ = z;
+    let newFace = face;
 
     if (newX < 0 || newX >= numX || newY < 0 || newY >= numY) {
 
@@ -260,8 +251,8 @@ CubeTile.prototype.neighbors = function() {
       // tile and its neighbor meet, and convert it into tile coordinates for
       // the neighboring face.
 
-      var xCoord = this.centerX();
-      var yCoord = this.centerY();
+      const xCoord = this.centerX();
+      const yCoord = this.centerY();
 
       // First, calculate the vector as if the initial tile belongs to the
       // front face, so that the tile x,y coordinates map directly into the
@@ -312,11 +303,9 @@ CubeTile.prototype.neighbors = function() {
 
 };
 
-
 CubeTile.prototype.hash = function() {
   return hash(faceList.indexOf(this.face), this.z, this.y, this.x);
 };
-
 
 CubeTile.prototype.equals = function(that) {
   return (this._geometry === that._geometry &&
@@ -326,18 +315,15 @@ CubeTile.prototype.equals = function(that) {
       this.x === that.x);
 };
 
-
 CubeTile.prototype.cmp = function(that) {
   return (cmp(this.z, that.z) ||
   cmp(faceList.indexOf(this.face), faceList.indexOf(that.face)) ||
   cmp(this.y, that.y) || cmp(this.x, that.x));
 };
 
-
 CubeTile.prototype.str = function() {
-  return 'CubeTile(' + tile.face + ', ' + tile.x + ', ' + tile.y + ', ' + tile.z + ')';
+  return `CubeTile(${this.face}, ${this.x}, ${this.y}, ${this.z})`;
 };
-
 
 function CubeLevel(levelProperties) {
   this.constructor.super_.call(this, levelProperties);
@@ -346,74 +332,65 @@ function CubeLevel(levelProperties) {
   this._tileSize = levelProperties.tileSize;
 
   if (this._size % this._tileSize !== 0) {
-    throw new Error('Level size is not multiple of tile size: ' +
-                    this._size + ' ' + this._tileSize);
+    throw new Error(`Level size is not multiple of tile size: ${this}`._size + ` ${this}`._tileSize);
   }
 }
 
 inherits(CubeLevel, Level);
 
-
 CubeLevel.prototype.width = function() {
   return this._size;
 };
-
 
 CubeLevel.prototype.height = function() {
   return this._size;
 };
 
-
 CubeLevel.prototype.tileWidth = function() {
   return this._tileSize;
 };
-
 
 CubeLevel.prototype.tileHeight = function() {
   return this._tileSize;
 };
 
-
 CubeLevel.prototype._validateWithParentLevel = function(parentLevel) {
 
-  var width = this.width();
-  var height = this.height();
-  var tileWidth = this.tileWidth();
-  var tileHeight = this.tileHeight();
-  var numHorizontal = this.numHorizontalTiles();
-  var numVertical = this.numVerticalTiles();
+  const width = this.width();
+  const height = this.height();
+  const tileWidth = this.tileWidth();
+  const tileHeight = this.tileHeight();
+  const numHorizontal = this.numHorizontalTiles();
+  const numVertical = this.numVerticalTiles();
 
-  var parentWidth = parentLevel.width();
-  var parentHeight = parentLevel.height();
-  var parentTileWidth = parentLevel.tileWidth();
-  var parentTileHeight = parentLevel.tileHeight();
-  var parentNumHorizontal = parentLevel.numHorizontalTiles();
-  var parentNumVertical = parentLevel.numVerticalTiles();
+  const parentWidth = parentLevel.width();
+  const parentHeight = parentLevel.height();
+  const parentTileWidth = parentLevel.tileWidth();
+  const parentTileHeight = parentLevel.tileHeight();
+  const parentNumHorizontal = parentLevel.numHorizontalTiles();
+  const parentNumVertical = parentLevel.numVerticalTiles();
 
   if (width % parentWidth !== 0) {
-    throw new Error('Level width must be multiple of parent level: ' +
-                    width + ' vs. ' + parentWidth);
+    throw new Error(`Level width must be multiple of parent level: ${width} vs. ` + parentWidth);
   }
 
   if (height % parentHeight !== 0) {
-    throw new Error('Level height must be multiple of parent level: ' +
-                    height + ' vs. ' + parentHeight);
+    throw new Error(`Level height must be multiple of parent level: ${height} vs. ` + parentHeight);
   }
 
   if (numHorizontal % parentNumHorizontal !== 0) {
     throw new Error('Number of horizontal tiles must be multiple of parent level: ' +
-      numHorizontal + " (" + width + '/' + tileWidth + ')' + " vs. " +
-      parentNumHorizontal + " (" + parentWidth + '/' + parentTileWidth + ')');
+      numHorizontal + " (" + width + `/${tileWidth})` + " vs. " +
+      parentNumHorizontal + " (" + parentWidth + `/${parentTileWidth})`);
   }
 
   if (numVertical % parentNumVertical !== 0) {
     throw new Error('Number of vertical tiles must be multiple of parent level: ' +
-      numVertical + " (" + height + '/' + tileHeight + ')' + " vs. " +
-      parentNumVertical + " (" + parentHeight + '/' + parentTileHeight + ')');
+      numVertical + " (" + height + `/${tileHeight})` + " vs. " +
+      parentNumVertical + " (" + parentHeight + `/${parentTileHeight})`);
   }
 
 };
-
 
 /**
  * @class CubeGeometry
@@ -442,7 +419,7 @@ function CubeGeometry(levelPropertiesList) {
   this.levelList = makeLevelList(levelPropertiesList, CubeLevel);
   this.selectableLevelList = makeSelectableLevelList(this.levelList);
 
-  for (var i = 1; i < this.levelList.length; i++) {
+  for (let i = 1; i < this.levelList.length; i++) {
     this.levelList[i]._validateWithParentLevel(this.levelList[i-1]);
   }
 
@@ -455,29 +432,27 @@ function CubeGeometry(levelPropertiesList) {
   this._viewSize = {};
 }
 
-
 CubeGeometry.prototype.maxTileSize = function() {
-  var maxTileSize = 0;
-  for (var i = 0; i < this.levelList.length; i++) {
-    var level = this.levelList[i];
+  let maxTileSize = 0;
+  for (let i = 0; i < this.levelList.length; i++) {
+    const level = this.levelList[i];
     maxTileSize = Math.max(maxTileSize, level.tileWidth, level.tileHeight);
   }
   return maxTileSize;
 };
 
-
 CubeGeometry.prototype.levelTiles = function(level, result) {
 
-  var levelIndex = this.levelList.indexOf(level);
-  var maxX = level.numHorizontalTiles() - 1;
-  var maxY = level.numVerticalTiles() - 1;
+  const levelIndex = this.levelList.indexOf(level);
+  const maxX = level.numHorizontalTiles() - 1;
+  const maxY = level.numVerticalTiles() - 1;
 
   result = result || [];
 
-  for (var f = 0; f < faceList.length; f++) {
-    var face = faceList[f];
-    for (var x = 0; x <= maxX; x++) {
-      for (var y = 0; y <= maxY; y++) {
+  for (const f = 0; f < faceList.length; f++) {
+    const face = faceList[f];
+    for (const x = 0; x <= maxX; x++) {
+      for (const y = 0; y <= maxY; y++) {
         result.push(new CubeTile(face, x, y, levelIndex, this));
       }
     }
@@ -487,23 +462,22 @@ CubeGeometry.prototype.levelTiles = function(level, result) {
 
 };
 
-
 CubeGeometry.prototype._closestTile = function(view, level) {
-  var ray = this._vec;
+  const ray = this._vec;
 
   // Compute a view ray into the central screen point.
   vec4.set(ray, 0, 0, 1, 1);
   vec4.transformMat4(ray, ray, view.inverseProjection());
 
-  var minAngle = Infinity;
-  var closestFace = null;
+  let minAngle = Infinity;
+  let closestFace = null;
 
   // Find the face whose vector makes a minimal angle with the view ray.
   // This is the face into which the view ray points.
   for (var face in faceVectors) {
-    var vector = faceVectors[face];
+    const vector = faceVectors[face];
     // For a small angle between two normalized vectors, angle ~ 1-cos(angle).
-    var angle = 1 - vec3.dot(vector, ray);
+    const angle = 1 - vec3.dot(vector, ray);
     if (angle < minAngle) {
       minAngle = angle;
       closestFace = face;
@@ -512,31 +486,30 @@ CubeGeometry.prototype._closestTile = function(view, level) {
 
   // Project view ray onto cube, i.e., normalize the coordinate with
   // largest absolute value to ±0.5.
-  var max = Math.max(Math.abs(ray[0]), Math.abs(ray[1]), Math.abs(ray[2])) / 0.5;
-  for (var i = 0; i < 3; i++) {
+  const max = Math.max(Math.abs(ray[0]), Math.abs(ray[1]), Math.abs(ray[2])) / 0.5;
+  for (const i = 0; i < 3; i++) {
     ray[i] = ray[i] / max;
   }
 
   // Rotate view ray into front face.
-  var rot = faceRotation[closestFace];
+  const rot = faceRotation[closestFace];
   rotateVector(ray, 0, -rot.x, -rot.y);
 
   // Get the desired zoom level.
-  var tileZ = this.levelList.indexOf(level);
-  var numX = level.numHorizontalTiles();
-  var numY = level.numVerticalTiles();
+  const tileZ = this.levelList.indexOf(level);
+  const numX = level.numHorizontalTiles();
+  const numY = level.numVerticalTiles();
 
   // Find the coordinates of the tile that the view ray points into.
-  var tileX = clamp(Math.floor((0.5 + ray[0]) * numX), 0, numX - 1);
-  var tileY = clamp(Math.floor((0.5 - ray[1]) * numY), 0, numY - 1);
+  const tileX = clamp(Math.floor((0.5 + ray[0]) * numX), 0, numX - 1);
+  const tileY = clamp(Math.floor((0.5 - ray[1]) * numY), 0, numY - 1);
 
   return new CubeTile(closestFace, tileX, tileY, tileZ, this);
 };
 
-
 CubeGeometry.prototype.visibleTiles = function(view, level, result) {
-  var viewSize = this._viewSize;
-  var tileSearcher = this._tileSearcher;
+  const viewSize = this._viewSize;
+  const tileSearcher = this._tileSearcher;
 
   result = result || [];
 
@@ -546,8 +519,8 @@ CubeGeometry.prototype.visibleTiles = function(view, level, result) {
     return result;
   }
 
-  var startingTile = this._closestTile(view, level);
-  var count = tileSearcher.search(view, startingTile, result);
+  const startingTile = this._closestTile(view, level);
+  const count = tileSearcher.search(view, startingTile, result);
   if (!count) {
     throw new Error('Starting tile is not visible');
   }
@@ -555,10 +528,8 @@ CubeGeometry.prototype.visibleTiles = function(view, level, result) {
   return result;
 };
 
-
 CubeGeometry.Tile = CubeGeometry.prototype.Tile = CubeTile;
 CubeGeometry.type = CubeGeometry.prototype.type = 'cube';
 CubeTile.type = CubeTile.prototype.type = 'cube';
 
-
-module.exports = CubeGeometry;
+export default CubeGeometry;

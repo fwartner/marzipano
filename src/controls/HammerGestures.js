@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var Hammer = require('hammerjs');
 
-var nextId = 1;
-var idProperty = 'MarzipanoHammerElementId';
+import Hammer from 'hammerjs';
+
+const nextId = 1;
+const idProperty = 'MarzipanoHammerElementId';
 function getKeyForElementAndType(element, type) {
   if (!element[idProperty]) {
     element[idProperty] = nextId++;
   }
   return type + element[idProperty];
 }
-
 
 /**
  * @class HammerGestures
@@ -39,9 +38,8 @@ function HammerGestures() {
   this._refCount = {};
 }
 
-
 HammerGestures.prototype.get = function(element, type) {
-  var key = getKeyForElementAndType(element, type);
+  let key = getKeyForElementAndType(element, type);
   if (!this._managers[key]) {
     this._managers[key] = this._createManager(element, type);
     this._refCount[key] = 0;
@@ -50,9 +48,8 @@ HammerGestures.prototype.get = function(element, type) {
   return new HammerGesturesHandle(this, this._managers[key], element, type);
 };
 
-
 HammerGestures.prototype._createManager = function(element, type) {
-  var manager = new Hammer.Manager(element);
+  let manager = new Hammer.Manager(element);
 
   // Managers are created with different parameters for different pointer
   // types.
@@ -69,9 +66,8 @@ HammerGestures.prototype._createManager = function(element, type) {
   return manager;
 };
 
-
 HammerGestures.prototype._releaseHandle = function(element, type) {
-  var key = getKeyForElementAndType(element, type);
+  const key = getKeyForElementAndType(element, type);
   if (this._refCount[key]) {
     this._refCount[key]--;
     if (!this._refCount[key]) {
@@ -82,7 +78,6 @@ HammerGestures.prototype._releaseHandle = function(element, type) {
   }
 };
 
-
 function HammerGesturesHandle(hammerGestures, manager, element, type) {
   this._manager = manager;
   this._element = element;
@@ -91,10 +86,9 @@ function HammerGesturesHandle(hammerGestures, manager, element, type) {
   this._eventHandlers = [];
 }
 
-
 HammerGesturesHandle.prototype.on = function(events, handler) {
-  var type = this._type;
-  var handlerFilteredEvents = function(e) {
+  const type = this._type;
+  const handlerFilteredEvents = function(e) {
     if (type === e.pointerType) {
       handler(e);
     }
@@ -104,10 +98,9 @@ HammerGesturesHandle.prototype.on = function(events, handler) {
   this._manager.on(events, handlerFilteredEvents);
 };
 
-
 HammerGesturesHandle.prototype.release = function() {
-  for (var i = 0; i < this._eventHandlers.length; i++) {
-    var eventHandler = this._eventHandlers[i];
+  for (const i = 0; i < this._eventHandlers.length; i++) {
+    const eventHandler = this._eventHandlers[i];
     this._manager.off(eventHandler.events, eventHandler.handler);
   }
 
@@ -118,10 +111,8 @@ HammerGesturesHandle.prototype.release = function() {
   this._hammerGestures = null;
 };
 
-
 HammerGesturesHandle.prototype.manager = function() {
   return this._manager;
 };
 
-
-module.exports = new HammerGestures();
+export default new HammerGestures();

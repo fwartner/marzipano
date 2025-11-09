@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-var eventEmitter = require('minimal-event-emitter');
 
-var RenderLoop = require('./RenderLoop');
-var Controls = require('./controls/Controls');
-var Scene = require('./Scene');
-var Timer = require('./Timer');
+import eventEmitter from 'minimal-event-emitter';
+import RenderLoop from './RenderLoop.js';
+import Controls from './controls/Controls.js';
+import Scene from './Scene.js';
+import Timer from './Timer.js';
+import WebGlStage from './stages/WebGl.js';
+import ControlCursor from './controls/ControlCursor.js';
+import HammerGestures from './controls/HammerGestures.js';
+import registerDefaultControls from './controls/registerDefaultControls.js';
+import registerDefaultRenderers from './renderers/registerDefaultRenderers.js';
+import tween from './util/tween.js';
+import noop from './util/noop.js';
+import clearOwnProperties from './util/clearOwnProperties.js';
 
-var WebGlStage = require('./stages/WebGl');
-
-var ControlCursor = require('./controls/ControlCursor');
-var HammerGestures = require('./controls/HammerGestures');
-
-var registerDefaultControls = require('./controls/registerDefaultControls');
-var registerDefaultRenderers = require('./renderers/registerDefaultRenderers');
-
-var setOverflowHidden = require('./util/dom').setOverflowHidden;
-var setAbsolute = require('./util/dom').setAbsolute;
-var setFullSize = require('./util/dom').setFullSize;
-
-var tween = require('./util/tween');
-var noop = require('./util/noop');
-var clearOwnProperties = require('./util/clearOwnProperties');
+import { setOverflowHidden } from './util/dom.js';
+import { setAbsolute } from './util/dom.js';
+import { setFullSize } from './util/dom.js';
 
 /**
  * Signals that the current scene has changed.
@@ -169,7 +164,6 @@ function Viewer(domElement, opts) {
 
 eventEmitter(Viewer);
 
-
 /**
  * Destructor.
  */
@@ -209,7 +203,6 @@ Viewer.prototype.destroy = function() {
   clearOwnProperties(this);
 };
 
-
 /**
  * Updates the stage size to fill the containing element.
  *
@@ -217,12 +210,11 @@ Viewer.prototype.destroy = function() {
  * Most clients won't need to explicitly call it to keep the size up to date.
  */
 Viewer.prototype.updateSize = function() {
-  var size = this._size;
+  const size = this._size;
   size.width = this._domElement.clientWidth;
   size.height = this._domElement.clientHeight;
   this._stage.setSize(size);
 };
-
 
 /**
  * Returns the underlying {@link Stage stage}.
@@ -232,7 +224,6 @@ Viewer.prototype.stage = function() {
   return this._stage;
 };
 
-
 /**
  * Returns the underlying {@link RenderLoop render loop}.
  * @return {RenderLoop}
@@ -240,7 +231,6 @@ Viewer.prototype.stage = function() {
 Viewer.prototype.renderLoop = function() {
   return this._renderLoop;
 };
-
 
 /**
  * Returns the underlying {@link Controls controls}.
@@ -250,7 +240,6 @@ Viewer.prototype.controls = function() {
   return this._controls;
 };
 
-
 /**
  * Returns the underlying DOM element.
  * @return {Element}
@@ -258,7 +247,6 @@ Viewer.prototype.controls = function() {
 Viewer.prototype.domElement = function() {
   return this._domElement;
 };
-
 
 /**
  * Creates a new {@link Scene scene} with a single layer and adds it to the
@@ -282,7 +270,7 @@ Viewer.prototype.domElement = function() {
 Viewer.prototype.createScene = function(opts) {
   opts = opts || {};
 
-  var scene = this.createEmptyScene({ view: opts.view });
+  let scene = this.createEmptyScene({ view: opts.view });
 
   scene.createLayer({
     source: opts.source,
@@ -294,7 +282,6 @@ Viewer.prototype.createScene = function(opts) {
 
   return scene;
 };
-
 
 /**
  * Creates a new {@link Scene scene} with no layers and adds it to the viewer.
@@ -313,26 +300,25 @@ Viewer.prototype.createScene = function(opts) {
 Viewer.prototype.createEmptyScene = function(opts) {
   opts = opts || {};
 
-  var scene = new Scene(this, opts.view);
+  let scene = new Scene(this, opts.view);
   this._scenes.push(scene);
 
   return scene;
 };
 
-
 Viewer.prototype._updateSceneLayers = function() {
   var i;
   var layer;
 
-  var stage = this._stage;
-  var currentScene = this._currentScene;
-  var replacedScene = this._replacedScene;
+  let stage = this._stage;
+  const currentScene = this._currentScene;
+  const replacedScene = this._replacedScene;
 
-  var oldLayers = stage.listLayers();
+  const oldLayers = stage.listLayers();
 
   // The stage contains layers from at most two scenes: the current one, on top,
   // and the one currently being switched away from, on the bottom.
-  var newLayers = [];
+  let newLayers = [];
   if (replacedScene) {
     newLayers = newLayers.concat(replacedScene.listLayers());
   }
@@ -370,7 +356,6 @@ Viewer.prototype._updateSceneLayers = function() {
   // opacity.
 };
 
-
 Viewer.prototype._addLayerToStage = function(layer, i) {
   // Pin the first level to ensure a fallback while the layer is visible.
   // Note that this is distinct from the `pinFirstLevel` option passed to
@@ -379,32 +364,28 @@ Viewer.prototype._addLayerToStage = function(layer, i) {
   this._stage.addLayer(layer, i);
 };
 
-
 Viewer.prototype._removeLayerFromStage = function(layer) {
   this._stage.removeLayer(layer);
   layer.unpinFirstLevel();
   layer.textureStore().clearNotPinned();
 };
 
-
 Viewer.prototype._addSceneEventListeners = function(scene) {
   scene.addEventListener('layerChange', this._layerChangeHandler);
   scene.addEventListener('viewChange', this._viewChangeHandler);
 };
-
 
 Viewer.prototype._removeSceneEventListeners = function(scene) {
   scene.removeEventListener('layerChange', this._layerChangeHandler);
   scene.removeEventListener('viewChange', this._viewChangeHandler);
 };
 
-
 /**
  * Destroys a {@link Scene scene} and removes it from the viewer.
  * @param {Scene} scene
  */
 Viewer.prototype.destroyScene = function(scene) {
-  var i = this._scenes.indexOf(scene);
+  let i = this._scenes.indexOf(scene);
   if (i < 0) {
     throw new Error('No such scene in viewer');
   }
@@ -444,7 +425,6 @@ Viewer.prototype.destroyScene = function(scene) {
   scene.destroy();
 };
 
-
 /**
  * Destroys all {@link Scene scenes} and removes them from the viewer.
  */
@@ -453,7 +433,6 @@ Viewer.prototype.destroyAllScenes = function() {
     this.destroyScene(this._scenes[0]);
   }
 };
-
 
 /**
  * Returns whether the viewer contains a {@link Scene scene}.
@@ -464,7 +443,6 @@ Viewer.prototype.hasScene = function(scene) {
   return this._scenes.indexOf(scene) >= 0;
 };
 
-
 /**
  * Returns a list of all {@link Scene scenes}.
  * @return {Scene[]}
@@ -472,7 +450,6 @@ Viewer.prototype.hasScene = function(scene) {
 Viewer.prototype.listScenes = function() {
   return [].concat(this._scenes);
 };
-
 
 /**
  * Returns the current {@link Scene scene}, or null if there isn't one.
@@ -485,20 +462,18 @@ Viewer.prototype.scene = function() {
   return this._currentScene;
 };
 
-
 /**
  * Returns the {@link View view} for the current {@link Scene scene}, or null
  * if there isn't one.
  * @return {View}
  */
 Viewer.prototype.view = function() {
-  var scene = this._currentScene;
+  let scene = this._currentScene;
   if (scene) {
     return scene.view();
   }
   return null;
 };
-
 
 /**
  * Tweens the {@link View view} for the current {@link Scene scene}.
@@ -511,12 +486,11 @@ Viewer.prototype.view = function() {
  */
 Viewer.prototype.lookTo = function(params, opts, done) {
   // TODO: is it an error to call lookTo when no scene is displayed?
-  var scene = this._currentScene;
+  let scene = this._currentScene;
   if (scene) {
     scene.lookTo(params, opts, done);
   }
 };
-
 
 /**
  * Starts a movement, possibly replacing the current movement.
@@ -529,13 +503,12 @@ Viewer.prototype.lookTo = function(params, opts, done) {
  *     interrupted.
  */
 Viewer.prototype.startMovement = function(fn, done) {
-  var scene = this._currentScene;
+  let scene = this._currentScene;
   if (!scene) {
     return;
   }
   scene.startMovement(fn, done);
 };
-
 
 /**
  * Stops the current movement.
@@ -544,13 +517,12 @@ Viewer.prototype.startMovement = function(fn, done) {
  * current scene. If there is no current scene, this is a no-op.
  */
 Viewer.prototype.stopMovement = function() {
-  var scene = this._currentScene;
+  let scene = this._currentScene;
   if (!scene) {
     return;
   }
   scene.stopMovement();
 };
-
 
 /**
  * Returns the current movement.
@@ -561,13 +533,12 @@ Viewer.prototype.stopMovement = function() {
  * @return {function}
  */
 Viewer.prototype.movement = function() {
-  var scene = this._currentScene;
+  const scene = this._currentScene;
   if (!scene) {
     return;
   }
   return scene.movement();
 };
-
 
 /**
  * Schedules an idle movement to be automatically started when the view remains
@@ -585,7 +556,6 @@ Viewer.prototype.setIdleMovement = function(timeout, movement) {
   this._idleMovement = movement;
 };
 
-
 /**
  * Stops the idle movement. It will be started again after the timeout set by
  * {@link Viewer#setIdleMovement}.
@@ -595,32 +565,28 @@ Viewer.prototype.breakIdleMovement = function() {
   this._resetIdleTimer();
 };
 
-
 Viewer.prototype._resetIdleTimer = function() {
   this._idleTimer.start();
 };
 
-
 Viewer.prototype._triggerIdleTimer = function() {
-  var idleMovement = this._idleMovement;
+  const idleMovement = this._idleMovement;
   if (!idleMovement) {
     return;
   }
   this.startMovement(idleMovement);
 };
 
-
-var defaultSwitchDuration = 1000;
+const defaultSwitchDuration = 1000;
 
 function defaultTransitionUpdate(val, newScene, oldScene) {
-  var layers = newScene.listLayers();
+  const layers = newScene.listLayers();
   layers.forEach(function(layer) {
     layer.mergeEffects({ opacity: val });
   });
 
   newScene._hotspotContainer.domElement().style.opacity = val;
 }
-
 
 /**
  * Switches to another {@link Scene scene} with a fade transition. This scene
@@ -643,14 +609,14 @@ function defaultTransitionUpdate(val, newScene, oldScene) {
  *     takes place, but this function is still called.
  */
 Viewer.prototype.switchScene = function(newScene, opts, done) {
-  var self = this;
+  const self = this;
 
   opts = opts || {};
   done = done || noop;
 
-  var stage = this._stage;
+  const stage = this._stage;
 
-  var oldScene = this._currentScene;
+  const oldScene = this._currentScene;
 
   // Do nothing if the target scene is the current one.
   if (oldScene === newScene) {
@@ -669,9 +635,9 @@ Viewer.prototype.switchScene = function(newScene, opts, done) {
     this._cancelCurrentTween = null;
   }
 
-  var oldSceneLayers = oldScene ? oldScene.listLayers() : [];
-  var newSceneLayers = newScene.listLayers();
-  var stageLayers = stage.listLayers();
+  let oldSceneLayers = oldScene ? oldScene.listLayers() : [];
+  const newSceneLayers = newScene.listLayers();
+  const stageLayers = stage.listLayers();
 
   // Check that the stage contains exactly as many layers as the current scene,
   // and that the top layer is the right one. If this test fails, either there
@@ -682,13 +648,13 @@ Viewer.prototype.switchScene = function(newScene, opts, done) {
   }
 
   // Get the transition parameters.
-  var duration = opts.transitionDuration != null ?
+  const duration = opts.transitionDuration != null ?
       opts.transitionDuration : defaultSwitchDuration;
-  var update = opts.transitionUpdate != null ?
+  const update = opts.transitionUpdate != null ?
       opts.transitionUpdate : defaultTransitionUpdate;
 
   // Add new scene layers into the stage before starting the transition.
-  for (var i = 0; i < newSceneLayers.length; i++) {
+  for (let i = 0; i < newSceneLayers.length; i++) {
     this._addLayerToStage(newSceneLayers[i]);
   }
 
@@ -706,7 +672,7 @@ Viewer.prototype.switchScene = function(newScene, opts, done) {
     if (self._replacedScene) {
       self._removeSceneEventListeners(self._replacedScene);
       oldSceneLayers = self._replacedScene.listLayers();
-      for (var i = 0; i < oldSceneLayers.length; i++) {
+      for (const i = 0; i < oldSceneLayers.length; i++) {
         self._removeLayerFromStage(oldSceneLayers[i]);
       }
       self._replacedScene = null;
@@ -733,5 +699,4 @@ Viewer.prototype.switchScene = function(newScene, opts, done) {
   this._addSceneEventListeners(newScene);
 };
 
-
-module.exports = Viewer;
+export default Viewer;

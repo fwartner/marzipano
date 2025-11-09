@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+
 
 function Level(levelProperties) {
   this._fallbackOnly = !!levelProperties.fallbackOnly;
@@ -31,4 +31,4 @@ Level.prototype.fallbackOnly = function() {
   return this._fallbackOnly;
 };
 
-module.exports = Level;
+export default Level;
