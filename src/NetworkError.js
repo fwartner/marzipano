@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import inherits from './util/inherits.js';
-
 /**
  * @class NetworkError
  * @extends {Error}
@@ -24,12 +22,11 @@ import inherits from './util/inherits.js';
  * Signals an error that occurred while fetching a URL. This is used by
  * {@link Loader loaders} to distinguish network failures from other errors.
  */
-function NetworkError(message) {
-  // See: https://stackoverflow.com/questions/1382107/whats-a-good-way-to-extend-error-in-javascript
-  this.constructor.super_.apply(this, arguments);
-  this.message = message;
+class NetworkError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'NetworkError';
+  }
 }
-
-inherits(NetworkError, Error);
 
 export default NetworkError;

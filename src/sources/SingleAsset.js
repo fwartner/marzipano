@@ -23,27 +23,27 @@
  *
  * @param {Asset} asset The asset.
  */
-function SingleAssetSource(asset) {
-  this._asset = asset;
-}
-
-SingleAssetSource.prototype.asset = function () {
-  return this._asset;
-};
-
-SingleAssetSource.prototype.loadAsset = function (stage, tile, done) {
-  const self = this;
-
-  const timeout = setTimeout(() => {
-    done(null, tile, self._asset);
-  }, 0);
-
-  function cancel() {
-    clearTimeout(timeout);
-    done.apply(null, arguments);
+class SingleAssetSource {
+  constructor(asset) {
+    this._asset = asset;
   }
 
-  return cancel;
-};
+  asset() {
+    return this._asset;
+  }
+
+  loadAsset(stage, tile, done) {
+    const timeout = setTimeout(() => {
+      done(null, tile, this._asset);
+    }, 0);
+
+    const cancel = (...args) => {
+      clearTimeout(timeout);
+      done.apply(null, args);
+    };
+
+    return cancel;
+  }
+}
 
 export default SingleAssetSource;

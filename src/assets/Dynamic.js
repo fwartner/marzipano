@@ -15,7 +15,6 @@
  */
 
 import StaticAsset from './Static.js';
-import inherits from '../util/inherits.js';
 import eventEmitter from 'minimal-event-emitter';
 import clearOwnProperties from '../util/clearOwnProperties.js';
 
@@ -31,38 +30,39 @@ import clearOwnProperties from '../util/clearOwnProperties.js';
  *     underlying pixel source.
  * @throws If the pixel source is unsupported.
  */
-function DynamicAsset(element) {
-  this.constructor.super_.call(this, element);
-  this._timestamp = 0;
+class DynamicAsset extends StaticAsset {
+  constructor(element) {
+    super(element);
+    this._timestamp = 0;
+  }
+
+  /**
+   * Destructor.
+   */
+  destroy() {
+    clearOwnProperties(this);
+  }
+
+  timestamp() {
+    return this._timestamp;
+  }
+
+  isDynamic() {
+    return true;
+  }
+
+  /**
+   * Marks the asset dirty, signaling that the contents of the underlying pixel
+   * source have changed.
+   *
+   * @throws If the asset is not dynamic.
+   */
+  markDirty() {
+    this._timestamp++;
+    this.emit('change');
+  }
 }
 
-inherits(DynamicAsset, StaticAsset);
 eventEmitter(DynamicAsset);
-
-/**
- * Destructor.
- */
-DynamicAsset.prototype.destroy = function () {
-  clearOwnProperties(this);
-};
-
-DynamicAsset.prototype.timestamp = function () {
-  return this._timestamp;
-};
-
-DynamicAsset.prototype.isDynamic = function () {
-  return true;
-};
-
-/**
- * Marks the asset dirty, signaling that the contents of the underlying pixel
- * source have changed.
- *
- * @throws If the asset is not dynamic.
- */
-DynamicAsset.prototype.markDirty = function () {
-  this._timestamp++;
-  this.emit('change');
-};
 
 export default DynamicAsset;

@@ -56,160 +56,162 @@ import { setTransform } from './util/dom.js';
  *     value to the CSS `transform` property used to position the hotspot. This
  *     may be used to rotate an embedded hotspot.
  */
-function Hotspot(domElement, parentDomElement, view, coords, opts) {
-  opts = opts || {};
-  opts.perspective = opts.perspective || {};
-  opts.perspective.extraTransforms =
-    opts.perspective.extraTransforms != null ? opts.perspective.extraTransforms : '';
+class Hotspot {
+  constructor(domElement, parentDomElement, view, coords, opts) {
+    opts = opts || {};
+    opts.perspective = opts.perspective || {};
+    opts.perspective.extraTransforms =
+      opts.perspective.extraTransforms != null ? opts.perspective.extraTransforms : '';
 
-  this._domElement = domElement;
-  this._parentDomElement = parentDomElement;
-  this._view = view;
-  this._coords = {};
-  this._perspective = {};
+    this._domElement = domElement;
+    this._parentDomElement = parentDomElement;
+    this._view = view;
+    this._coords = {};
+    this._perspective = {};
 
-  this.setPosition(coords);
+    this.setPosition(coords);
 
-  // Add hotspot into the DOM.
-  this._parentDomElement.appendChild(this._domElement);
+    // Add hotspot into the DOM.
+    this._parentDomElement.appendChild(this._domElement);
 
-  this.setPerspective(opts.perspective);
+    this.setPerspective(opts.perspective);
 
-  // Whether the hotspot is visible.
-  // The hotspot may still be hidden if it's inside a hidden HotspotContainer.
-  this._visible = true;
-
-  // The current calculated screen position.
-  this._position = { x: 0, y: 0 };
-}
-
-eventEmitter(Hotspot);
-
-/**
- * Destructor.
- * Clients should call {@link HotspotContainer#destroyHotspot} instead.
- */
-Hotspot.prototype.destroy = function () {
-  this._parentDomElement.removeChild(this._domElement);
-  clearOwnProperties(this);
-};
-
-/**
- * @return {Element}
- */
-Hotspot.prototype.domElement = function () {
-  return this._domElement;
-};
-
-/**
- * @return {Object}
- */
-Hotspot.prototype.position = function () {
-  return this._coords;
-};
-
-/**
- * @param {Object} coords
- */
-Hotspot.prototype.setPosition = function (coords) {
-  for (var key in coords) {
-    this._coords[key] = coords[key];
-  }
-  this._update();
-  // TODO: We should probably emit a hotspotsChange event on the parent
-  // HotspotContainer. What's the best way to do so?
-};
-
-/**
- * @return {Object}
- */
-Hotspot.prototype.perspective = function () {
-  return this._perspective;
-};
-
-/**
- * @param {Object}
- */
-Hotspot.prototype.setPerspective = function (perspective) {
-  for (var key in perspective) {
-    this._perspective[key] = perspective[key];
-  }
-  this._update();
-};
-
-/**
- * Show the hotspot
- */
-Hotspot.prototype.show = function () {
-  if (!this._visible) {
+    // Whether the hotspot is visible.
+    // The hotspot may still be hidden if it's inside a hidden HotspotContainer.
     this._visible = true;
+
+    // The current calculated screen position.
+    this._position = { x: 0, y: 0 };
+  }
+
+  /**
+   * Destructor.
+   * Clients should call {@link HotspotContainer#destroyHotspot} instead.
+   */
+  destroy() {
+    this._parentDomElement.removeChild(this._domElement);
+    clearOwnProperties(this);
+  }
+
+  /**
+   * @return {Element}
+   */
+  domElement() {
+    return this._domElement;
+  }
+
+  /**
+   * @return {Object}
+   */
+  position() {
+    return this._coords;
+  }
+
+  /**
+   * @param {Object} coords
+   */
+  setPosition(coords) {
+    for (const key in coords) {
+      this._coords[key] = coords[key];
+    }
+    this._update();
+    // TODO: We should probably emit a hotspotsChange event on the parent
+    // HotspotContainer. What's the best way to do so?
+  }
+
+  /**
+   * @return {Object}
+   */
+  perspective() {
+    return this._perspective;
+  }
+
+  /**
+   * @param {Object}
+   */
+  setPerspective(perspective) {
+    for (const key in perspective) {
+      this._perspective[key] = perspective[key];
+    }
     this._update();
   }
-};
 
-/**
- * Hide the hotspot
- */
-Hotspot.prototype.hide = function () {
-  if (this._visible) {
-    this._visible = false;
-    this._update();
-  }
-};
-
-Hotspot.prototype._update = function () {
-  const element = this._domElement;
-
-  const params = this._coords;
-  let position = this._position;
-  var x, y;
-
-  let isVisible = false;
-
-  if (this._visible) {
-    const view = this._view;
-
-    if (this._perspective.radius) {
-      // Hotspots that are embedded in the panorama may be visible even when
-      // positioned behind the camera.
-      isVisible = true;
-      this._setEmbeddedPosition(view, params);
-    } else {
-      // Regular hotspots are only visible when positioned in front of the
-      // camera. Note that they may be partially visible when positioned outside
-      // the viewport.
-      view.coordinatesToScreen(params, position);
-      x = position.x;
-      y = position.y;
-
-      if (x != null && y != null) {
-        isVisible = true;
-        this._setPosition(x, y);
-      }
+  /**
+   * Show the hotspot
+   */
+  show() {
+    if (!this._visible) {
+      this._visible = true;
+      this._update();
     }
   }
 
-  // Show if visible, hide if not.
-  if (isVisible) {
-    element.style.display = 'block';
-    element.style.position = 'absolute';
-  } else {
-    element.style.display = 'none';
-    element.style.position = '';
+  /**
+   * Hide the hotspot
+   */
+  hide() {
+    if (this._visible) {
+      this._visible = false;
+      this._update();
+    }
   }
-};
 
-Hotspot.prototype._setEmbeddedPosition = function (view, params) {
-  const transform = view.coordinatesToPerspectiveTransform(
-    params,
-    this._perspective.radius,
-    this._perspective.extraTransforms
-  );
-  setTransform(this._domElement, transform);
-};
+  _update() {
+    const element = this._domElement;
 
-Hotspot.prototype._setPosition = function (x, y) {
-  positionAbsolutely(this._domElement, x, y, this._perspective.extraTransforms);
-};
+    const params = this._coords;
+    let position = this._position;
+    let x, y;
+
+    let isVisible = false;
+
+    if (this._visible) {
+      const view = this._view;
+
+      if (this._perspective.radius) {
+        // Hotspots that are embedded in the panorama may be visible even when
+        // positioned behind the camera.
+        isVisible = true;
+        this._setEmbeddedPosition(view, params);
+      } else {
+        // Regular hotspots are only visible when positioned in front of the
+        // camera. Note that they may be partially visible when positioned outside
+        // the viewport.
+        view.coordinatesToScreen(params, position);
+        x = position.x;
+        y = position.y;
+
+        if (x != null && y != null) {
+          isVisible = true;
+          this._setPosition(x, y);
+        }
+      }
+    }
+
+    // Show if visible, hide if not.
+    if (isVisible) {
+      element.style.display = 'block';
+      element.style.position = 'absolute';
+    } else {
+      element.style.display = 'none';
+      element.style.position = '';
+    }
+  }
+
+  _setEmbeddedPosition(view, params) {
+    const transform = view.coordinatesToPerspectiveTransform(
+      params,
+      this._perspective.radius,
+      this._perspective.extraTransforms
+    );
+    setTransform(this._domElement, transform);
+  }
+
+  _setPosition(x, y) {
+    positionAbsolutely(this._domElement, x, y, this._perspective.extraTransforms);
+  }
+}
+
+eventEmitter(Hotspot);
 
 export default Hotspot;

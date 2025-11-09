@@ -48,378 +48,379 @@ import clearOwnProperties from './util/clearOwnProperties.js';
  * @param {Viewer} viewer The viewer this scene belongs to.
  * @param {View} view The scene's underlying view.
  */
-function Scene(viewer, view) {
-  this._viewer = viewer;
-  this._view = view;
-  this._layers = [];
+class Scene {
+  constructor(viewer, view) {
+    this._viewer = viewer;
+    this._view = view;
+    this._layers = [];
 
-  // Hotspot container. Assume it occupies a full rect.
-  this._hotspotContainer = new HotspotContainer(
-    viewer._controlContainer,
-    viewer.stage(),
-    this._view,
-    viewer.renderLoop()
-  );
+    // Hotspot container. Assume it occupies a full rect.
+    this._hotspotContainer = new HotspotContainer(
+      viewer._controlContainer,
+      viewer.stage(),
+      this._view,
+      viewer.renderLoop()
+    );
 
-  // The current movement.
-  this._movement = null;
-  this._movementStartTime = null;
-  this._movementStep = null;
-  this._movementParams = null;
-  this._movementCallback = null;
+    // The current movement.
+    this._movement = null;
+    this._movementStartTime = null;
+    this._movementStep = null;
+    this._movementParams = null;
+    this._movementCallback = null;
 
-  // Event listener for updating the view according to the current movement.
-  // The listener is set/unset on the render loop when a movement starts/stops.
-  this._updateMovementHandler = this._updateMovement.bind(this);
+    // Event listener for updating the view according to the current movement.
+    // The listener is set/unset on the render loop when a movement starts/stops.
+    this._updateMovementHandler = this._updateMovement.bind(this);
 
-  // Show or hide hotspots when scene changes.
-  this._updateHotspotContainerHandler = this._updateHotspotContainer.bind(this);
-  this._viewer.addEventListener('sceneChange', this._updateHotspotContainerHandler);
+    // Show or hide hotspots when scene changes.
+    this._updateHotspotContainerHandler = this._updateHotspotContainer.bind(this);
+    this._viewer.addEventListener('sceneChange', this._updateHotspotContainerHandler);
 
-  // Emit event when view changes.
-  this._viewChangeHandler = this.emit.bind(this, 'viewChange');
-  this._view.addEventListener('change', this._viewChangeHandler);
+    // Emit event when view changes.
+    this._viewChangeHandler = this.emit.bind(this, 'viewChange');
+    this._view.addEventListener('change', this._viewChangeHandler);
 
-  // Update the hotspot container.
-  this._updateHotspotContainer();
+    // Update the hotspot container.
+    this._updateHotspotContainer();
+  }
 }
 
 eventEmitter(Scene);
 
-/**
- * Destructor. Clients should call {@link Viewer#destroyScene} instead.
- */
-Scene.prototype.destroy = function () {
-  this._view.removeEventListener('change', this._viewChangeHandler);
-  this._viewer.removeEventListener('sceneChange', this._updateHotspotContainerHandler);
+  /**
+   * Destructor. Clients should call {@link Viewer#destroyScene} instead.
+   */
+  destroy() {
+    this._view.removeEventListener('change', this._viewChangeHandler);
+    this._viewer.removeEventListener('sceneChange', this._updateHotspotContainerHandler);
 
-  if (this._movement) {
-    this.stopMovement();
-  }
-
-  this._hotspotContainer.destroy();
-
-  this.destroyAllLayers();
-
-  clearOwnProperties(this);
-};
-
-/**
- * Returns the {@link HotspotContainer hotspot container} for the scene.
- * @return {Layer}
- */
-Scene.prototype.hotspotContainer = function () {
-  return this._hotspotContainer;
-};
-
-/**
- * Returns the first of the {@link Layer layers} belonging to the scene, or
- * null if the scene has no layers.
- *
- * This method is equivalent to `Scene#listLayers[0]`. It may be removed in the
- * future.
- *
- * @return {Layer}
- */
-Scene.prototype.layer = function () {
-  return this._layers[0];
-};
-
-/**
- * Returns a list of all {@link Layer layers} belonging to the scene. The
- * returned list is in display order, background to foreground.
- * @return {Layer[]}
- */
-Scene.prototype.listLayers = function () {
-  return [].concat(this._layers);
-};
-
-/**
- * Returns the scene's underlying {@link View view}.
- * @return {View}
- */
-Scene.prototype.view = function () {
-  return this._view;
-};
-
-/**
- * Returns the {@link Viewer viewer} the scene belongs to.
- * @return {Viewer}
- */
-Scene.prototype.viewer = function () {
-  return this._viewer;
-};
-
-/**
- * Returns whether the scene is currently visible.
- * @return {boolean}
- */
-Scene.prototype.visible = function () {
-  return this._viewer.scene() === this;
-};
-
-/**
- * Creates a new {@link Layer layer} and adds it into the scene in the
- * foreground position.
- *
- * @param {Object} opts Layer creation options.
- * @param {Source} opts.source The layer's underlying {@link Source}.
- * @param {Source} opts.geometry The layer's underlying {@link Geometry}.
- * @param {boolean} [opts.pinFirstLevel=false] Whether to pin the first level to
- *     provide a fallback of last resort, at the cost of memory consumption.
- * @param {Object} [opts.textureStoreOpts={}] Options to pass to the
- *     {@link TextureStore} constructor.
- * @param {Object} [opts.layerOpts={}] Options to pass to the {@link Layer}
- *     constructor.
- * @return {Layer}
- */
-Scene.prototype.createLayer = function (opts) {
-  opts = opts || {};
-
-  const textureStoreOpts = opts.textureStoreOpts || {};
-  const layerOpts = opts.layerOpts || {};
-
-  const source = opts.source;
-  const geometry = opts.geometry;
-  let view = this._view;
-  const stage = this._viewer.stage();
-  const textureStore = new TextureStore(source, stage, textureStoreOpts);
-  const layer = new Layer(source, geometry, view, textureStore, layerOpts);
-
-  this._layers.push(layer);
-
-  if (opts.pinFirstLevel) {
-    layer.pinFirstLevel();
-  }
-
-  // Signal that the layers have changed.
-  this.emit('layerChange');
-
-  return layer;
-};
-
-/**
- * Destroys a {@link Layer layer} and removes it from the scene.
- * @param {Layer} layer
- * @throws An error if the layer does not belong to the scene.
- */
-Scene.prototype.destroyLayer = function (layer) {
-  const i = this._layers.indexOf(layer);
-  if (i < 0) {
-    throw new Error('No such layer in scene');
-  }
-
-  this._layers.splice(i, 1);
-
-  // Signal that the layers have changed.
-  this.emit('layerChange');
-
-  layer.textureStore().destroy();
-  layer.destroy();
-};
-
-/**
- * Destroys all {@link Layer layers} and removes them from the scene.
- */
-Scene.prototype.destroyAllLayers = function () {
-  while (this._layers.length > 0) {
-    this.destroyLayer(this._layers[0]);
-  }
-};
-
-/**
- * Switches to the scene.
- *
- * This is equivalent to calling {@link Viewer#switchScene} on this scene.
- *
- * @param {Object} opts Options to pass into {@link Viewer#switchScene}.
- * @param {function} done Function to call when the switch is complete.
- */
-Scene.prototype.switchTo = function (opts, done) {
-  return this._viewer.switchScene(this, opts, done);
-};
-
-/**
- * Tweens the scene's underlying {@link View view}.
- *
- * @param {Object} params Target view parameters.
- * @param {Object} opts Transition options.
- * @param {function} [opts.ease=easeInOutQuad] Tween easing function
- * @param {number} [opts.controlsInterrupt=false] allow controls to interrupt
- *     an ongoing tween.
- * @param {number} [opts.transitionDuration=1000] Tween duration, in
- *     milliseconds.
- * @param {number} [opts.closest=true] Whether to tween through the shortest
- *    path between the initial and final view parameters. This requires
- *    {@link View#normalizeToClosest} to be implemented, and does nothing
- *    otherwise.
- * @param {function} done Function to call when the tween finishes or is
- *    interrupted.
- */
-Scene.prototype.lookTo = function (params, opts, done) {
-  const self = this;
-
-  opts = opts || {};
-  done = done || noop;
-
-  if (type(params) !== 'object') {
-    throw new Error('Target view parameters must be an object');
-  }
-
-  // Quadratic in/out easing.
-  const easeInOutQuad = function (k) {
-    if ((k *= 2) < 1) {
-      return 0.5 * k * k;
+    if (this._movement) {
+      this.stopMovement();
     }
-    return -0.5 * (--k * (k - 2) - 1);
-  };
 
-  const ease = opts.ease != null ? opts.ease : easeInOutQuad;
-  const controlsInterrupt = opts.controlsInterrupt != null ? opts.controlsInterrupt : false;
-  const duration = opts.transitionDuration != null ? opts.transitionDuration : 1000;
-  const shortest = opts.shortest != null ? opts.shortest : true;
+    this._hotspotContainer.destroy();
 
-  let view = this._view;
+    this.destroyAllLayers();
 
-  const initialParams = view.parameters();
-
-  const finalParams = {};
-  defaults(finalParams, params);
-  defaults(finalParams, initialParams);
-
-  // Tween through the shortest path if requested.
-  // The view must implement the normalizeToClosest() method.
-  if (shortest && view.normalizeToClosest) {
-    view.normalizeToClosest(finalParams, finalParams);
+    clearOwnProperties(this);
   }
 
-  let movement = function () {
-    let finalUpdate = false;
+  /**
+   * Returns the {@link HotspotContainer hotspot container} for the scene.
+   * @return {Layer}
+   */
+  hotspotContainer() {
+    return this._hotspotContainer;
+  }
 
-    return function (params, elapsed) {
-      if (elapsed >= duration && finalUpdate) {
-        return null;
+  /**
+   * Returns the first of the {@link Layer layers} belonging to the scene, or
+   * null if the scene has no layers.
+   *
+   * This method is equivalent to `Scene#listLayers[0]`. It may be removed in the
+   * future.
+   *
+   * @return {Layer}
+   */
+  layer() {
+    return this._layers[0];
+  }
+
+  /**
+   * Returns a list of all {@link Layer layers} belonging to the scene. The
+   * returned list is in display order, background to foreground.
+   * @return {Layer[]}
+   */
+  listLayers() {
+    return [].concat(this._layers);
+  }
+
+  /**
+   * Returns the scene's underlying {@link View view}.
+   * @return {View}
+   */
+  view() {
+    return this._view;
+  }
+
+  /**
+   * Returns the {@link Viewer viewer} the scene belongs to.
+   * @return {Viewer}
+   */
+  viewer() {
+    return this._viewer;
+  }
+
+  /**
+   * Returns whether the scene is currently visible.
+   * @return {boolean}
+   */
+  visible() {
+    return this._viewer.scene() === this;
+  }
+
+  /**
+   * Creates a new {@link Layer layer} and adds it into the scene in the
+   * foreground position.
+   *
+   * @param {Object} opts Layer creation options.
+   * @param {Source} opts.source The layer's underlying {@link Source}.
+   * @param {Source} opts.geometry The layer's underlying {@link Geometry}.
+   * @param {boolean} [opts.pinFirstLevel=false] Whether to pin the first level to
+   *     provide a fallback of last resort, at the cost of memory consumption.
+   * @param {Object} [opts.textureStoreOpts={}] Options to pass to the
+   *     {@link TextureStore} constructor.
+   * @param {Object} [opts.layerOpts={}] Options to pass to the {@link Layer}
+   *     constructor.
+   * @return {Layer}
+   */
+  createLayer(opts) {
+    opts = opts || {};
+
+    const textureStoreOpts = opts.textureStoreOpts || {};
+    const layerOpts = opts.layerOpts || {};
+
+    const source = opts.source;
+    const geometry = opts.geometry;
+    let view = this._view;
+    const stage = this._viewer.stage();
+    const textureStore = new TextureStore(source, stage, textureStoreOpts);
+    const layer = new Layer(source, geometry, view, textureStore, layerOpts);
+
+    this._layers.push(layer);
+
+    if (opts.pinFirstLevel) {
+      layer.pinFirstLevel();
+    }
+
+    // Signal that the layers have changed.
+    this.emit('layerChange');
+
+    return layer;
+  }
+
+  /**
+   * Destroys a {@link Layer layer} and removes it from the scene.
+   * @param {Layer} layer
+   * @throws An error if the layer does not belong to the scene.
+   */
+  destroyLayer(layer) {
+    const i = this._layers.indexOf(layer);
+    if (i < 0) {
+      throw new Error('No such layer in scene');
+    }
+
+    this._layers.splice(i, 1);
+
+    // Signal that the layers have changed.
+    this.emit('layerChange');
+
+    layer.textureStore().destroy();
+    layer.destroy();
+  }
+
+  /**
+   * Destroys all {@link Layer layers} and removes them from the scene.
+   */
+  destroyAllLayers() {
+    while (this._layers.length > 0) {
+      this.destroyLayer(this._layers[0]);
+    }
+  }
+
+  /**
+   * Switches to the scene.
+   *
+   * This is equivalent to calling {@link Viewer#switchScene} on this scene.
+   *
+   * @param {Object} opts Options to pass into {@link Viewer#switchScene}.
+   * @param {function} done Function to call when the switch is complete.
+   */
+  switchTo(opts, done) {
+    return this._viewer.switchScene(this, opts, done);
+  }
+
+  /**
+   * Tweens the scene's underlying {@link View view}.
+   *
+   * @param {Object} params Target view parameters.
+   * @param {Object} opts Transition options.
+   * @param {function} [opts.ease=easeInOutQuad] Tween easing function
+   * @param {number} [opts.controlsInterrupt=false] allow controls to interrupt
+   *     an ongoing tween.
+   * @param {number} [opts.transitionDuration=1000] Tween duration, in
+   *     milliseconds.
+   * @param {number} [opts.closest=true] Whether to tween through the shortest
+   *    path between the initial and final view parameters. This requires
+   *    {@link View#normalizeToClosest} to be implemented, and does nothing
+   *    otherwise.
+   * @param {function} done Function to call when the tween finishes or is
+   *    interrupted.
+   */
+  lookTo(params, opts, done) {
+    opts = opts || {};
+    done = done || noop;
+
+    if (type(params) !== 'object') {
+      throw new Error('Target view parameters must be an object');
+    }
+
+    // Quadratic in/out easing.
+    const easeInOutQuad = (k) => {
+      if ((k *= 2) < 1) {
+        return 0.5 * k * k;
       }
-
-      const delta = Math.min(elapsed / duration, 1);
-
-      for (var param in params) {
-        const start = initialParams[param];
-        const end = finalParams[param];
-        params[param] = start + ease(delta) * (end - start);
-      }
-
-      finalUpdate = elapsed >= duration;
-
-      return params;
+      return -0.5 * (--k * (k - 2) - 1);
     };
-  };
 
-  const reenableControls = this._viewer.controls().enabled();
+    const ease = opts.ease != null ? opts.ease : easeInOutQuad;
+    const controlsInterrupt = opts.controlsInterrupt != null ? opts.controlsInterrupt : false;
+    const duration = opts.transitionDuration != null ? opts.transitionDuration : 1000;
+    const shortest = opts.shortest != null ? opts.shortest : true;
 
-  if (!controlsInterrupt) {
-    this._viewer.controls().disable();
-  }
+    let view = this._view;
 
-  this.startMovement(movement, function () {
-    if (reenableControls) {
-      self._viewer.controls().enable();
+    const initialParams = view.parameters();
+
+    const finalParams = {};
+    defaults(finalParams, params);
+    defaults(finalParams, initialParams);
+
+    // Tween through the shortest path if requested.
+    // The view must implement the normalizeToClosest() method.
+    if (shortest && view.normalizeToClosest) {
+      view.normalizeToClosest(finalParams, finalParams);
     }
-    done();
-  });
-};
 
-/**
- * Starts a movement, possibly replacing the current movement.
- *
- * @param {function} fn The movement function.
- * @param {function} done Function to be called when the movement finishes or is
- *     interrupted.
- */
-Scene.prototype.startMovement = function (fn, done) {
-  let renderLoop = this._viewer.renderLoop();
+    const movement = () => {
+      let finalUpdate = false;
 
-  if (this._movement) {
-    this.stopMovement();
+      return (params, elapsed) => {
+        if (elapsed >= duration && finalUpdate) {
+          return null;
+        }
+
+        const delta = Math.min(elapsed / duration, 1);
+
+        for (const param in params) {
+          const start = initialParams[param];
+          const end = finalParams[param];
+          params[param] = start + ease(delta) * (end - start);
+        }
+
+        finalUpdate = elapsed >= duration;
+
+        return params;
+      };
+    };
+
+    const reenableControls = this._viewer.controls().enabled();
+
+    if (!controlsInterrupt) {
+      this._viewer.controls().disable();
+    }
+
+    this.startMovement(movement, () => {
+      if (reenableControls) {
+        this._viewer.controls().enable();
+      }
+      done();
+    });
   }
 
-  let step = fn();
-  if (typeof step !== 'function') {
-    throw new Error('Bad movement');
-  }
+  /**
+   * Starts a movement, possibly replacing the current movement.
+   *
+   * @param {function} fn The movement function.
+   * @param {function} done Function to be called when the movement finishes or is
+   *     interrupted.
+   */
+  startMovement(fn, done) {
+    let renderLoop = this._viewer.renderLoop();
 
-  this._movement = fn;
-  this._movementStep = step;
-  this._movementStartTime = now();
-  this._movementParams = {};
-  this._movementCallback = done;
+    if (this._movement) {
+      this.stopMovement();
+    }
 
-  renderLoop.addEventListener('beforeRender', this._updateMovementHandler);
-  renderLoop.renderOnNextFrame();
-};
+    let step = fn();
+    if (typeof step !== 'function') {
+      throw new Error('Bad movement');
+    }
 
-/**
- * Stops the current movement.
- */
-Scene.prototype.stopMovement = function () {
-  const done = this._movementCallback;
-  let renderLoop = this._viewer.renderLoop();
+    this._movement = fn;
+    this._movementStep = step;
+    this._movementStartTime = now();
+    this._movementParams = {};
+    this._movementCallback = done;
 
-  if (!this._movement) {
-    return;
-  }
-
-  // Clear state before calling done, to prevent an infinite loop when the
-  // callback starts a new movement.
-  this._movement = null;
-  this._movementStep = null;
-  this._movementStartTime = null;
-  this._movementParams = null;
-  this._movementCallback = null;
-
-  renderLoop.removeEventListener('beforeRender', this._updateMovementHandler);
-
-  if (done) {
-    done();
-  }
-};
-
-/**
- * Returns the current movement.
- * @return {function}
- */
-Scene.prototype.movement = function () {
-  return this._movement;
-};
-
-Scene.prototype._updateMovement = function () {
-  if (!this._movement) {
-    throw new Error('Should not call update');
-  }
-
-  const renderLoop = this._viewer.renderLoop();
-  const view = this._view;
-
-  const elapsed = now() - this._movementStartTime;
-  const step = this._movementStep;
-  let params = this._movementParams;
-
-  params = view.parameters(params);
-  params = step(params, elapsed);
-  if (params == null) {
-    this.stopMovement();
-  } else {
-    view.setParameters(params);
+    renderLoop.addEventListener('beforeRender', this._updateMovementHandler);
     renderLoop.renderOnNextFrame();
   }
-};
 
-Scene.prototype._updateHotspotContainer = function () {
-  if (this.visible()) {
-    this._hotspotContainer.show();
-  } else {
-    this._hotspotContainer.hide();
+  /**
+   * Stops the current movement.
+   */
+  stopMovement() {
+    const done = this._movementCallback;
+    let renderLoop = this._viewer.renderLoop();
+
+    if (!this._movement) {
+      return;
+    }
+
+    // Clear state before calling done, to prevent an infinite loop when the
+    // callback starts a new movement.
+    this._movement = null;
+    this._movementStep = null;
+    this._movementStartTime = null;
+    this._movementParams = null;
+    this._movementCallback = null;
+
+    renderLoop.removeEventListener('beforeRender', this._updateMovementHandler);
+
+    if (done) {
+      done();
+    }
   }
-};
+
+  /**
+   * Returns the current movement.
+   * @return {function}
+   */
+  movement() {
+    return this._movement;
+  }
+
+  _updateMovement() {
+    if (!this._movement) {
+      throw new Error('Should not call update');
+    }
+
+    const renderLoop = this._viewer.renderLoop();
+    const view = this._view;
+
+    const elapsed = now() - this._movementStartTime;
+    const step = this._movementStep;
+    let params = this._movementParams;
+
+    params = view.parameters(params);
+    params = step(params, elapsed);
+    if (params == null) {
+      this.stopMovement();
+    } else {
+      view.setParameters(params);
+      renderLoop.renderOnNextFrame();
+    }
+  }
+
+  _updateHotspotContainer() {
+    if (this.visible()) {
+      this._hotspotContainer.show();
+    } else {
+      this._hotspotContainer.hide();
+    }
+  }
+}
 
 export default Scene;

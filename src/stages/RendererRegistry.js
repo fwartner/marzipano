@@ -24,35 +24,37 @@
  *
  * See also {@link Stage#registerRenderer}.
  */
-function RendererRegistry() {
-  this._renderers = {};
-}
-
-/**
- * Registers a renderer for the given geometry and view type.
- * @param {string} geometryType The geometry type, as given by
- *     {@link Geometry#type}.
- * @param {string} viewType The view type, as given by {@link View#type}.
- * @param {*} Renderer The renderer class.
- */
-RendererRegistry.prototype.set = function (geometryType, viewType, Renderer) {
-  if (!this._renderers[geometryType]) {
-    this._renderers[geometryType] = {};
+class RendererRegistry {
+  constructor() {
+    this._renderers = {};
   }
-  this._renderers[geometryType][viewType] = Renderer;
-};
 
-/**
- * Retrieves the renderer for the given geometry and view type.
- * @param {string} geometryType The geometry type, as given by
- *     {@link Geometry#type}.
- * @param {string} viewType The view type, as given by {@link View#type}.
- * @param {*} Renderer The renderer class, or null if no such renderer has been
- * registered.
- */
-RendererRegistry.prototype.get = function (geometryType, viewType) {
-  const Renderer = this._renderers[geometryType] && this._renderers[geometryType][viewType];
-  return Renderer || null;
-};
+  /**
+   * Registers a renderer for the given geometry and view type.
+   * @param {string} geometryType The geometry type, as given by
+   *     {@link Geometry#type}.
+   * @param {string} viewType The view type, as given by {@link View#type}.
+   * @param {*} Renderer The renderer class.
+   */
+  set(geometryType, viewType, Renderer) {
+    if (!this._renderers[geometryType]) {
+      this._renderers[geometryType] = {};
+    }
+    this._renderers[geometryType][viewType] = Renderer;
+  }
+
+  /**
+   * Retrieves the renderer for the given geometry and view type.
+   * @param {string} geometryType The geometry type, as given by
+   *     {@link Geometry#type}.
+   * @param {string} viewType The view type, as given by {@link View#type}.
+   * @param {*} Renderer The renderer class, or null if no such renderer has been
+   * registered.
+   */
+  get(geometryType, viewType) {
+    const Renderer = this._renderers[geometryType] && this._renderers[geometryType][viewType];
+    return Renderer || null;
+  }
+}
 
 export default RendererRegistry;

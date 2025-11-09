@@ -56,131 +56,131 @@ const defaultRetryDelay = 10000;
  * @param {number} [opts.retryDelay=10000] Time in milliseconds to wait before
  *     retrying a failed request.
  */
-function ImageUrlSource(sourceFromTile, opts) {
-  opts = opts ? opts : {};
+class ImageUrlSource {
+  constructor(sourceFromTile, opts) {
+    opts = opts ? opts : {};
 
-  this._loadPool = new WorkPool({
-    concurrency: opts.concurrency || defaultConcurrency,
-  });
+    this._loadPool = new WorkPool({
+      concurrency: opts.concurrency || defaultConcurrency,
+    });
 
-  this._retryDelay = opts.retryDelay || defaultRetryDelay;
-  this._retryMap = {};
+    this._retryDelay = opts.retryDelay || defaultRetryDelay;
+    this._retryMap = {};
 
-  this._sourceFromTile = sourceFromTile;
+    this._sourceFromTile = sourceFromTile;
+  }
+
+  loadAsset(stage, tile, done) {
+    const retryDelay = this._retryDelay;
+    const retryMap = this._retryMap;
+
+    const tileSource = this._sourceFromTile(tile);
+    const url = tileSource.url;
+    const rect = tileSource.rect;
+
+    const loadImage = stage.loadImage.bind(stage, url, rect);
+
+    const loadFn = (done) => {
+      // TODO: Deduplicate load requests for the same URL. Although the browser
+      // might be smart enough to avoid duplicate requests, they are still unduly
+      // impacted by the concurrency parameter.
+      return this._loadPool.push(loadImage, (err, asset) => {
+        if (err) {
+          if (err instanceof NetworkError) {
+            // If a network error occurred, wait before retrying.
+            retryMap[url] = now();
+            this.emit('networkError', err, tile);
+          }
+          done(err, tile);
+        } else {
+          // On a successful fetch, forget the previous timeout.
+          delete retryMap[url];
+          done(null, tile, asset);
+        }
+      });
+    };
+
+    // Check whether we are retrying a failed request.
+    let delayAmount;
+    const lastTime = retryMap[url];
+    if (lastTime != null) {
+      const currentTime = now();
+      const elapsed = currentTime - lastTime;
+      if (elapsed < retryDelay) {
+        // Wait before retrying.
+        delayAmount = retryDelay - elapsed;
+      } else {
+        // Retry timeout expired; perform the request at once.
+        delayAmount = 0;
+        delete retryMap[url];
+      }
+    }
+
+    const delayFn = delay.bind(null, delayAmount);
+
+    return chain(delayFn, loadFn)(done);
+  }
+
+  /**
+   * Creates an ImageUrlSource from a string template.
+   *
+   * @param {String} url Tile URL template, which may contain the following
+   *    placeholders:
+   *    - `{f}` : tile face (one of `b`, `d`, `f`, `l`, `r`, `u`)
+   *    - `{z}` : tile level index (0 is the smallest level)
+   *    - `{x}` : tile horizontal index
+   *    - `{y}` : tile vertical index
+   * @param {Object} opts In addition to the options already supported by the
+   *     {@link ImageUrlSource} constructor.
+   * @param {String} opts.cubeMapPreviewUrl URL to use as the preview level.
+   *     This must be a single image containing six cube faces laid out
+   *     vertically according to the face order parameter.
+   * @param {String} [opts.cubeMapPreviewFaceOrder='bdflru'] Face order within
+   *     the preview image.
+   */
+  static fromString(url, opts) {
+    opts = opts || {};
+
+    const faceOrder = (opts && opts.cubeMapPreviewFaceOrder) || defaultCubeMapFaceOrder;
+
+    const urlFn = opts.cubeMapPreviewUrl ? withPreview : withoutPreview;
+
+    return new ImageUrlSource(urlFn, opts);
+
+    function withoutPreview(tile) {
+      let tileUrl = url;
+
+      for (const property in templateProperties) {
+        const templateProperty = templateProperties[property];
+        const regExp = propertyRegExp(property);
+        const valueFromTile = Object.prototype.hasOwnProperty.call(tile, templateProperty)
+          ? tile[templateProperty]
+          : '';
+        tileUrl = tileUrl.replace(regExp, valueFromTile);
+      }
+
+      return { url: tileUrl };
+    }
+
+    function withPreview(tile) {
+      if (tile.z === 0) {
+        return cubeMapUrl(tile);
+      } else {
+        return withoutPreview(tile);
+      }
+    }
+
+    function cubeMapUrl(tile) {
+      const y = faceOrder.indexOf(tile.face) / 6;
+      return {
+        url: opts.cubeMapPreviewUrl,
+        rect: { x: 0, y, width: 1, height: 1 / 6 },
+      };
+    }
+  }
 }
 
 eventEmitter(ImageUrlSource);
-
-ImageUrlSource.prototype.loadAsset = function (stage, tile, done) {
-  const self = this;
-
-  const retryDelay = this._retryDelay;
-  const retryMap = this._retryMap;
-
-  const tileSource = this._sourceFromTile(tile);
-  const url = tileSource.url;
-  const rect = tileSource.rect;
-
-  const loadImage = stage.loadImage.bind(stage, url, rect);
-
-  const loadFn = function (done) {
-    // TODO: Deduplicate load requests for the same URL. Although the browser
-    // might be smart enough to avoid duplicate requests, they are still unduly
-    // impacted by the concurrency parameter.
-    return self._loadPool.push(loadImage, (err, asset) => {
-      if (err) {
-        if (err instanceof NetworkError) {
-          // If a network error occurred, wait before retrying.
-          retryMap[url] = now();
-          self.emit('networkError', err, tile);
-        }
-        done(err, tile);
-      } else {
-        // On a successful fetch, forget the previous timeout.
-        delete retryMap[url];
-        done(null, tile, asset);
-      }
-    });
-  };
-
-  // Check whether we are retrying a failed request.
-  let delayAmount;
-  const lastTime = retryMap[url];
-  if (lastTime != null) {
-    const currentTime = now();
-    const elapsed = currentTime - lastTime;
-    if (elapsed < retryDelay) {
-      // Wait before retrying.
-      delayAmount = retryDelay - elapsed;
-    } else {
-      // Retry timeout expired; perform the request at once.
-      delayAmount = 0;
-      delete retryMap[url];
-    }
-  }
-
-  const delayFn = delay.bind(null, delayAmount);
-
-  return chain(delayFn, loadFn)(done);
-};
-
-/**
- * Creates an ImageUrlSource from a string template.
- *
- * @param {String} url Tile URL template, which may contain the following
- *    placeholders:
- *    - `{f}` : tile face (one of `b`, `d`, `f`, `l`, `r`, `u`)
- *    - `{z}` : tile level index (0 is the smallest level)
- *    - `{x}` : tile horizontal index
- *    - `{y}` : tile vertical index
- * @param {Object} opts In addition to the options already supported by the
- *     {@link ImageUrlSource} constructor.
- * @param {String} opts.cubeMapPreviewUrl URL to use as the preview level.
- *     This must be a single image containing six cube faces laid out
- *     vertically according to the face order parameter.
- * @param {String} [opts.cubeMapPreviewFaceOrder='bdflru'] Face order within
- *     the preview image.
- */
-ImageUrlSource.fromString = function (url, opts) {
-  opts = opts || {};
-
-  const faceOrder = (opts && opts.cubeMapPreviewFaceOrder) || defaultCubeMapFaceOrder;
-
-  const urlFn = opts.cubeMapPreviewUrl ? withPreview : withoutPreview;
-
-  return new ImageUrlSource(urlFn, opts);
-
-  function withoutPreview(tile) {
-    let tileUrl = url;
-
-    for (const property in templateProperties) {
-      const templateProperty = templateProperties[property];
-      const regExp = propertyRegExp(property);
-      const valueFromTile = Object.prototype.hasOwnProperty.call(tile, templateProperty)
-        ? tile[templateProperty]
-        : '';
-      tileUrl = tileUrl.replace(regExp, valueFromTile);
-    }
-
-    return { url: tileUrl };
-  }
-
-  function withPreview(tile) {
-    if (tile.z === 0) {
-      return cubeMapUrl(tile);
-    } else {
-      return withoutPreview(tile);
-    }
-  }
-
-  function cubeMapUrl(tile) {
-    const y = faceOrder.indexOf(tile.face) / 6;
-    return {
-      url: opts.cubeMapPreviewUrl,
-      rect: { x: 0, y, width: 1, height: 1 / 6 },
-    };
-  }
-};
 
 function propertyRegExp(property) {
   const regExpStr = `\\{(${property})\\}`;

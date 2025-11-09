@@ -15,7 +15,6 @@
  */
 
 import WebGlBaseRenderer from './WebGlBase.js';
-import inherits from '../util/inherits.js';
 
 /**
  * @class WebGlFlatRenderer
@@ -28,10 +27,10 @@ import inherits from '../util/inherits.js';
  * Most users do not need to instantiate this class. Renderers are created and
  * destroyed by {@link Stage} as necessary.
  */
-function WebGlFlatRenderer() {
-  this.constructor.super_.apply(this, arguments);
+class WebGlFlatRenderer extends WebGlBaseRenderer {
+  constructor(...args) {
+    super(...args);
+  }
 }
-
-inherits(WebGlFlatRenderer, WebGlBaseRenderer);
 
 export default WebGlFlatRenderer;
