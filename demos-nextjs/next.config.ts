@@ -23,7 +23,9 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
-  // Skip static optimization for demo routes (they use client-only code)
+  // Add empty turbopack config to silence Next.js 16 warning
+  // We're using webpack explicitly for better compatibility with local packages
+  turbopack: {},
 };
 
 export default nextConfig;
