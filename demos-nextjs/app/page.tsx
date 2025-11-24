@@ -29,18 +29,12 @@ export default function Home() {
             </p>
             
             <div className="flex flex-wrap justify-center gap-4">
-              <Link
-                href="/demos"
-                className="group inline-flex items-center gap-2 px-8 py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-900 transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg"
-              >
-                <span>View Demos</span>
-                <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
-              </Link>
               <a
                 href="#installation"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-gray-300 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 hover:scale-105 text-gray-900 shadow-sm"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-900 transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg"
               >
                 <span>Get Started</span>
+                <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
               </a>
               <a
                 href="https://github.com/Pixel-Process-UG/marzipano-ts"
@@ -167,7 +161,7 @@ scene.switchTo();`}
       {/* Features Section */}
       <section className="py-24 md:py-32 bg-white">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black">
               Key Features
             </h2>
@@ -176,8 +170,8 @@ scene.switchTo();`}
               Everything you need to build immersive 360° experiences
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ 
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto justify-items-center md:justify-items-stretch">
             <FeatureCard
               title="Multiple Geometries"
               description="Support for cube maps, equirectangular projections, and flat images with automatic level-of-detail management."
@@ -385,12 +379,6 @@ npm run test:watch`}
                   <li>
                     <Link href="/" className="text-gray-600 hover:text-black transition-colors text-sm inline-flex items-center gap-2 group">
                       <span>Home</span>
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/demos" className="text-gray-600 hover:text-black transition-colors text-sm inline-flex items-center gap-2 group">
-                      <span>Demos</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                     </Link>
                   </li>

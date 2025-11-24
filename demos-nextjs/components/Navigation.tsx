@@ -46,12 +46,12 @@ export default function Navigation() {
             >
               Home
             </Link>
-            <Link
-              href="/demos"
+            <a
+              href="#installation"
               className="px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-all duration-200 font-medium text-sm"
             >
-              Demos
-            </Link>
+              Installation
+            </a>
             <a
               href="https://github.com/Pixel-Process-UG/marzipano-ts"
               target="_blank"
@@ -108,13 +108,13 @@ export default function Navigation() {
             >
               Home
             </Link>
-            <Link
-              href="/demos"
+            <a
+              href="#installation"
               className="block px-4 py-3 text-gray-700 hover:text-black hover:bg-gray-50 rounded-lg transition-all duration-200 font-medium"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Demos
-            </Link>
+              Installation
+            </a>
             <a
               href="https://github.com/Pixel-Process-UG/marzipano-ts"
               target="_blank"
