@@ -11,7 +11,7 @@ export default function NextGenFeaturesPage() {
   const handleViewerReady = (viewer: Marzipano.Viewer) => {
     // Create source.
     const source = Marzipano.ImageUrlSource.fromString(
-      "//www.marzipano.net/media/equirect/{z}.jpg"
+      "/media/equirect/{z}.jpg"
     );
 
     // Create geometry.

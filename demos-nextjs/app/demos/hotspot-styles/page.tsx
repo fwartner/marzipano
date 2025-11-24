@@ -11,8 +11,8 @@ export default function HotspotStylesPage() {
   const handleViewerReady = (viewer: Marzipano.Viewer) => {
     // Create source.
     const source = Marzipano.ImageUrlSource.fromString(
-      "//www.marzipano.net/media/furnace/{z}/{f}/{y}/{x}.jpg",
-      { cubeMapPreviewUrl: "//www.marzipano.net/media/furnace/preview.jpg" }
+      "/media/furnace/{z}/{f}/{y}/{x}.jpg",
+      { cubeMapPreviewUrl: "/media/furnace/preview.jpg" }
     );
 
     // Create geometry.
@@ -46,7 +46,7 @@ export default function HotspotStylesPage() {
     // Simple hotspot with hint
     const hintspot = document.createElement('div');
     hintspot.id = 'hintspot';
-    hintspot.innerHTML = '<a href="https://github.com/chinchang/hint.css" target="_blank" style="display: block;"><img src="//www.marzipano.net/demos/hotspot-styles/img/hotspot.png" alt="Hotspot" style="width: 50px; height: 50px;"></a>';
+    hintspot.innerHTML = '<a href="https://github.com/chinchang/hint.css" target="_blank" style="display: block;"><img src="/demos/hotspot-styles/img/hotspot.png" alt="Hotspot" style="width: 50px; height: 50px;"></a>';
     hintspot.setAttribute('title', 'hint.css!');
     container.createHotspot(hintspot, { yaw: 2.15, pitch: 0 });
 

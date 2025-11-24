@@ -12,7 +12,7 @@ export default function SpatialAudioPage() {
   const handleViewerReady = (viewer: Marzipano.Viewer) => {
     // Create a simple equirect scene
     const source = Marzipano.ImageUrlSource.fromString(
-      'https://www.marzipano.net/media/equirect/{z}.jpg'
+      '/media/equirect/{z}.jpg'
     );
     const geometry = new Marzipano.EquirectGeometry([
       { width: 4096 },

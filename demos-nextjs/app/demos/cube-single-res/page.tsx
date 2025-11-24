@@ -11,7 +11,8 @@ export default function CubeSingleResPage() {
   const handleViewerReady = (viewer: Marzipano.Viewer) => {
     // Create source.
     const source = Marzipano.ImageUrlSource.fromString(
-      "/media/cubemap/{f}.jpg"
+      "/media/cubemap/{f}.jpg",
+      {}
     );
 
     // Create geometry.

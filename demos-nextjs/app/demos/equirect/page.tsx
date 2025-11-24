@@ -11,7 +11,8 @@ export default function EquirectPage() {
   const handleViewerReady = (viewer: Marzipano.Viewer) => {
     // Create source.
     const source = Marzipano.ImageUrlSource.fromString(
-      "/media/equirect/angra.jpg"
+      "/media/equirect/angra.jpg",
+      {}
     );
 
     // Create geometry.

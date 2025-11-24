@@ -65,7 +65,7 @@ export default function TransitionsPage() {
     // Create a view limiter to be shared by the two scenes.
     const limiter = Marzipano.RectilinearView.limit.traditional(2048, 120*Math.PI/180);
 
-    const urlPrefix = "//www.marzipano.net/media";
+    const urlPrefix = "/media";
 
     // Set up the first scene.
     const view1 = new Marzipano.RectilinearView(null, limiter);

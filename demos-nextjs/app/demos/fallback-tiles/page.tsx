@@ -6,7 +6,7 @@ import DemoLayout from '@/components/DemoLayout';
 import MarzipanoViewer from '@/components/MarzipanoViewer';
 
 export default function FallbackTilesPage() {
-  const stageRef = useRef<Marzipano.Stage | null>(null);
+  const stageRef = useRef<any>(null);
   const viewerRef = useRef<Marzipano.Viewer | null>(null);
 
   const handleViewerReady = (viewer: Marzipano.Viewer) => {
@@ -26,7 +26,7 @@ export default function FallbackTilesPage() {
     });
     const geometryBelow = new Marzipano.CubeGeometry(levelsBelow);
     const sourceBelow = new Marzipano.ImageUrlSource(function(tile: any) {
-      return { url: "//www.marzipano.net/media/pixels/red.png" };
+      return { url: "/media/pixels/red.png" };
     });
     const textureStoreBelow = new Marzipano.TextureStore(sourceBelow, stage);
     const layerBelow = new Marzipano.Layer(
@@ -41,7 +41,7 @@ export default function FallbackTilesPage() {
     const geometryAbove = new Marzipano.CubeGeometry(levelsAbove);
     const sourceAbove = new Marzipano.ImageUrlSource(function(tile: any) {
       return { 
-        url: "//www.marzipano.net/media/generated-tiles/" +
+        url: "/media/generated-tiles/" +
           tile.z + '_' + tile.face + '_' + tile.x + '_' + tile.y + '.png' 
       };
     });
@@ -52,8 +52,8 @@ export default function FallbackTilesPage() {
     );
 
     // Add layers to stage.
-    stage.addLayer(layerBelow);
-    stage.addLayer(layerAbove);
+    (stage as any).addLayer(layerBelow);
+    (stage as any).addLayer(layerAbove);
 
     // Pin level 0 so it serves as the last-resort fallback.
     layerAbove.pinLevel(0);

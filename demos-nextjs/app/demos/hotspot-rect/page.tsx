@@ -6,7 +6,7 @@ import DemoLayout from '@/components/DemoLayout';
 import MarzipanoViewer from '@/components/MarzipanoViewer';
 
 export default function HotspotRectPage() {
-  const stageRef = useRef<Marzipano.Stage | null>(null);
+  const stageRef = useRef<any>(null);
   const viewerRef = useRef<Marzipano.Viewer | null>(null);
 
   const handleViewerReady = (viewer: Marzipano.Viewer) => {
@@ -18,7 +18,8 @@ export default function HotspotRectPage() {
 
     // Create source.
     const source = Marzipano.ImageUrlSource.fromString(
-      "/media/cubemap/{f}.jpg"
+      "/media/cubemap/{f}.jpg",
+      {}
     );
 
     // Create geometry.
@@ -47,7 +48,7 @@ export default function HotspotRectPage() {
       hotspotContainer.createHotspot(hotspotElement, { yaw: 0.1, pitch: -0.3 });
 
       // Add layer into stage.
-      stage.addLayer(layer);
+      (stage as any).addLayer(layer);
     });
   };
 

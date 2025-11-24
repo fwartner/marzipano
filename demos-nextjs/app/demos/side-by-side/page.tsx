@@ -6,7 +6,7 @@ import DemoLayout from '@/components/DemoLayout';
 import MarzipanoViewer from '@/components/MarzipanoViewer';
 
 export default function SideBySidePage() {
-  const stageRef = useRef<Marzipano.Stage | null>(null);
+  const stageRef = useRef<any>(null);
   const viewerRef = useRef<Marzipano.Viewer | null>(null);
 
   const handleViewerReady = (viewer: Marzipano.Viewer) => {
@@ -31,7 +31,7 @@ export default function SideBySidePage() {
     const viewRight = new Marzipano.RectilinearView(null, viewLimiter);
 
     // Create layers.
-    const urlPrefix = "//www.marzipano.net/media/music-room";
+    const urlPrefix = "/media/music-room";
     
     // Left layer
     const sourceLeft = Marzipano.ImageUrlSource.fromString(
@@ -56,8 +56,8 @@ export default function SideBySidePage() {
     );
 
     // Add layers to stage.
-    stage.addLayer(leftLayer);
-    stage.addLayer(rightLayer);
+    (stage as any).addLayer(leftLayer);
+    (stage as any).addLayer(rightLayer);
   };
 
   return (

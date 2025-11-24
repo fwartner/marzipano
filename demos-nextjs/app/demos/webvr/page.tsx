@@ -21,8 +21,8 @@ export default function WebVRPage() {
 
     // Create source.
     const source = Marzipano.ImageUrlSource.fromString(
-      "//www.marzipano.net/media/outdoors/{z}/{f}/{y}/{x}.jpg",
-      { cubeMapPreviewUrl: "//www.marzipano.net/media/outdoors/preview.jpg" }
+      "/media/outdoors/{z}/{f}/{y}/{x}.jpg",
+      { cubeMapPreviewUrl: "/media/outdoors/preview.jpg" }
     );
 
     // Create view.

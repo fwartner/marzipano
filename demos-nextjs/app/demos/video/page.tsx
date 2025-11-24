@@ -75,7 +75,7 @@ export default function VideoPage() {
     setStarted(true);
 
     const video = document.createElement('video');
-    video.src = '//www.marzipano.net/media/video/mercedes-f1-1280x640.mp4';
+    video.src = '/media/video/mercedes-f1-1280x640.mp4';
     video.crossOrigin = 'anonymous';
     video.autoplay = true;
     video.loop = true;

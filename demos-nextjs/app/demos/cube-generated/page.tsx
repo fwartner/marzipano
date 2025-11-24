@@ -108,7 +108,7 @@ export default function CubeGeneratedPage() {
     scene.switchTo();
 
     // Show stats about the current view and cubemap size.
-    view.addEventListener('change', function() {
+    (view as any).addEventListener('change', function() {
       const level = view.selectLevel(geometry.levelList);
 
       const faceTiles = level.numHorizontalTiles() * level.numVerticalTiles();

@@ -7,7 +7,7 @@ import MarzipanoViewer from '@/components/MarzipanoViewer';
 
 export default function EmbeddedHotspotsPage() {
   const sceneRef = useRef<Marzipano.Scene | null>(null);
-  const containerRef = useRef<Marzipano.HotspotContainer | null>(null);
+  const containerRef = useRef<any>(null);
   const [selectedSource, setSelectedSource] = useState<string>('');
 
   const handleViewerReady = (viewer: Marzipano.Viewer) => {

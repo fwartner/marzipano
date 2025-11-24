@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Marzipano Demos",
   description: "360° media viewer demos powered by Marzipano",
+  metadataBase: new URL('https://marzipano-ts.pixelandprocess.de'),
   viewport: "target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui",
 };
 

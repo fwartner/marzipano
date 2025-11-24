@@ -6,7 +6,7 @@ import DemoLayout from '@/components/DemoLayout';
 import MarzipanoViewer from '@/components/MarzipanoViewer';
 
 export default function AnaglyphPage() {
-  const stageRef = useRef<Marzipano.Stage | null>(null);
+  const stageRef = useRef<any>(null);
   const viewerRef = useRef<Marzipano.Viewer | null>(null);
 
   const handleViewerReady = (viewer: Marzipano.Viewer) => {
@@ -30,7 +30,7 @@ export default function AnaglyphPage() {
     const view = new Marzipano.RectilinearView(null, viewLimiter);
 
     // Create the left and right layers.
-    const urlPrefix = "//www.marzipano.net/media/music-room";
+    const urlPrefix = "/media/music-room";
     
     // Left layer
     const sourceLeft = Marzipano.ImageUrlSource.fromString(
@@ -50,8 +50,8 @@ export default function AnaglyphPage() {
 
     // Add layers into the stage.
     // The left image must be rendered on top of the right image.
-    stage.addLayer(rightLayer);
-    stage.addLayer(leftLayer);
+    (stage as any).addLayer(rightLayer);
+    (stage as any).addLayer(leftLayer);
   };
 
   return (
