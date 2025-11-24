@@ -24,9 +24,6 @@ const nextConfig: NextConfig = {
     return config;
   },
   // Skip static optimization for demo routes (they use client-only code)
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
 };
 
 export default nextConfig;
