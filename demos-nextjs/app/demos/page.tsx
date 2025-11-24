@@ -52,7 +52,7 @@ const demos = [
 export default function DemosPage() {
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         {/* Breadcrumb */}
         <nav className="mb-8">
           <Link
@@ -65,12 +65,12 @@ export default function DemosPage() {
         </nav>
 
         {/* Header */}
-        <header className="text-center mb-16">
+        <header className="text-center mb-16 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-black tracking-tight">
             Marzipano-TS Demos
           </h1>
           <div className="w-24 h-1 bg-black mx-auto mb-6" />
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600">
             A collection of 360° media viewer demos powered by Marzipano-TS
           </p>
         </header>
@@ -122,7 +122,7 @@ export default function DemosPage() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-24 pt-12 border-t border-gray-200 text-center">
+        <footer className="mt-24 pt-12 border-t border-gray-200 text-center max-w-4xl mx-auto">
           <p className="text-gray-500 text-sm">
             Powered by{' '}
             <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:text-black underline underline-offset-2 font-medium">

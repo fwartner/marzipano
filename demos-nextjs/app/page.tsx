@@ -6,9 +6,9 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-gray-100 min-h-[85vh] flex items-center">
+      <section className="relative overflow-hidden border-b border-gray-100 min-h-[85vh] flex items-center justify-center">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-transparent" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 w-full">
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 bg-gray-100 border border-gray-200 rounded-full text-sm text-gray-700">
               <span className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" />
@@ -58,8 +58,8 @@ export default function Home() {
 
       {/* About Section */}
       <section className="py-24 md:py-32 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black">
                 About Marzipano-TS
@@ -94,8 +94,8 @@ export default function Home() {
 
       {/* Installation Section */}
       <section id="installation" className="py-24 md:py-32 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black">
                 Installation
@@ -166,7 +166,7 @@ scene.switchTo();`}
 
       {/* Features Section */}
       <section className="py-24 md:py-32 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black">
               Key Features
@@ -176,8 +176,8 @@ scene.switchTo();`}
               Everything you need to build immersive 360° experiences
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard
               title="Multiple Geometries"
               description="Support for cube maps, equirectangular projections, and flat images with automatic level-of-detail management."
@@ -220,8 +220,8 @@ scene.switchTo();`}
 
       {/* Contribution Section */}
       <section className="py-24 md:py-32 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black">
                 Contributing
@@ -294,8 +294,8 @@ npm run test:watch`}
 
       {/* Pixel & Process Section */}
       <section className="py-24 md:py-32 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black">
                 Maintained by Pixel & Process
@@ -348,8 +348,8 @@ npm run test:watch`}
 
       {/* Footer */}
       <footer className="border-t-2 border-gray-200 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="max-w-5xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-6xl mx-auto">
             {/* Main Footer Content */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 justify-items-center md:justify-items-start">
               {/* Brand Section */}
