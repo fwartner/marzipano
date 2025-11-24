@@ -35,7 +35,7 @@ export default function WebXRImmersivePage() {
     scene.switchTo();
 
     // Check XR support
-    if (viewer.isXREnabled && viewer.isXREnabled()) {
+    if ((viewer as any).isXREnabled && (viewer as any).isXREnabled()) {
       setXrSupported(true);
     } else if (typeof navigator !== 'undefined' && (navigator as any).xr) {
       (navigator as any).xr.isSessionSupported('immersive-vr').then((supported: boolean) => {

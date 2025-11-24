@@ -36,10 +36,10 @@ export default function SpatialAudioPage() {
 
     try {
       // Get audio context using AudioManager
-      const audioContext = Marzipano.audioManager.getContext();
+      const audioContext = (Marzipano.audioManager as any).getContext();
       
       // Resume context (required for autoplay policy)
-      await Marzipano.audioManager.resume();
+      await (Marzipano.audioManager as any).resume();
 
       // Create audio anchors at different positions
       // This is a simplified version - full implementation would create oscillators or load audio files

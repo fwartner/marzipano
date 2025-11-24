@@ -15,7 +15,7 @@ export default function PerformanceTelemetryPage() {
     viewerRef.current = viewer;
 
     // Set initial LOD policy
-    viewer.setLODPolicy({
+    (viewer as any).setLODPolicy({
       maxGpuMB: 256,
       prefetchAhead: 2,
       evictionStrategy: 'hybrid'
@@ -43,8 +43,8 @@ export default function PerformanceTelemetryPage() {
     scene.switchTo();
 
     // Display backend info
-    if (viewer.getBackend) {
-      setBackend(viewer.getBackend().toUpperCase());
+    if ((viewer as any).getBackend) {
+      setBackend((viewer as any).getBackend().toUpperCase());
     }
 
     // Listen for performance events

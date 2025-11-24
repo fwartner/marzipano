@@ -12,28 +12,28 @@ const transitionFunctions: Record<string, (ease?: (val: number) => number) => (v
     ease = ease || linear;
     return function(val: number, newScene: Marzipano.Scene) {
       val = ease(val);
-      newScene.layer().setEffects({ opacity: val });
+      (newScene as any).layer()?.setEffects({ opacity: val });
     }
   },
   fromRight: function(ease) {
     ease = ease || linear;
     return function(val: number, newScene: Marzipano.Scene) {
       val = ease(val);
-      newScene.layer().setEffects({ rect: { relativeX: 1 - val } });
+      (newScene as any).layer()?.setEffects({ rect: { relativeX: 1 - val } });
     }
   },
   fromTop: function(ease) {
     ease = ease || linear;
     return function(val: number, newScene: Marzipano.Scene) {
       val = ease(val);
-      newScene.layer().setEffects({ rect: { relativeY: -1 + val } });
+      (newScene as any).layer()?.setEffects({ rect: { relativeY: -1 + val } });
     }
   },
   fromBottom: function(ease) {
     ease = ease || linear;
     return function(val: number, newScene: Marzipano.Scene) {
       val = ease(val);
-      newScene.layer().setEffects({ rect: { relativeY: 1 - val } });
+      (newScene as any).layer()?.setEffects({ rect: { relativeY: 1 - val } });
     }
   },
 };

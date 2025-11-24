@@ -16,6 +16,13 @@ Related GitHub issue or pull request numbers are indicated in brackets.
 
 # v1.0.0 [YYYY-MM-DD]
 
+* Cleanup: Remove deprecated WebVR demo implementation (replaced by WebXR)
+* Cleanup: Remove IE11 compatibility hacks from video-multi-res demo
+* Cleanup: Remove legacy build system files (browserify/watchify/testem scripts)
+* Cleanup: Remove unused legacy dev dependencies (browserify, watchify, testem, uglify-js)
+* Cleanup: Update documentation to remove references to old build systems
+* Cleanup: Enhance WebGPU experimental warnings in code and documentation
+
 # v0.10.2 [2021-03-18]
 
 # New: implement a pinch drag mode.
