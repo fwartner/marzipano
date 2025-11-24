@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+import * as Marzipano from '../../dist/marzipano.es.js';
+import WebVrView from './WebVrView.js';
 
-var mat4 = Marzipano.dependencies.glMatrix.mat4;
-var quat = Marzipano.dependencies.glMatrix.quat;
+const mat4 = Marzipano.dependencies.glMatrix.mat4;
+const quat = Marzipano.dependencies.glMatrix.quat;
 
-var degToRad = Marzipano.util.degToRad;
+const degToRad = Marzipano.util.degToRad;
 
-var viewerElement = document.querySelector("#pano");
-var enterVrElement = document.querySelector("#enter-vr");
-var noVrElement = document.querySelector("#no-vr");
+const viewerElement = document.querySelector("#pano");
+const enterVrElement = document.querySelector("#enter-vr");
+const noVrElement = document.querySelector("#no-vr");
 
 // Install the WebVR polyfill, which makes the demo functional on "fake" WebVR
 // displays such as Google Cardboard.
-var polyfill = new WebVRPolyfill();
+const polyfill = new WebVRPolyfill();
 
 // Create stage and register renderers.
-var stage = new Marzipano.WebGlStage();
+const stage = new Marzipano.WebGlStage();
 Marzipano.registerDefaultRenderers(stage);
 
 // Insert stage into the DOM.
@@ -46,7 +47,7 @@ updateSize();
 window.addEventListener('resize', updateSize);
 
 // Create geometry.
-var geometry = new Marzipano.CubeGeometry([
+const geometry = new Marzipano.CubeGeometry([
   { tileSize: 256, size: 256, fallbackOnly: true },
   { tileSize: 512, size: 512 },
   { tileSize: 512, size: 1024 },
@@ -55,14 +56,14 @@ var geometry = new Marzipano.CubeGeometry([
 ]);
 
 // Create view.
-var limiter = Marzipano.RectilinearView.limit.traditional(4096, 110*Math.PI/180);
-var viewLeft = new WebVrView();
-var viewRight = new WebVrView();
+const limiter = Marzipano.RectilinearView.limit.traditional(4096, 110*Math.PI/180);
+const viewLeft = new WebVrView();
+const viewRight = new WebVrView();
 
 // Create layers.
-var layerLeft = createLayer(stage, viewLeft, geometry, 'left',
+const layerLeft = createLayer(stage, viewLeft, geometry, 'left',
   { relativeWidth: 0.5, relativeX: 0 });
-var layerRight = createLayer(stage, viewRight, geometry, 'right',
+const layerRight = createLayer(stage, viewRight, geometry, 'right',
   { relativeWidth: 0.5, relativeX: 0.5 });
 
 // Add layers into stage.
@@ -70,7 +71,7 @@ stage.addLayer(layerLeft);
 stage.addLayer(layerRight);
 
 // Check for an available VR device and initialize accordingly.
-var vrDisplay = null;
+let vrDisplay = null;
 navigator.getVRDisplays().then(function(vrDisplays) {
   if (vrDisplays.length > 0) {
     vrDisplay = vrDisplays[0];
@@ -85,11 +86,11 @@ enterVrElement.addEventListener('click', function() {
   vrDisplay.requestPresent([{source: stage.domElement()}]);
 });
 
-var proj = mat4.create();
-var pose = mat4.create();
+const proj = mat4.create();
+const pose = mat4.create();
 
 function render() {
-  var frameData = new VRFrameData;
+  const frameData = new VRFrameData();
   vrDisplay.getFrameData(frameData);
 
   // Update the view.
@@ -118,13 +119,13 @@ function render() {
 }
 
 function createLayer(stage, view, geometry, eye, rect) {
-  var urlPrefix = "//www.marzipano.net/media/music-room";
-  var source = new Marzipano.ImageUrlSource.fromString(
+  const urlPrefix = "//www.marzipano.net/media/music-room";
+  const source = Marzipano.ImageUrlSource.fromString(
     urlPrefix + "/" + eye + "/{z}/{f}/{y}/{x}.jpg",
     { cubeMapPreviewUrl: urlPrefix + "/" + eye + "/preview.jpg" });
 
-  var textureStore = new Marzipano.TextureStore(source, stage);
-  var layer = new Marzipano.Layer(source, geometry, view, textureStore,
+  const textureStore = new Marzipano.TextureStore(source, stage);
+  const layer = new Marzipano.Layer(source, geometry, view, textureStore,
     { effects: { rect: rect }});
 
   layer.pinFirstLevel();

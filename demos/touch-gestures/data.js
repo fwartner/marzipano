@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var data = {
+const data = {
   "scenes": [
     {
       "id": "oriente-station",
@@ -88,3 +88,5 @@ var data = {
     "autorotateEnabled": "true"
   }
 };
+
+export default data;
